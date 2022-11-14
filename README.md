@@ -3,7 +3,7 @@
 ## Team members
 The members of the team are:
 - *<name of team member 1>*
-- *<name of team member 2>*
+- Darshan Kumaresan
 - Wesley Lin
 - *<name of team member 4>*
 - *<name of team member 5>*
