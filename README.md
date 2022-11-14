@@ -2,7 +2,7 @@
 
 ## Team members
 The members of the team are:
-- *<name of team member 1>*
+- Michael (Misha) Higham
 - Darshan Kumaresan
 - Wesley Lin
 - Manik Aggarwal
