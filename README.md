@@ -6,7 +6,7 @@ The members of the team are:
 - Darshan Kumaresan
 - Wesley Lin
 - Manik Aggarwal
-- *<name of team member 5>*
+- Alex Rubio
 
 ## Project structure
 The project is called `msms` (Music School Management System).  It currently consists of a single app `lessons` where all functionality resides.
