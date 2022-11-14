@@ -5,7 +5,7 @@ The members of the team are:
 - *<name of team member 1>*
 - Darshan Kumaresan
 - Wesley Lin
-- *<name of team member 4>*
+- Manik Aggarwal
 - *<name of team member 5>*
 
 ## Project structure
