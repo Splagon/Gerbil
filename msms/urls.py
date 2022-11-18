@@ -19,5 +19,6 @@ from lessons import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("log_in/", views.log_in, name="log_in"),
     path('', views.home, name = 'home')
 ]
