@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>Request form</title>
+  </head>
+  <body>
+    <a href="/">Back to home</a>
+    <h1>Request Lessons!</h1>
+
+    <form action="{% url 'request_form' %}" method="post">
+      {% csrf_token %} {{form.as_p}}
+      <input type="submit" value="Request lesson" />
+    </form>
+  </body>
+</html>
