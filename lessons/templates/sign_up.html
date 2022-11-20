@@ -1,0 +1,22 @@
+<html>
+<head>
+  <title>MSMS</title>
+</head>
+<body>
+  <h1>Sign Up Page</h1>
+  <form action='{% url "sign_up" %}' method="post">
+    {% csrf_token %}
+    <label for="username">Email</label>
+    <input id="username" type="email">
+
+    <label for="first_name">First name</label>
+    <input id="first_name" type="text">
+
+    <label for="last_name">Last Name</label>
+    <input id="email" type="email">
+
+    <label for="dateOfBirth">Date of Birth</label>
+    <input id="dateOfBirth" type="date">
+  </form>
+</body>
+</html>
