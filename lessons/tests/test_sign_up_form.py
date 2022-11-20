@@ -1,16 +1,17 @@
 from django.test import TestCase
 from django import forms
-from django.core.exceptions import ValidationError
-from ..models import User
 from lessons.forms import SignUpForm
+from ..models import User
+from django.contrib.auth.hashers import check_password
 
-class UnitModelTestCase(TestCase):
+class SignUpFormTestCase(TestCase):
     """Unit tests for sign-up form"""
     def setUp(self):
         self.form_input = {
             "first_name": "Michael",
             "last_name": "Kolling",
             "username": "michael.kolling@kcl.ac.uk",
+            "dateOfBirth":"01/01/1995",
             "password" : "Password123",
             "password_confirm" : "Password123"
         }
@@ -74,3 +75,29 @@ class UnitModelTestCase(TestCase):
         self.form_input["password_confirm"] = "WrongPass123"
         form=SignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
+    
+    def test_dob_no_entry(self):
+        self.form_input["dateOfBirth"] = ""
+        form=SignUpForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+    
+    def test_dob_invalid(self):
+        self.form_input["dateOfBirth"] = "NotAValidDate123"
+        form=SignUpForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+    
+    def test_form_must_save_correctly(self):
+        
+        form=SignUpForm(data=self.form_input)
+        before_count = User.objects.count()
+        form.save()
+        after_count = User.objects.count()    
+        self.assertEqual(after_count, before_count+1)    
+        
+        user = User.objects.get(username="michael.kolling@kcl.ac.uk")
+        self.assertEqual(user.first_name, "Michael")
+        self.assertEqual(user.last_name, "Kolling")
+        self.assertEqual(user.username, "michael.kolling@kcl.ac.uk")
+        self.assertEqual(user.dateOfBirth.strftime("%d/%m/%Y"), "01/01/1995")
+        is_pass_correct = check_password("Password123", user.password)
+        self.assertTrue(is_pass_correct)

@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import widgets
 from .models import User
 from django.core.validators import RegexValidator
 
@@ -6,7 +7,7 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["username", "first_name","last_name", "dateOfBirth"]
-    
+        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
     password = forms.CharField(label="Password", 
                                widget=forms.PasswordInput(),
                                validators=[RegexValidator(
@@ -21,3 +22,14 @@ class SignUpForm(forms.ModelForm):
         pass_confirm = self.cleaned_data.get("password_confirm")
         if(password != pass_confirm):
             self.add_error("password_confirm", "Confirmation does not match password")
+            
+    def save(self):
+        super().save(commit=False)
+        user = User.objects.create_user(
+                self.cleaned_data.get("username"),
+                first_name = self.cleaned_data.get("first_name"),
+                last_name = self.cleaned_data.get("last_name"),
+                dateOfBirth = self.cleaned_data.get("dateOfBirth"),
+                password = self.cleaned_data.get("password"),
+            )
+        return user
