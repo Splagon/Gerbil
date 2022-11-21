@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from .models import User
+from ..models import User
 
 class UnitModelTestCase(TestCase):
     def setUp(self):
