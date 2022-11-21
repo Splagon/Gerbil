@@ -33,15 +33,15 @@ class User(AbstractUser):
 
 
 class RequestForm(forms.Form):
-    availability = forms.DateField(
-        widget=forms.SelectDateWidget(years=['2022', '2023']))
-    number_of_lessons = forms.CharField(
-        label="Number of lessons ", widget=forms.NumberInput)
-    interval_between_lessons = forms.CharField(
-        label="Time between lessons ", widget=forms.NumberInput)
-    duration_of_lessons = forms.CharField(
-        label="Lesson time", widget=forms.NumberInput)
-    instruments = forms.CharField(label="Select the instrument you are interested in: ",
-                                  widget=forms.Select(choices=[('violin', 'violin'), ('piano', 'piano'), ('cello', 'cello')]))
-    teacher = forms.CharField(
-        label="Find a teacher that you know on this site", max_length=50)
+    availability = forms.DateField(required=True,
+                                   widget=forms.SelectDateWidget(years=['2022', '2023']))
+    number_of_lessons = forms.CharField(required=True,
+                                        label="Number of lessons ", widget=forms.NumberInput)
+    interval_between_lessons = forms.CharField(required=True,
+                                               label="Time between lessons ", widget=forms.NumberInput)
+    duration_of_lessons = forms.CharField(required=True,
+                                          label="Lesson time", widget=forms.NumberInput)
+    instruments = forms.CharField(required=False, label="Select the instrument you are interested in: ",
+                                  widget=forms.Select(choices=[("", ""), ('violin', 'violin'), ('piano', 'piano'), ('cello', 'cello')]))
+    teacher = forms.CharField(required=False,
+                              label="Find a teacher that you know on this site", max_length=50)
