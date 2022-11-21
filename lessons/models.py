@@ -25,7 +25,7 @@ class User(AbstractUser):
     )
 
     dateOfBirth = models.DateField(
-        max_length = 8,
+        max_length = 10,
         blank = True,
         null = True
     )
