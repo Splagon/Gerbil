@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
+from .forms import LogInForm, UserForm, SignUpForm
 from django.contrib.auth import authenticate, login
 from .forms import SignUpForm
 from .forms import LogInForm
+from django.contrib import messages
 
 
 def home(request):
@@ -36,3 +38,16 @@ def sign_up(request):
 
 def lessons(request):
     return render(request, 'lessons.html')
+
+
+def profile(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = UserForm(instance=current_user, data=request.POST)
+        if form.is_valid():
+            messages.add_message(request, messages.SUCCESS, "Profile updated!")
+            form.save()
+            return redirect('lessons')
+    else:
+        form = UserForm(instance=current_user)
+    return render(request, 'profile.html', {'form': form})

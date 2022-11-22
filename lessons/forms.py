@@ -13,13 +13,15 @@ class SignUpForm(forms.ModelForm):
         model = User
         fields = ["username", "first_name","last_name", "dateOfBirth"]
         widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
-    password = forms.CharField(label="Password", 
-                               widget=forms.PasswordInput(),
-                               validators=[RegexValidator(
-                                   regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
-                                   message="Password must contain an uppercase character, a lowercase character, and a number"
-                               )])
-    password_confirm = forms.CharField(label="Confirm password", widget=forms.PasswordInput())
+        password = forms.CharField(
+            label="Password", 
+            widget=forms.PasswordInput(),
+            validators=[RegexValidator(
+                regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
+                message="Password must contain an uppercase character, a lowercase character, and a number"
+                )]
+        )
+        password_confirm = forms.CharField(label="Confirm password", widget=forms.PasswordInput())
     
     def clean(self):
         super().clean()
@@ -36,5 +38,13 @@ class SignUpForm(forms.ModelForm):
                 last_name = self.cleaned_data.get("last_name"),
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
-            )
+        )
         return user
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        """Form options."""
+
+        model = User
+        fields = ["username", "first_name", "last_name", "dateOfBirth"]
+        widgets = {"dateOfBirth": widgets.DateInput(attrs={'type': 'date'})}
