@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.validators import EmailValidator
 from django import forms
-
+import datetime
 
 class User(AbstractUser):
     username = models.EmailField(
@@ -31,17 +31,27 @@ class User(AbstractUser):
         null=True
     )
 
+INSTRUMENTS_TO_SELECT_FROM = [
+    ('0', 'violin'),
+    ('1', 'double bass'),
+    ('2', 'cello'),
+]
 
-class RequestForm(forms.Form):
-    availability = forms.DateField(required=True,
-                                   widget=forms.SelectDateWidget(years=['2022', '2023']))
-    number_of_lessons = forms.CharField(required=True,
-                                        label="Number of lessons ", widget=forms.NumberInput)
-    interval_between_lessons = forms.CharField(required=True,
-                                               label="Time between lessons ", widget=forms.NumberInput)
-    duration_of_lessons = forms.CharField(required=True,
-                                          label="Lesson time", widget=forms.NumberInput)
-    instruments = forms.CharField(required=False, label="Select the instrument you are interested in: ",
-                                  widget=forms.Select(choices=[("", ""), ('violin', 'violin'), ('piano', 'piano'), ('cello', 'cello')]))
-    teacher = forms.CharField(required=False,
-                              label="Find a teacher that you know on this site", max_length=50)
+DURATIONS_TO_SELECT_FROM = [
+    ('0', '30'),
+    ('1', '60'),
+    ('2', '90'),
+    ('3', '120'),
+]
+class Request(models.Model):
+    """Request from a student for a lesson"""
+    availability = models.DateTimeField( blank=False )
+    number_of_lessons = models.CharField(blank=False, max_length=3)
+    interval_between_lessons = models.CharField(blank=False, max_length=3)
+    duration_of_lessons = models.CharField(blank=False, max_length=1, choices=DURATIONS_TO_SELECT_FROM)
+    instrument = models.CharField(blank=True, max_length=1, choices=INSTRUMENTS_TO_SELECT_FROM)
+    teacher = models.CharField(blank=True,max_length=50)
+
+
+    class Meta:
+        """Model options."""

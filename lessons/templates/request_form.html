@@ -1,14 +1,19 @@
-<html>
-  <head>
-    <title>Request form</title>
-  </head>
-  <body>
-    <a href="/">Back to home</a>
-    <h1>Request Lessons!</h1>
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <a href="/">Back to home</a>
+      <h1>Request Lessons!</h1>
 
-    <form action="{% url 'request_form' %}" method="post">
-      {% csrf_token %} {{form.as_p}}
-      <input type="submit" value="Request lesson" />
-    </form>
-  </body>
-</html>
+      <form action="{% url 'request_form' %}" method="post">
+        {% csrf_token %} 
+        {% include 'partials/bootstrap_form.html' with form=form %}
+        <div class=" text-center">
+          <input type="submit" value="Request lesson" class="btn btn-primary" />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
