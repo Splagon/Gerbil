@@ -1,4 +1,4 @@
-"""Tests of the sign up view."""
+"""Tests of the log in view."""
 from django.test import TestCase
 from django.urls import reverse
 from lessons.forms import LogInForm
@@ -8,7 +8,7 @@ from .helpers import LogInTester
 class LogInViewTestCase(TestCase, LogInTester):
     """Tests of the log in view."""
 
-    #fixtures = ["microblogs/tests/fixtures/default_user.json"]
+
 
     def setUp(self):
         self.url = reverse('log_in')
@@ -19,6 +19,7 @@ class LogInViewTestCase(TestCase, LogInTester):
             #'username': '@janedoe',
             password = "Password123",
             is_active=True,
+            id = "3"
 
 
             #'new_password': 'Password123',
@@ -51,14 +52,9 @@ class LogInViewTestCase(TestCase, LogInTester):
         form_input = { "username": "johndoe@example.org", "password": "Password123"}
         response = self.client.post(self.url, form_input, follow = True)
         self.assertTrue(self._is_logged_in())
-        #To do
-        #These 3 lines of code need to be chnaged () when  the  view for the
-        #page that goes after the log in one  is implemented (when this is done,
-        # replace  the word "feed" in line 61 and 63  with whatever the name of your view is ")
-
-        response_url = reverse('home')
+        response_url = reverse('lessons')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'home.html')
+        self.assertTemplateUsed(response, 'lessons.html')
 
     def test_valid_log_in_by_inactive_user(self):
         self.user.is_active = False

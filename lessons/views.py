@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from .forms import SignUpForm
-from .forms import LogInForm
+from .forms import SignUpForm, LogInForm
+
 
 
 def home(request):
     return render(request, 'home.html')
-    
+
 def log_in(request):
     if request.method == "POST":
         form = LogInForm(request.POST)
@@ -16,11 +16,7 @@ def log_in(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                #The line below should be changed when The
-                #view that goes after the log in page is
-                #implemented (see test_log_in_view.py line 57)
-                #TLDR: change home for the name of said view
-                return redirect("home")
+                return redirect("lessons")
     form =LogInForm()
     return render(request,'log_in.html',{"form": form})
 
