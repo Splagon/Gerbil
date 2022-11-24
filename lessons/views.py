@@ -6,7 +6,9 @@ def home(request):
     return render(request, 'home.html')
 
 def requests(request):
-    return render(request, 'requests.html')
+    user = request.user
+    requests = Request.objects.all().values()
+    return render(request, 'requests.html', {'user': user, 'requests': requests})
 
 # before going to request form, must make sure user is logged in
 def request_form(request):
@@ -14,7 +16,7 @@ def request_form(request):
         form = RequestForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request,'requests.html', {'form', form})
+            return redirect('requests')
     else:
         form = RequestForm()
     return render(request, 'request_form.html', {'form': form})
