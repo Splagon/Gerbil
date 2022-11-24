@@ -6,16 +6,16 @@ from django.core.validators import EmailValidator
 from django import forms
 import datetime
 INSTRUMENTS_TO_SELECT_FROM = [
-    ('0', 'violin'),
-    ('1', 'double bass'),
-    ('2', 'cello'),
+    ('violin', 'violin'),
+    ('double bass', 'double bass'),
+    ('cello', 'cello'),
 ]
 
 DURATIONS_TO_SELECT_FROM = [
-    ('0', '30'),
-    ('1', '60'),
-    ('2', '90'),
-    ('3', '120'),
+    ('30', '30'),
+    ('60', '60'),
+    ('90', '90'),
+    ('120', '120'),
 ]
 class User(AbstractUser):
     username = models.EmailField(
@@ -49,8 +49,8 @@ class Request(models.Model):
     availability_time = models.TimeField(blank=False, default="08:00")
     number_of_lessons = models.CharField(blank=False, max_length=3)
     interval_between_lessons = models.CharField(blank=False, max_length=3)
-    duration_of_lessons = models.CharField(blank=False, max_length=1, choices=DURATIONS_TO_SELECT_FROM)
-    instrument = models.CharField(blank=True, max_length=1, choices=INSTRUMENTS_TO_SELECT_FROM)
+    duration_of_lessons = models.CharField(blank=False, max_length=4, choices=DURATIONS_TO_SELECT_FROM)
+    instrument = models.CharField(blank=True, max_length=180, choices=INSTRUMENTS_TO_SELECT_FROM)
     teacher = models.CharField(blank=True,max_length=50)
 
 
