@@ -12,10 +12,9 @@ def requests(request):
 def request_form(request):
     if request.method == 'POST':
         form = RequestForm(request.POST)
-        # if form.is_valid():
-            # user = form.save()
-            # login(request, user)
-        return redirect('requests')
+        if form.is_valid():
+            form.save()
+            return render(request,'requests.html', {'form', form})
     else:
         form = RequestForm()
     return render(request, 'request_form.html', {'form': form})
