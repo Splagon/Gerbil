@@ -1,0 +1,40 @@
+<html>
+<head>
+  <title>MSMS</title>
+</head>
+<body>
+  <h1>MSMS</h1>
+  <h2>View Requests</h2>
+  <p><a href='{% url "admin_home" %}'>Go Home</a></p>
+  <h3>Active Requests</h3>
+  <table>
+    <thead>
+      <th>Name</th>
+      <th>Fulfilled?</th>
+      <th>Paid?</th>
+    </thead>
+    <tbody>
+      <tr>
+         <td>{{user.first_name}} {{user.last_name}}</td>
+         <td>False</td>
+         <td>False</td>
+      </tr>
+      <tr>
+         <td>{{user.first_name}} {{user.last_name}}</td>
+         <td>False</td>
+         <td>False</td>
+      </tr>
+      <tr>
+         <td>{{user.first_name}} {{user.last_name}}</td>
+         <td>False</td>
+         <td>False</td>
+      </tr>
+      <tr>
+         <td>{{user.first_name}} {{user.last_name}}</td>
+         <td>False</td>
+         <td>False</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<html>
+<head>
+  <title>MSMS</title>
+</head>
+<body>
+  <h1>Admin log in</h1>
+  <p>Admins and Directors Only</p>
+  
+  <form action="{% url "admin_log_in" %}" method ="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Log in">
+</body>
+</html>

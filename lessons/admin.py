@@ -4,6 +4,7 @@ from .models import User
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users"""
+    site_header = "MSMS Administration"
     list_display = [
         'username','first_name', 'last_name', 'is_active',
     ]

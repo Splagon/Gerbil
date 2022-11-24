@@ -3,13 +3,10 @@ from django.core.exceptions import ValidationError
 from ..models import User
 
 class UnitModelTestCase(TestCase):
+    fixtures = ['lessons/tests/fixtures/default_user.json']
+
     def setUp(self):
-        self.user = User.objects.create_user(
-            first_name = 'Michael',
-            last_name = 'Kolling',
-            username = 'michael.kolling@kcl.ac.uk',
-            password = 'password123'
-        )
+        self.user = User.objects.get(username = "jonathandeer@example.com")
 
     def test_valid_user(self):
         self._assert_user_is_valid();
@@ -68,23 +65,23 @@ class UnitModelTestCase(TestCase):
         self._assert_user_is_invalid();
 
     def test_email_must_contain_at_symbol(self):
-        self.user.username = 'michaelkollingkcl.ac.uk'
+        self.user.username = 'jonathandeerkcl.ac.uk'
         self._assert_user_is_invalid();
 
     def test_email_must_contain_domain_name(self):
-        self.user.username = 'michaelkolling@.uk'
+        self.user.username = 'jonathandeer@.uk'
         self._assert_user_is_invalid();
 
     def test_email_must_contain_domain(self):
-        self.user.username = 'michaelkolling@kcl'
+        self.user.username = 'jonathandeer@kcl'
         self._assert_user_is_invalid();
 
     def test_email_must_not_contain_more_than_one_at_symbol(self):
-        self.user.username = 'michaelkolling@@kcl.ac.uk'
+        self.user.username = 'jonathandeer@@kcl.ac.uk'
         self._assert_user_is_invalid();
 
     def test_email_may_contain_more_than_one_dot(self):
-        self.user.username = 'michaelkolling@kcl.ac.uk'
+        self.user.username = 'jonathandeer@kcl.ac.uk'
         self._assert_user_is_valid();
 
 
@@ -102,9 +99,11 @@ class UnitModelTestCase(TestCase):
 
     def _create_second_user(self):
         user = User.objects.create_user(
-            first_name = 'Josh',
-            last_name = 'Murphy',
-            username='josh.murphy@kcl.ac.uk',
-            password='password123',
+            first_name = 'Harry',
+            last_name = 'Kane',
+            username='harry.kane@england.co.uk',
+            password='ItsComingHome@2022',
+            is_staff = False,
+            is_superuser = False
         )
         return user
