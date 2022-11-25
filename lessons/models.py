@@ -42,7 +42,6 @@ class User(AbstractUser):
         null=True
     )
 
-
 class Request(models.Model):
     """Request from a student for a lesson"""
     availability_date = models.DateTimeField( blank=False, default=datetime.date.today, )
@@ -56,3 +55,4 @@ class Request(models.Model):
 
     class Meta:
         """Model options."""
+
