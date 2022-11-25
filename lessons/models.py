@@ -45,7 +45,7 @@ class User(AbstractUser):
 
 class Request(models.Model):
     """Request from a student for a lesson"""
-    availability_date = models.DateTimeField( blank=False, default=datetime.date.today )
+    availability_date = models.DateTimeField( blank=False, default=datetime.date.today, )
     availability_time = models.TimeField(blank=False, default="08:00")
     number_of_lessons = models.CharField(blank=False, max_length=3)
     interval_between_lessons = models.CharField(blank=False, max_length=3)

@@ -8,8 +8,8 @@ class RequestForm(forms.ModelForm):
         model = Request
         fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : forms.DateInput(attrs={'type' : 'date', 'min': datetime.date.today() } ),
-            'availability_time' : forms.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}, format='%H:%M:%S'),
+            'availability_date' : forms.DateTimeInput(attrs={'type' : 'date', 'min': datetime.date.today() } ),
+            'availability_time' : forms.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : forms.Select(),
             'interval_between_lessons' : forms.NumberInput(),
             'number_of_lessons' : forms.NumberInput(),
