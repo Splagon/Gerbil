@@ -36,7 +36,6 @@ class SignUpViewTestCase(TestCase):
         response = self.client.post(self.url, self.form_input)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
-
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "sign_up.html")
         form = response.context["form"]
@@ -48,26 +47,6 @@ class SignUpViewTestCase(TestCase):
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count+1)
-
-<<<<<<< HEAD
         response_url = reverse("home")
         self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
         self.assertTemplateUsed(response, "home.html")
-=======
-        response_url = reverse("lessons")
-        self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
-        self.assertTemplateUsed(response, "lessons.html")
->>>>>>> 227ec4b579440345154a9239d2e9446268857de8
-
-        user = User.objects.get(username="michael.kolling@kcl.ac.uk")
-        self.assertEqual(user.first_name, "Michael")
-        self.assertEqual(user.last_name, "Kolling")
-        self.assertEqual(user.username, "michael.kolling@kcl.ac.uk")
-        self.assertEqual(user.dateOfBirth.strftime("%d/%m/%Y"), "01/01/1995")
-        is_pass_correct = check_password("Password123", user.password)
-        self.assertTrue(is_pass_correct)
-<<<<<<< HEAD
-        self.assertEqual(user.is_staff, False)
-        self.assertEqual(user.is_superuser, False)
-=======
->>>>>>> 227ec4b579440345154a9239d2e9446268857de8
