@@ -1,5 +1,5 @@
 from django import forms
-
+from django.contrib.auth import get_user_model
 from django.forms import widgets
 from .models import User
 from django.core.validators import RegexValidator
@@ -10,24 +10,25 @@ class LogInForm(forms.Form):
 
 class SignUpForm(forms.ModelForm):
     class Meta:
-        model = User
+        #User
+        model = get_user_model()
         fields = ["username", "first_name","last_name", "dateOfBirth"]
         widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
-    password = forms.CharField(label="Password", 
-                               widget=forms.PasswordInput(),
-                               validators=[RegexValidator(
-                                   regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
-                                   message="Password must contain an uppercase character, a lowercase character, and a number"
-                               )])
+    password = forms.CharField(label="Password",
+                            widget=forms.PasswordInput(),
+                            validators=[RegexValidator(
+                                regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
+                                message="Password must contain an uppercase character, a lowercase character, and a number"
+                            )])
     password_confirm = forms.CharField(label="Confirm password", widget=forms.PasswordInput())
-    
+
     def clean(self):
         super().clean()
         password = self.cleaned_data.get("password")
         pass_confirm = self.cleaned_data.get("password_confirm")
         if(password != pass_confirm):
             self.add_error("password_confirm", "Confirmation does not match password")
-            
+
     def save(self):
         super().save(commit=False)
         user = User.objects.create_user(
@@ -36,5 +37,13 @@ class SignUpForm(forms.ModelForm):
                 last_name = self.cleaned_data.get("last_name"),
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
-            )
+        )
         return user
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        """Form options."""
+
+        model = User
+        fields = ["username", "first_name", "last_name", "dateOfBirth"]
+        widgets = {"dateOfBirth": widgets.DateInput(attrs={'type': 'date'})}
