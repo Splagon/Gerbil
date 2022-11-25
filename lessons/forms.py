@@ -15,11 +15,11 @@ class SignUpForm(forms.ModelForm):
         fields = ["username", "first_name","last_name", "dateOfBirth"]
         widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
     password = forms.CharField(label="Password",
-                               widget=forms.PasswordInput(),
-                               validators=[RegexValidator(
-                                   regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
-                                   message="Password must contain an uppercase character, a lowercase character, and a number"
-                               )])
+                            widget=forms.PasswordInput(),
+                            validators=[RegexValidator(
+                                regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
+                                message="Password must contain an uppercase character, a lowercase character, and a number"
+                            )])
     password_confirm = forms.CharField(label="Confirm password", widget=forms.PasswordInput())
 
     def clean(self):
