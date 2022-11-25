@@ -15,7 +15,8 @@ class SignUpViewTestCase(TestCase):
             "username": "michael.kolling@kcl.ac.uk",
             "dateOfBirth":"01/01/1995",
             "password" : "Password123",
-            "password_confirm" : "Password123"
+            "password_confirm" : "Password123",
+            "id": "3"
         }
 
     def test_sign_up_url(self):
@@ -48,9 +49,15 @@ class SignUpViewTestCase(TestCase):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count+1)
 
+<<<<<<< HEAD
         response_url = reverse("home")
         self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
         self.assertTemplateUsed(response, "home.html")
+=======
+        response_url = reverse("lessons")
+        self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
+        self.assertTemplateUsed(response, "lessons.html")
+>>>>>>> 227ec4b579440345154a9239d2e9446268857de8
 
         user = User.objects.get(username="michael.kolling@kcl.ac.uk")
         self.assertEqual(user.first_name, "Michael")
@@ -59,5 +66,8 @@ class SignUpViewTestCase(TestCase):
         self.assertEqual(user.dateOfBirth.strftime("%d/%m/%Y"), "01/01/1995")
         is_pass_correct = check_password("Password123", user.password)
         self.assertTrue(is_pass_correct)
+<<<<<<< HEAD
         self.assertEqual(user.is_staff, False)
         self.assertEqual(user.is_superuser, False)
+=======
+>>>>>>> 227ec4b579440345154a9239d2e9446268857de8

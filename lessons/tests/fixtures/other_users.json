@@ -1,0 +1,32 @@
+[
+    {
+        "model": "lessons.user",
+        "pk": 2,
+        "fields": {
+        "username": "phildunphy@email.com",
+        "first_name": "Phil",
+        "last_name": "Dunphy",
+        "dateOfBirth": "1995-02-02"
+        }
+    },
+    {
+        "model": "lessons.user",
+        "pk": 3,
+        "fields": {
+            "username": "clairedunphy@email.com",
+            "first_name": "Jay",
+            "last_name": "Prichett",
+            "dateOfBirth": "1995-03-03"
+        }
+    },
+    {
+        "model": "lessons.user",
+        "pk": 4,
+        "fields": {
+            "username": "camerontucker@email.com",
+            "first_name": "Cameron",
+            "last_name": "Tucker",
+            "dateOfBirth": "1995-04-04"
+        }
+    }
+]

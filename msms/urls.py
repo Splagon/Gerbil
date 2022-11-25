@@ -18,6 +18,9 @@ from django.urls import path
 from lessons import views
 
 urlpatterns = [
+    path('', views.home, name='home'),
+    path('requests/', views.requests, name='requests'),
+    path('request-lesson/', views.request_form, name='request_form'),
     path('', views.home, name = 'home'),
     path("log_in/", views.log_in, name="log_in"),
     path("sign_up/", views.sign_up, name="sign_up"),
@@ -29,5 +32,6 @@ urlpatterns = [
     path('admin/sign_up/', views.admin_sign_up, name = 'admin_sign_up'),
     path('admin/view_users/', admin.site.urls, name = 'admin_view_users'),
     path('admin/view_users/', views.admin_view_users, name = 'admin_view_users'),
-    path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests')
+    path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
+    path('profile/', views.profile, name='profile'),
 ]

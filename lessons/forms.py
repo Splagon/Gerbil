@@ -1,8 +1,43 @@
 from django import forms
-
+from .models import Request
+from django.contrib.auth import get_user_model
 from django.forms import widgets
 from .models import User
 from django.core.validators import RegexValidator
+import datetime
+class RequestForm(forms.ModelForm):
+    """Form enabling students to make lesson requests."""
+
+    class Meta:
+        model = Request
+        fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
+        widgets = {
+            'availability_date' : forms.DateTimeInput(attrs={'type' : 'date', 'min': datetime.date.today() } ),
+            'availability_time' : forms.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
+            'instrument' : forms.Select(),
+            'interval_between_lessons' : forms.NumberInput(),
+            'number_of_lessons' : forms.NumberInput(),
+            'duration_of_lessons' : forms.Select(),
+        }
+    def clean(self):
+        """Clean the data and generate messages for any errors."""
+
+        super().clean()
+
+
+    def save(self):
+        """Create a new request."""
+        super().save(commit=False)
+        request = Request.objects.create(
+            availability_date=self.cleaned_data.get('availability_date'),
+            availability_time=self.cleaned_data.get('availability_time'),
+            number_of_lessons=self.cleaned_data.get('number_of_lessons'),
+            interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
+            duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
+            instrument=self.cleaned_data.get('instrument'),
+            teacher=self.cleaned_data.get('teacher'),
+        )
+        return request
 
 class LogInForm(forms.Form):
     username = forms.CharField(label = "Username")
@@ -10,15 +45,16 @@ class LogInForm(forms.Form):
 
 class SignUpForm(forms.ModelForm):
     class Meta:
-        model = User
+        #User
+        model = get_user_model()
         fields = ["username", "first_name","last_name", "dateOfBirth"]
         widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
     password = forms.CharField(label="Password",
-                               widget=forms.PasswordInput(),
-                               validators=[RegexValidator(
-                                   regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
-                                   message="Password must contain an uppercase character, a lowercase character, and a number"
-                               )])
+                            widget=forms.PasswordInput(),
+                            validators=[RegexValidator(
+                                regex = r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$",
+                                message="Password must contain an uppercase character, a lowercase character, and a number"
+                            )])
     password_confirm = forms.CharField(label="Confirm password", widget=forms.PasswordInput())
 
     def clean(self):
@@ -36,7 +72,7 @@ class SignUpForm(forms.ModelForm):
                 last_name = self.cleaned_data.get("last_name"),
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
-            )
+        )
         return user
 
 class AdminSignUpForm(forms.ModelForm):
@@ -74,3 +110,11 @@ class AdminSignUpForm(forms.ModelForm):
                 is_superuser = self.cleaned_data.get("is_superuser")
             )
         return user
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        """Form options."""
+
+        model = User
+        fields = ["username", "first_name", "last_name", "dateOfBirth"]
+        widgets = {"dateOfBirth": widgets.DateInput(attrs={'type': 'date'})}
