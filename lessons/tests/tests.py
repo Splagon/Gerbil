@@ -8,7 +8,8 @@ class UnitModelTestCase(TestCase):
             first_name = 'Michael',
             last_name = 'Kolling',
             username = 'michael.kolling@kcl.ac.uk',
-            password = 'password123'
+            password = 'password123',
+            id = "3"
         )
 
     def test_valid_user(self):

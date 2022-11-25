@@ -29,3 +29,5 @@ class User(AbstractUser):
         blank = True,
         null = True
     )
+
+    id = models.IntegerField(primary_key=True)
