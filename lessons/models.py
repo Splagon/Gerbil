@@ -49,8 +49,8 @@ class User(AbstractUser):
 
 class Invoice(models.Model):
     """Invoice"""
-    reference_number = models.CharField(max_length = 6)
-    invoice_number = models.CharField(max_length = 6)
+    reference_number = models.CharField(blank=False ,max_length = 12)
+    invoice_number = models.CharField(blank=False,max_length = 12)
 
 
 class Request(models.Model):
