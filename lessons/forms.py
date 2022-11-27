@@ -2,9 +2,29 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User
+from .models import User, Invoice
 from django.core.validators import RegexValidator
 import datetime
+
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = ["invoice_number"]
+        widgets = {}
+
+    def clean(self):
+        super().clean()
+
+    def save(self):
+        super().save(commit=False)
+        invoice = Invoice.objects.create(
+        reference_number = self.cleaned_data.get("invoice_number").split("-")[0],
+        invoice_number = self.cleaned_data.get("invoice_number").split("-")[1]
+
+
+        )
+        return invoice
+
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
 
@@ -24,7 +44,6 @@ class RequestForm(forms.ModelForm):
 
         super().clean()
 
-
     def save(self):
         """Create a new request."""
         super().save(commit=False)
@@ -37,7 +56,12 @@ class RequestForm(forms.ModelForm):
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
         )
+
         return request
+
+
+
+
 
 class LogInForm(forms.Form):
     username = forms.CharField(label = "Username")

@@ -46,6 +46,13 @@ class User(AbstractUser):
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
 
+
+class Invoice(models.Model):
+    """Invoice"""
+    reference_number = models.CharField(max_length = 6)
+    invoice_number = models.CharField(max_length = 6)
+
+
 class Request(models.Model):
     """Request from a student for a lesson"""
     availability_date = models.DateTimeField( blank=False, default=datetime.date.today, )
@@ -55,6 +62,7 @@ class Request(models.Model):
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=DURATIONS_TO_SELECT_FROM)
     instrument = models.CharField(blank=True, max_length=180, choices=INSTRUMENTS_TO_SELECT_FROM)
     teacher = models.CharField(blank=True,max_length=50)
+    #person_who_made_the_request = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     class Meta:

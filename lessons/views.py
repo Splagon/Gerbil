@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Request
 from .forms import RequestForm
-from .forms import LogInForm, UserForm, SignUpForm
+from .forms import LogInForm, UserForm, SignUpForm,InvoiceForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from .forms import SignUpForm, LogInForm, AdminSignUpForm
@@ -22,7 +22,7 @@ def requests(request):
 def request_form(request):
     if request.method == 'POST':
         form = RequestForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() :
             form.save()
             return redirect('requests')
     else:
@@ -113,3 +113,18 @@ def profile(request):
     else:
         form = UserForm(instance=current_user)
     return render(request, 'profile.html', {'form': form})
+
+def bank_transfer(request):
+    if request.method == 'POST':
+        #print(request.POST.get('reference_number'))
+        form = InvoiceForm(request.POST)
+        if form.is_valid():
+            #form.cleaned_data["reference_number"] = 0
+            form.save()
+            return redirect('lessons')
+        else:
+            return redirect("home")
+
+    else:
+        form = InvoiceForm()
+        return render(request, 'bank_transfer.html', {'form': form})

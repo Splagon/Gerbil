@@ -33,4 +33,5 @@ urlpatterns = [
     path('admin/view_users/', views.admin_view_users, name = 'admin_view_users'),
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
     path('profile/', views.profile, name='profile'),
+    path("bank_transfer/", views.bank_transfer, name= "bank_transfer"),
 ]
