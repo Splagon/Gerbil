@@ -14,13 +14,29 @@ class InvoiceForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
+        entire_reference_number = self.cleaned_data.get("invoice_number")
+        if("-" not in entire_reference_number):
+            self.add_error("invoice_number","invoice number is missing a separator")
+
+        else:
+
+            reference_number = self.cleaned_data.get("invoice_number").split("-")[0]
+            invoice_number = self.cleaned_data.get("invoice_number").split("-")[1]
+
+            if(reference_number.isdigit()== False):
+                self.add_error("invoice_number", "reference number is invalid")
+
+            if(invoice_number.isdigit()== False):
+                self.add_error("invoice_number", "invoice number is invalid")
+
+
+
 
     def save(self):
         super().save(commit=False)
         invoice = Invoice.objects.create(
         reference_number = self.cleaned_data.get("invoice_number").split("-")[0],
         invoice_number = self.cleaned_data.get("invoice_number").split("-")[1]
-
 
         )
         return invoice
