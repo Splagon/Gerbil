@@ -2,9 +2,41 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User
+from .models import User, Invoice
 from django.core.validators import RegexValidator
 import datetime
+
+
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields =[]
+
+    new_password = forms.CharField(
+    label='Enter reference number',
+    widget=forms.TextInput(),
+    validators=[RegexValidator(
+            regex=r'^[0-9]+-[0-9]+',
+            message='Password must contain an uppercase character, a lowercase '
+                    'character and a number'
+            )]
+            )
+
+
+
+    def clean(self):
+        super().clean()
+
+    def save(self):
+        super().save(commit=False)
+        invoice = Invoice.objects.create(
+        reference_number = self.cleaned_data.get("new_password").split("-")[0],
+        invoice_number = self.cleaned_data.get("new_password").split("-")[1]
+
+        )
+        return invoice
+
+
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
 
