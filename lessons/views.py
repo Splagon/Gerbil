@@ -42,8 +42,23 @@ def update_request(request,id):
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
         availability_date = request.POST['availability_date']
+        availability_time = request.POST['availability_time']
+        duration_of_lessons = request.POST['duration_of_lessons']
+        number_of_lessons = request.POST['number_of_lessons']
+        interval_between_lessons = request.POST['interval_between_lessons']
+        teacher = request.POST['teacher']
+        instrument = request.POST['instrument']
+
+        # Update the records after the user has made changes
         request = Request.objects.get(id=id)
         request.availability_date = availability_date
+        request.availability_time = availability_time
+        request.duration_of_lessons = duration_of_lessons
+        request.number_of_lessons = number_of_lessons
+        request.interval_between_lessons = interval_between_lessons
+        request.teacher = teacher
+        request.instrument = instrument
+
         request.save()
         return redirect('requests')
         
