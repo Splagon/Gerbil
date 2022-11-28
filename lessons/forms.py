@@ -40,6 +40,32 @@ class SignUpForm(forms.ModelForm):
         )
         return user
 
+
+class PasswordForm(forms.Form):
+    print("test")
+    password = forms.CharField(
+        label='Current password', widget=forms.PasswordInput())
+    new_password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput(),
+        validators=[RegexValidator(
+            regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
+            message='Password must contain an uppercase character, a lowercase '
+                    'character and a number'
+        )]
+    )
+    password_confirmation = forms.CharField(
+        label='Password confirmation', widget=forms.PasswordInput())
+
+    def clean(self):
+        super().clean()
+        new_password = self.cleaned_data.get('new_password')
+        password_confirmation = self.cleaned_data.get('password_confirmation')
+        if new_password != password_confirmation:
+            self.add_error('password_confirmation',
+                        'Confirmation does not match password.')
+
+
 class UserForm(forms.ModelForm):
     class Meta:
         """Form options."""

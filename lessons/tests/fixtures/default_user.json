@@ -6,7 +6,8 @@
             "username": "michael.kolling@kcl.ac.uk",
             "first_name": "Michael",
             "last_name": "Kolling",
-            "dateOfBirth": "1995-01-01"
+            "dateOfBirth": "1995-01-01",
+            "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc="
         }
     }
 ]
