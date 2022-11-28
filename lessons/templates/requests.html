@@ -33,13 +33,14 @@
                             </a>
                         </td>
                         <td scope="col" class="font-weight-bold">{{value.id}}</td>
-                        <td cope="col">{{value.availability_date}}</td>
+                        <td scope="col">{{value.availability_date}}</td>
                         <td scope="col">{{value.availability_time}}</td>
                         <td scope="col">{{value.duration_of_lessons}}</td>
                         <td scope="col">{{value.number_of_lessons}}</td>
                         <td scope="col">{{value.interval_between_lessons}}</td>
                         <td scope="col">{{value.teacher}}</td>
                         <td scope="col">{{value.instrument}}</td>
+                        <td scope="col">{{value.status}}</td>
                         <td  scope="col" >
                             <a href="{% url 'delete-request' value.id %}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"  >

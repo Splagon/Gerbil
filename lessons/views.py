@@ -1,6 +1,4 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.http import HttpResponseRedirect
 from .models import Request
 from .forms import RequestForm
 from .forms import LogInForm, UserForm, SignUpForm
@@ -9,7 +7,6 @@ from django.contrib.auth.decorators import login_required, permission_required, 
 from .forms import SignUpForm, LogInForm, AdminSignUpForm
 from django.contrib import messages
 import operator
-
 
 
 def home(request):
@@ -41,13 +38,15 @@ def update_request(request,id):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
-        availability_date = request.POST['availability_date']
-        availability_time = request.POST['availability_time']
-        duration_of_lessons = request.POST['duration_of_lessons']
-        number_of_lessons = request.POST['number_of_lessons']
-        interval_between_lessons = request.POST['interval_between_lessons']
-        teacher = request.POST['teacher']
-        instrument = request.POST['instrument']
+        # TODO-- Refactor this asap
+        availability_date = form.cleaned_data.get('availability_date')
+        availability_time = form.cleaned_data.get('availability_time')
+        duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
+        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
+        teacher = form.cleaned_data.get('teacher')
+        instrument = form.cleaned_data.get('instrument')
+        status = form.cleaned_data.get('status')
 
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
@@ -58,6 +57,7 @@ def update_request(request,id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
+        request.status = status
 
         request.save()
         return redirect('requests')
@@ -131,7 +131,38 @@ def admin_sign_up(request):
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_requests(request):
-    return render(request, 'admin/admin_view_requests.html')
+    user = request.user
+    requests = Request.objects.all().values()
+    return render(request, 'admin/admin_view_requests.html', {'user': user, 'requests': requests})
+
+def admin_update_requests(request):
+    requestObject = Request.objects.get(id=id)
+    form = RequestForm(request.POST or None, instance=requestObject)
+    if form.is_valid():
+        # TODO-- Refactor this asap
+        availability_date = form.cleaned_data.get('availability_date')
+        availability_time = form.cleaned_data.get('availability_time')
+        duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
+        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
+        teacher = form.cleaned_data.get('teacher')
+        instrument = form.cleaned_data.get('instrument')
+        status = form.cleaned_data.get('status')
+        # Update the records after the user has made changes
+        request = Request.objects.get(id=id)
+        request.availability_date = availability_date
+        request.availability_time = availability_time
+        request.duration_of_lessons = duration_of_lessons
+        request.number_of_lessons = number_of_lessons
+        request.interval_between_lessons = interval_between_lessons
+        request.teacher = teacher
+        request.instrument = instrument
+        request.status = status
+
+        request.save()
+        return redirect('admin_view_requests')
+        
+    return render(request, 'admin_update_request_form.html', {'request': requestObject,'form' : form })
 
 @user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
 def admin_view_users(request):

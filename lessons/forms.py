@@ -14,10 +14,11 @@ class RequestForm(forms.ModelForm):
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
             'instrument' : 'Please select the instrument you\'d like to start having lessons in',
             'interval_between_lessons' : 'Interval between lessons(in weeks)',
-            'teacher' : 'Please select a preferred teacher'
+            'teacher' : 'Please select a preferred teacher',
+            'status' : 'Request status'
         }
         model = Request
-        fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
+        fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher','status']
         widgets = {
             'availability_date' : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today } ),
             'availability_time' : forms.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
@@ -25,6 +26,7 @@ class RequestForm(forms.ModelForm):
             'interval_between_lessons' : forms.NumberInput(),
             'number_of_lessons' : forms.NumberInput(),
             'duration_of_lessons' : forms.Select(),
+            'status' : forms.CharField()
         }
 
         
@@ -44,6 +46,7 @@ class RequestForm(forms.ModelForm):
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
+            status = self.cleaned_data.get('status')
         )
         return request
 

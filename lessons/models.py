@@ -3,17 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.validators import EmailValidator
 import datetime
-INSTRUMENTS_TO_SELECT_FROM = [
-    ('violin', 'violin'),
-    ('double bass', 'double bass'),
-    ('cello', 'cello'),
-]
-
-DURATIONS_TO_SELECT_FROM = [
-    ('30', '30'),
-    ('45', '45'),
-    ('60', '60'),
-]
+from .helpers import getDurations, getInstruments, getStatuses
 class User(AbstractUser):
     username = models.EmailField(
         unique = True,
@@ -50,9 +40,10 @@ class Request(models.Model):
     availability_time = models.TimeField(blank=False, default="08:00")
     number_of_lessons = models.CharField(blank=False, max_length=3)
     interval_between_lessons = models.CharField(blank=False, max_length=3)
-    duration_of_lessons = models.CharField(blank=False, max_length=4, choices=DURATIONS_TO_SELECT_FROM)
-    instrument = models.CharField(blank=True, max_length=180, choices=INSTRUMENTS_TO_SELECT_FROM)
+    duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
+    instrument = models.CharField(blank=True, max_length=180, choices=getInstruments())
     teacher = models.CharField(blank=True,max_length=50)
+    status = models.CharField(blank=True, max_length=60, default="In Progress")
 
 
     class Meta:
