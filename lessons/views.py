@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Request
 from .forms import RequestForm
-from .forms import LogInForm, UserForm, SignUpForm, PasswordForm
+from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, InvoiceForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from .forms import SignUpForm, LogInForm, AdminSignUpForm
@@ -133,3 +133,22 @@ def password(request):
                 return redirect('lessons')
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
+
+def bank_transfer(request):
+    if request.method == 'POST':
+        print("new pass")
+        print(request.POST.get('new_password'))
+        form = InvoiceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            print("form was _valid")
+
+
+            return redirect('lessons')
+        else:
+            print("form was not valid")
+            return redirect("home")
+
+    else:
+        form = InvoiceForm()
+        return render(request, 'bank_transfer.html', {'form': form})
