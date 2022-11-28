@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 from .models import Request
 from .forms import RequestForm
 from .forms import LogInForm, UserForm, SignUpForm
@@ -28,6 +30,13 @@ def request_form(request):
     else:
         form = RequestForm()
     return render(request, 'request_form.html', {'form': form})
+
+
+def delete_request(request,id):
+    request = Request.objects.get(id=id)
+    request.delete()
+    return redirect('requests')
+ 
 
 def log_in(request):
     if request.method == "POST":

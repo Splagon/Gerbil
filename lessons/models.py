@@ -12,9 +12,8 @@ INSTRUMENTS_TO_SELECT_FROM = [
 
 DURATIONS_TO_SELECT_FROM = [
     ('30', '30'),
+    ('45', '45'),
     ('60', '60'),
-    ('90', '90'),
-    ('120', '120'),
 ]
 class User(AbstractUser):
     username = models.EmailField(
