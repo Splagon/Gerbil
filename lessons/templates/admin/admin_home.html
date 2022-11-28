@@ -1,0 +1,27 @@
+<html>
+<head>
+  <title>MSMS</title>
+</head>
+<body>
+  <h1>MSMS</h1>
+  {% if user.is_superuser %}
+    <h2>Director Home Page</h2>
+  {% else %}
+    <h2>Admin Home Page</h2>
+  {% endif %}
+  <p>
+    {% if user.is_authenticated %}
+      <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
+      <p><a href='{% url "admin_view_requests" %}'>View Requests</a></p>
+      {% if user.is_superuser %}
+        <p><a href='{% url "admin_view_users" %}'>View Users</a></p>
+        <p><a href='{% url "admin_sign_up" %}'>Sign Up New Admins</a></p>
+      {% endif %}
+      <p><a href='{% url "admin_log_out" %}'>Log Out</a></p>
+    {% else %}
+      <p>You are not logged in</p>
+      <a href="{% url 'admin_log_in' %}">Log In</a>
+    {% endif %}
+  </p>
+  </body>
+</html>

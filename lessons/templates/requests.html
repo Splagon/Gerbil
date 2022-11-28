@@ -1,0 +1,38 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Availability date(date)</th>
+                        <th scope="col">Availability time</th>
+                        <th scope="col">Duration of lessons</th>
+                        <th scope="col">Number of lessons</th>
+                        <th scope="col">Interval between lessons</th>
+                        <th scope="col">Teacher</th>
+                        <th scope="col">Instrument</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for value in requests %}
+                    <tr>
+                        <th scope="col">{{value.availability_date}}</th>
+                        <th scope="col">{{value.availability_time}}</th>
+                        <th scope="col">{{value.duration_of_lessons}}</th>
+                        <th scope="col">{{value.number_of_lessons}}</th>
+                        <th scope="col">{{value.interval_between_lessons}}</th>
+                        <th scope="col">{{value.teacher}}</th>
+                        <th scope="col">{{value.instrument}}</th>
+                    </tr>
+                    {% endfor %}
+                    
+                
+              
+                </tbody>
+            </table>  
+        </div>
+    </div>
+</div>
+{% endblock %}

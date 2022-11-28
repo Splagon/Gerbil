@@ -3,12 +3,12 @@
     "model" : "lessons.user",
     "pk" : 1,
     "fields" : {
-      "username" : "jonathandeer@example.com",
-      "first_name" : "Jonathan",
-      "last_name" : "Deer",
+      "username" : "michaeljohnson@example.com",
+      "first_name" : "Michael",
+      "last_name" : "Johnson",
       "password" : "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
-      "is_staff" : false,
-      "is_superuser" : false
+      "is_staff" : true,
+      "is_superuser" : true
     }
   }
 ]

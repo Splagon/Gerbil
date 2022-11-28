@@ -1,0 +1,17 @@
+<html>
+<head>
+  <title>MSMS</title>
+</head>
+<body>
+  <h1>Admin Sign Up Page</h1>
+  <form action='{% url "admin_sign_up" %}' method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <input type="submit" value="Sign Up">
+    <br><br>
+    <a href='{% url "admin_home" %}'>Go Home</a>
+  </form>
+</body>
+</html>
