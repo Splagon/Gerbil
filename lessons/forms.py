@@ -29,9 +29,6 @@ class InvoiceForm(forms.ModelForm):
             if(invoice_number.isdigit()== False):
                 self.add_error("invoice_number", "invoice number is invalid")
 
-
-
-
     def save(self):
         super().save(commit=False)
         invoice = Invoice.objects.create(
