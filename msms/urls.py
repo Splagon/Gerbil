@@ -22,6 +22,7 @@ urlpatterns = [
     path('requests/', views.requests, name='requests'),
     path('request-lesson/', views.request_form, name='request_form'),
     path('delete_request/<int:id>', views.delete_request, name='delete-request'),
+    path('update_request/<int:id>', views.update_request, name='update-request'),
 
     path("log_in/", views.log_in, name="log_in"),
     path("sign_up/", views.sign_up, name="sign_up"),

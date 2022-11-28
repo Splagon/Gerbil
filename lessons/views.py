@@ -36,6 +36,18 @@ def delete_request(request,id):
     request = Request.objects.get(id=id)
     request.delete()
     return redirect('requests')
+
+def update_request(request,id):
+    requestObject = Request.objects.get(id=id)
+    form = RequestForm(request.POST or None, instance=requestObject)
+    if form.is_valid():
+        availability_date = request.POST['availability_date']
+        request = Request.objects.get(id=id)
+        request.availability_date = availability_date
+        request.save()
+        return redirect('requests')
+        
+    return render(request, 'update_request_form.html', {'request': requestObject,'form' : form })
  
 
 def log_in(request):
