@@ -1,4 +1,5 @@
-<html>
+{% extends 'base.html' %}
+{% block body %}
 <head>
   <title>MSMS</title>
 </head>
@@ -14,4 +15,4 @@
     <a href='{% url "admin_home" %}'>Go Home</a>
   </form>
 </body>
-</html>
+{% endblock %}

@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block body %}
 <html>
 <head>
   <title>MSMS</title>
@@ -13,6 +15,7 @@
     {% if user.is_authenticated %}
       <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
       <p><a href='{% url "admin_view_requests" %}'>View Requests</a></p>
+      <p><a href='{% url "admin_view_bookings" %}'>View Bookings</a></p>
       {% if user.is_superuser %}
         <p><a href='{% url "admin_view_users" %}'>View Users</a></p>
         <p><a href='{% url "admin_sign_up" %}'>Sign Up New Admins</a></p>
@@ -25,3 +28,4 @@
   </p>
   </body>
 </html>
+{% endblock %}

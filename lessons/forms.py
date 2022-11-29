@@ -57,10 +57,11 @@ class RequestForm(forms.ModelForm):
         super().clean()
 
 
-    def save(self):
+    def save(self, user):
         """Create a new request."""
         super().save(commit=False)
         request = Request.objects.create(
+            username = user,
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
             number_of_lessons=self.cleaned_data.get('number_of_lessons'),

@@ -6,13 +6,14 @@
 
 <body>
     <h1>Edit Profile</h1>
-    <form action='{% url "profile" %}' method="post">
+    <form action='{% url "edit_profile" %}' method="post">
         {% csrf_token %}
 
         {{ form.as_p }}
 
         <input type="submit" value="Save">
     </form>
+    <p><a href='{% url 'view_profile' %}'>Return to Profile</a></p>
 </body>
 
 </html>
