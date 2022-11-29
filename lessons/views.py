@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from .forms import SignUpForm, LogInForm, AdminSignUpForm
 from django.contrib import messages
+import datetime
 import operator
 
 
@@ -14,8 +15,14 @@ def home(request):
 
 def requests(request):
     user = request.user
+    dto = datetime.datetime.now()
     requests = Request.objects.all().values()
-    return render(request, 'requests.html', {'user': user, 'requests': requests})
+    availability_date_dict = {}
+    for req in requests:
+        for i in range(int(req['number_of_lessons'])):
+            availability_date_dict[str(req['id']) +  str(i)] = ((req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))))
+
+    return render(request, 'requests.html', {'user': user, 'requests': requests, 'availability_dict' :availability_date_dict})
 
 # before going to request form, must make sure user is logged in
 def request_form(request):
@@ -26,7 +33,8 @@ def request_form(request):
             return redirect('requests')
     else:
         form = RequestForm()
-    return render(request, 'request_form.html', {'form': form})
+    
+    return render(request, 'request_form.html', {'form': form, })
 
 
 def delete_request(request,id):
