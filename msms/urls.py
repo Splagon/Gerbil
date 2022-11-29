@@ -31,7 +31,9 @@ urlpatterns = [
     path('admin/sign_up/', views.admin_sign_up, name = 'admin_sign_up'),
     path('admin/view_users/', admin.site.urls, name = 'admin_view_users'),
     path('admin/view_users/', views.admin_view_users, name = 'admin_view_users'),
+    path("admin/view_bank_balance/", views.admin_view_bank_balance, name= "admin_view_bank_balance"),
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
     path('profile/', views.profile, name='profile'),
     path('password/', views.password, name='password'),
+    path("tes/",views.view_invoices, name="tes")
 ]

@@ -6,6 +6,7 @@
             <table class="table">
                 <thead>
                     <tr>
+
                         <th scope="col">Availability date(date)</th>
                         <th scope="col">Availability time</th>
                         <th scope="col">Duration of lessons</th>
@@ -13,10 +14,13 @@
                         <th scope="col">Interval between lessons</th>
                         <th scope="col">Teacher</th>
                         <th scope="col">Instrument</th>
+                        <th scope="col">Invoice Number</th>
+                        <th scope="col">Price</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for value in requests %}
+
+                    {% for value in completed_transfers %}
                     <tr>
                         <th scope="col">{{value.availability_date}}</th>
                         <th scope="col">{{value.availability_time}}</th>
@@ -25,13 +29,15 @@
                         <th scope="col">{{value.interval_between_lessons}}</th>
                         <th scope="col">{{value.teacher}}</th>
                         <th scope="col">{{value.instrument}}</th>
+                        <th scope="col">{{value.id}}</th>
+                        <th scope="col">{{value.price}}</th>
                     </tr>
                     {% endfor %}
-                    
-                
-              
+
+
+
                 </tbody>
-            </table>  
+            </table>
         </div>
     </div>
 </div>

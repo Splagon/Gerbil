@@ -16,6 +16,7 @@
       {% if user.is_superuser %}
         <p><a href='{% url "admin_view_users" %}'>View Users</a></p>
         <p><a href='{% url "admin_sign_up" %}'>Sign Up New Admins</a></p>
+        <p><a href='{% url "admin_view_bank_balance" %}'>View bank account balance and Transactions</a></p>
       {% endif %}
       <p><a href='{% url "admin_log_out" %}'>Log Out</a></p>
     {% else %}

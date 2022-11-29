@@ -52,7 +52,14 @@ class Invoice(models.Model):
     reference_number = models.CharField(blank=False ,max_length = 12)
     invoice_number = models.CharField(blank=False,max_length = 12)
 
-    
+
+
+class BankAccount(models.Model):
+    balance = models.FloatField()
+
+
+
+
 class Request(models.Model):
     """Request from a student for a lesson"""
     availability_date = models.DateTimeField( blank=False, default=datetime.date.today, )
@@ -62,7 +69,12 @@ class Request(models.Model):
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=DURATIONS_TO_SELECT_FROM)
     instrument = models.CharField(blank=True, max_length=180, choices=INSTRUMENTS_TO_SELECT_FROM)
     teacher = models.CharField(blank=True,max_length=50)
+    price = models.CharField(blank=False, max_length=50)
 
 
     class Meta:
         """Model options."""
+
+class BankTransfer(models.Model):
+    amount= models.FloatField()
+    sender = models.CharField(max_length=50)

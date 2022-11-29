@@ -1,0 +1,34 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+
+                        <th scope="col">Invoice number</th>
+                        <th scope="col">Reference number</th>
+                        <th scope="col">Reference id</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for value in invoices %}
+                    <tr>
+                        <th scope="col">{{value.reference_number}}</th>
+                        <th scope="col">{{value.invoice_number}}</th>
+                        <th scope="col">{{value.id}}</th>
+
+                    </tr>
+                    {% endfor %}
+
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

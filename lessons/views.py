@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Request
+from .models import Request, Invoice, BankAccount, BankTransfer
 from .forms import RequestForm
 from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, InvoiceForm
 from django.contrib.auth import authenticate, login, logout
@@ -9,13 +9,30 @@ from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 import operator
 
+
 def home(request):
     return render(request, 'home.html')
+
+def admin_view_bank_balance(request):
+    school_bank_account= BankAccount.objects.get(id=1)
+    completed_transfers = BankTransfer.objects.values().all()
+    return render(request,'admin/admin_bank_balance.html',{"school_bank_account":school_bank_account,
+    "completed_transfers": completed_transfers })
+
 
 def requests(request):
     user = request.user
     requests = Request.objects.all().values()
     return render(request, 'requests.html', {'user': user, 'requests': requests})
+
+
+def view_invoices(request):
+    user = request.user
+    invoices = Invoice.objects.filter(reference_number= user.id).values()
+    return render(request, "tes.html", {"user":user, "invoices": invoices})
+
+
+
 
 # before going to request form, must make sure user is logged in
 def request_form(request):
@@ -60,6 +77,8 @@ def lessons(request):
 def admin_home(request):
     return render(request, 'admin/admin_home.html')
 
+
+
 def admin_log_in(request):
     if request.method == "POST":
         form = LogInForm(request.POST)
@@ -81,6 +100,8 @@ def admin_log_in(request):
 def admin_log_out(request):
     logout(request)
     return redirect("admin_home")
+
+
 
 @user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
 def admin_sign_up(request):
@@ -134,21 +155,26 @@ def password(request):
     form = PasswordForm()
     return render(request, 'password.html', {'form': form})
 
+def get_form_kwargs(self):
+       """ Passes the request object to the form class.This is necessary to only display members that belong to a given user"""
+       kwargs = super().get_form_kwargs()
+       kwargs['request'] = self.request
+       return kwargs
+
+
+@login_required
 def bank_transfer(request):
     if request.method == 'POST':
-        print("new pass")
-        print(request.POST.get('new_password'))
-        form = InvoiceForm(request.POST)
+
+        form = InvoiceForm(data=request.POST,request=request)
+
         if form.is_valid():
             form.save()
-            print("form was _valid")
-
-
-            return redirect('lessons')
+            return redirect('tes')
         else:
             print("form was not valid")
-            return redirect("home")
+            return redirect("bank_transfer")
 
     else:
-        form = InvoiceForm()
+        form = InvoiceForm(request=request)
         return render(request, 'bank_transfer.html', {'form': form})

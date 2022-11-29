@@ -1,5 +1,5 @@
 from django import forms
-from .models import Request
+from .models import Request,Invoice, BankAccount, BankTransfer
 from django.contrib.auth import get_user_model
 from django.forms import widgets
 from .models import User, Invoice
@@ -7,7 +7,15 @@ from django.core.validators import RegexValidator
 import datetime
 
 
+
+
 class InvoiceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(InvoiceForm, self).__init__(*args, **kwargs)
+
+
+
     class Meta:
         model = Invoice
         fields =[]
@@ -26,14 +34,45 @@ class InvoiceForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
+        a =str(self.request.user.id)
+        new_password = str(self.cleaned_data.get("new_password")).split("-")[0]
+        print(a)
+        print("cvdcd")
+        print("cvdcd")
+
+        #if(a!=new_password):
+        #    self.add_error('new_password',
+        #                ' not match.')
+
 
     def save(self):
         super().save(commit=False)
         invoice = Invoice.objects.create(
-        reference_number = self.cleaned_data.get("new_password").split("-")[0],
+        reference_number = self.request.user.id,
         invoice_number = self.cleaned_data.get("new_password").split("-")[1]
-
         )
+
+
+        invoice_number = int(self.cleaned_data.get("new_password").split("-")[1])
+        #print(type(invoice_number))
+        #print(invoice_number)
+
+        bank = BankAccount.objects.get(id=1)
+        #a = 12
+
+        request_id = Request.objects.get(id=invoice_number)
+        #print(f"{bank.balance}  this is the current balance")
+        bank.balance += 5.00
+        bank.save()
+
+        price_of_request = request_id.price
+        print(f"this is the price of invoice{request_id.price}")
+
+        person = self.request.user.first_name + " " + self.request.user.last_name
+
+        transaction = BankTransfer.objects.create(amount=float(price_of_request),sender=person)
+        transaction.save()
+
         return invoice
 
 
@@ -51,6 +90,7 @@ class RequestForm(forms.ModelForm):
             'number_of_lessons' : forms.NumberInput(),
             'duration_of_lessons' : forms.Select(),
         }
+
     def clean(self):
         """Clean the data and generate messages for any errors."""
 
@@ -60,6 +100,7 @@ class RequestForm(forms.ModelForm):
     def save(self):
         """Create a new request."""
         super().save(commit=False)
+        price = 45
         request = Request.objects.create(
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
@@ -68,6 +109,7 @@ class RequestForm(forms.ModelForm):
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
+            price = int(self.cleaned_data.get("number_of_lessons"))*price
         )
         return request
 

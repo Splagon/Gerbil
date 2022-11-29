@@ -1,0 +1,31 @@
+
+<div class="container">
+  <div class="row">
+        <div class="col-12">
+          <p>School Bank account balance:</p>
+          <h1><td>{{school_bank_account.balance}}</td> </h1>
+          <p>Transactions:</p>
+            <table class="table">
+                <thead>
+                    <tr>
+
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for value in completed_transfers %}
+                  <tr>
+                      <th scope="col">{{value.amount}}</th>
+                      <th scope="col">{{value.sender}}</th>
+
+                  </tr>
+                  {% endfor %}
+
+
+
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
