@@ -46,6 +46,13 @@ class User(AbstractUser):
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
 
+
+class Invoice(models.Model):
+    """Invoice"""
+    reference_number = models.CharField(blank=False ,max_length = 12)
+    invoice_number = models.CharField(blank=False,max_length = 12)
+
+    
 class Request(models.Model):
     """Request from a student for a lesson"""
     availability_date = models.DateTimeField( blank=False, default=datetime.date.today, )
