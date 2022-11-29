@@ -40,13 +40,13 @@ class PasswordViewTest(TestCase):
     #     self.assertRedirects(response, redirect_url,
     #                         status_code=302, target_status_code=200)
 
-    def test_succesful_password_change(self):
+    def test_successful_password_change(self):
         self.client.login(username=self.user.username, password='Password123')
         response = self.client.post(self.url, self.form_input, follow=True)
-        response_url = reverse('lessons')
+        response_url = reverse('view_profile')
         self.assertRedirects(response, response_url,
                             status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'lessons.html')
+        self.assertTemplateUsed(response, 'view_profile.html')
         self.user.refresh_from_db()
         is_password_correct = check_password(
             'NewPassword123', self.user.password)
