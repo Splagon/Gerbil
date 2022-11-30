@@ -16,22 +16,16 @@ def home(request):
 def requests(request):
     user = request.user
     requests = Request.objects.all().values()
-    availability_date_dict = []
-
-
-    for req in requests:
-        for i in range(int(req['number_of_lessons'])):
-            availability_date_dict.append(req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons']))))
     # After the form displays the dates, it should call a method which clears the dictionary
-    arr=[]
+    dates_of_lessons=[]
     
     for req in requests:
         dates = []
         for i in range(int(req['number_of_lessons'])):
             dates.append(req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons']))))
-        arr.append(dates)
+        dates_of_lessons.append(dates)
 
-    return render(request, 'requests.html', {'user': user, 'requests': requests, 'arr' :arr})
+    return render(request, 'requests.html', {'user': user, 'requests': requests, 'arr' :dates_of_lessons})
 
 # before going to request form, must make sure user is logged in
 def request_form(request):
@@ -150,9 +144,21 @@ def admin_sign_up(request):
 def admin_view_requests(request):
     user = request.user
     requests = Request.objects.all().values()
-    return render(request, 'admin/admin_view_requests.html', {'user': user, 'requests': requests})
 
-def admin_update_requests(request):
+    dates_of_lessons=[]
+    
+    for req in requests:
+        dates = {}
+        for i in range(int(req['number_of_lessons'])):
+            if(req['status'] == "In Progress"):
+                val = "n"
+            else: 
+                val = "y"
+            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
+        dates_of_lessons.append(dates)
+    return render(request, 'admin/admin_view_requests.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
+
+def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
@@ -179,7 +185,39 @@ def admin_update_requests(request):
         request.save()
         return redirect('admin_view_requests')
         
-    return render(request, 'admin_update_request_form.html', {'request': requestObject,'form' : form })
+    return render(request, 'admin/admin_home.html')
+def admin_delete_request(request,id):
+    request = Request.objects.get(id=id)
+    request.delete()
+    return redirect('admin_view_requests')
+    
+def admin_book_request_form(request, id):
+    requestObject = Request.objects.get(id=id)
+    form = RequestForm(request.POST or None, instance=requestObject)
+    if form.is_valid():
+        # TODO-- Refactor this asap
+        availability_date = form.cleaned_data.get('availability_date')
+        availability_time = form.cleaned_data.get('availability_time')
+        duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
+        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
+        teacher = form.cleaned_data.get('teacher')
+        instrument = form.cleaned_data.get('instrument')
+        status = 'Booked'
+        # Update the records after the user has made changes
+        request = Request.objects.get(id=id)
+        request.availability_date = availability_date
+        request.availability_time = availability_time
+        request.duration_of_lessons = duration_of_lessons
+        request.number_of_lessons = number_of_lessons
+        request.interval_between_lessons = interval_between_lessons
+        request.teacher = teacher
+        request.instrument = instrument
+        request.status = status
+
+        request.save()
+        return redirect('admin_view_requests')
+    return render(request, 'admin/admin_book_request_form.html', {'request': requestObject,'form' : form })
 
 @user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
 def admin_view_users(request):

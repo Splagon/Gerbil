@@ -43,7 +43,9 @@ class Request(models.Model):
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
     instrument = models.CharField(blank=True, max_length=180, choices=getInstruments())
     teacher = models.CharField(blank=True,max_length=50)
-    # status = models.CharField(blank=True,max_length=60, default="In Progress" )
+    status = models.CharField(max_length=50,default="In Progress", )
+    totalPrice = models.CharField( max_length=50,default=0,  )
+
 
 
     class Meta:

@@ -36,6 +36,9 @@ urlpatterns = [
     path('admin/view_users/', views.admin_view_users, name = 'admin_view_users'),
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
     path('admin/update_request/<int:id>', views.update_request, name = 'admin_update_requests'),
+    path('admin/delete_request/<int:id>', views.delete_request, name = 'admin_delete_requests'),
+    path('admin/book_request/<int:id>', views.admin_book_request_form, name = 'admin_book_request_form'),
+
 
     path('profile/', views.profile, name='profile'),
 ]
