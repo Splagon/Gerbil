@@ -21,8 +21,8 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('requests/', views.requests, name='requests'),
     path('request-lesson/', views.request_form, name='request_form'),
-    path('delete_request/<int:id>', views.delete_request, name='delete-request'),
-    path('update_request/<int:id>', views.update_request, name='update-request'),
+    path('delete_request/<uuid:id>', views.delete_request, name='delete-request'),
+    path('update_request/<uuid:id>', views.update_request, name='update-request'),
 
     path("log_in/", views.log_in, name="log_in"),
     path("log_out/", views.log_out, name="log_out"),
@@ -40,11 +40,10 @@ urlpatterns = [
     path('admin/view_users/', admin.site.urls, name = 'admin_view_users'),
     path('admin/view_users/', views.admin_home, name = 'admin_view_users'),
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
-    path('admin/update_request/<int:id>', views.update_request, name = 'admin_update_requests'),
-    path('admin/delete_request/<int:id>', views.delete_request, name = 'admin_delete_requests'),
-    path('admin/book_request/<int:id>', views.admin_book_request_form, name = 'admin_book_request_form'),
+    path('admin/view_bookings/', views.admin_view_bookings, name = 'admin_view_bookings'),
 
-
-    path('profile/', views.profile, name='profile'),
+    path('admin/update_request/<uuid:id>', views.update_request, name = 'admin_update_requests'),
+    path('admin/delete_request/<uuid:id>', views.delete_request, name = 'admin_delete_requests'),
+    path('admin/book_request/<uuid:id>', views.admin_book_request_form, name = 'admin_book_request_form'),
     path('admin/view_bookings/', views.admin_view_bookings, name = 'admin_view_bookings'),
 ]

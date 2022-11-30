@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.validators import EmailValidator
+from django.utils.timezone import now
 import datetime
 import uuid
 from .helpers import getDurations, getInstruments, getStatuses
@@ -46,7 +47,7 @@ class Request(models.Model):
     """Request from a student for a lesson"""
     id = models.UUIDField(primary_key = True, default=uuid.uuid4, editable = False)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    availability_date = models.DateTimeField( blank=False, default=datetime.date.today, )
+    availability_date = models.DateField( blank=False, default=now )
     availability_time = models.TimeField(blank=False, default="08:00")
     number_of_lessons = models.CharField(blank=False, max_length=3)
     interval_between_lessons = models.CharField(blank=False, max_length=3)
