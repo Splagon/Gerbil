@@ -311,4 +311,16 @@ def view_bookings(request):
 def admin_view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-    return render(request, 'requests.html', {'user': user, 'requests': requests})
+    dates_of_lessons=[]
+    
+    for req in requests:
+        dates = {}
+        for i in range(int(req['number_of_lessons'])):
+            if(req['status'] == "In Progress"):
+                val = "n"
+            else: 
+                val = "y"
+            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
+        dates_of_lessons.append(dates)
+    print(dates_of_lessons)
+    return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})

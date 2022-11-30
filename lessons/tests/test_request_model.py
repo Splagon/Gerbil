@@ -4,14 +4,17 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from lessons.models import Request
 import datetime
-import uuid
+from lessons.models import User
 class RequestModelTestCase(TestCase):
     """Unit tests for the Request model."""
-
+    fixtures = [
+        'lessons/tests/fixtures/default_user2.json'
+    ]
     def setUp(self):
+        self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
         self.request = Request.objects.create(
             # Must be in the form YYYY-MM-DD
-            id = uuid.uuid4,
+            username = self.user,
             availability_date = "2022-12-29",
             availability_time = "08:30",
             instrument = "violin",
