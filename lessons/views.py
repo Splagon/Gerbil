@@ -15,14 +15,8 @@ def home(request):
 
 def requests(request):
     user = request.user
-    dto = datetime.datetime.now()
     requests = Request.objects.all().values()
-    availability_date_dict = {}
-    for req in requests:
-        for i in range(int(req['number_of_lessons'])):
-            availability_date_dict[str(req['id']) +  str(i)] = ((req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))))
-
-    return render(request, 'requests.html', {'user': user, 'requests': requests, 'availability_dict' :availability_date_dict})
+    return render(request, 'requests.html', {'user': user, 'requests': requests})
 
 # before going to request form, must make sure user is logged in
 def request_form(request):
@@ -54,7 +48,7 @@ def update_request(request,id):
         interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
-        status = form.cleaned_data.get('status')
+
 
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
@@ -65,7 +59,7 @@ def update_request(request,id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-        request.status = status
+
 
         request.save()
         return redirect('requests')
@@ -155,7 +149,7 @@ def admin_update_requests(request):
         interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
-        status = form.cleaned_data.get('status')
+
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
         request.availability_date = availability_date
@@ -165,7 +159,7 @@ def admin_update_requests(request):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-        request.status = status
+
 
         request.save()
         return redirect('admin_view_requests')

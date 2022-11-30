@@ -6,6 +6,7 @@ from .models import User
 from django.core.validators import RegexValidator
 from django.core.validators import MinValueValidator
 import datetime
+from .helpers import getPrice
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
 
@@ -16,18 +17,16 @@ class RequestForm(forms.ModelForm):
             'instrument' : 'Please select the instrument you\'d like to start having lessons in',
             'interval_between_lessons' : 'Interval between lessons(in weeks)',
             'teacher' : 'Please select a preferred teacher',
-            # 'status' : 'Request status'
         }
         model = Request
         fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today }, ),
+            'availability_date' : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today, 'max' : datetime.date.today() + datetime.timedelta(days=2*365) }, ),
             'availability_time' : forms.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : forms.Select(),
-            'interval_between_lessons' : forms.NumberInput(),
-            'number_of_lessons' : forms.NumberInput(),
+            'interval_between_lessons' : forms.NumberInput(attrs={'min' : 1, 'max': 7}),
+            'number_of_lessons' : forms.NumberInput(attrs={'min' : 1 ,'max': 20}),
             'duration_of_lessons' : forms.Select(),
-            # 'status' : forms.CharField()
         }
 
         
@@ -42,7 +41,7 @@ class RequestForm(forms.ModelForm):
             raise forms.ValidationError('Time cannot be after 17:30.')
 
         availability_date = self.cleaned_data['availability_date']
-        if(availability_date < datetime.date.today):
+        if(availability_date < datetime.date.today()):
             self.add_error('availability_date', 'Date cannot be before today')
             raise forms.ValidationError('Date cannot be before today.')
 
@@ -63,7 +62,9 @@ class RequestForm(forms.ModelForm):
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
+            totalPrice = int(self.cleaned_data.get('number_of_lessons')) * getPrice(self.cleaned_data.get('duration_of_lessons'))
         )
+
         return request
 
 class LogInForm(forms.Form):

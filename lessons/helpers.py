@@ -16,6 +16,13 @@ STATUSES = [
 ]
 
 
+DURATION_TO_PRICES = {
+    '30' : 20,
+    '45' : 30,
+    '60' : 40
+}
+
+
 
 def getInstruments():
     return INSTRUMENTS
@@ -25,3 +32,6 @@ def getDurations():
 
 def getStatuses():
     return STATUSES
+
+def getPrice(duration):
+    return DURATION_TO_PRICES[duration]
