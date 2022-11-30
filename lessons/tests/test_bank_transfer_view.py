@@ -1,7 +1,7 @@
 """Unit tests of the bank transfer view."""
 from django.test import TestCase
 from django import forms
-from lessons.forms import InvoiceForm
+from lessons.forms import BankTransferForm
 from django.urls import reverse
 from ..models import User
 

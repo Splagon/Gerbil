@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Request
+from .models import Request, SchoolBankAccount, BankTransfer
 from .forms import RequestForm
-from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, InvoiceForm
+from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from .forms import SignUpForm, LogInForm, AdminSignUpForm
@@ -12,6 +12,7 @@ import operator
 
 def home(request):
     return render(request, 'home.html')
+
 
 @login_required(login_url = "log_in")
 def requests(request):
@@ -80,6 +81,10 @@ def admin_log_in(request):
     form =LogInForm()
     return render(request,'admin/admin_log_in.html',{"form": form})
 
+
+
+
+
 @login_required(login_url = "log_in")
 def admin_log_out(request):
     logout(request)
@@ -104,6 +109,11 @@ def admin_sign_up(request):
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_requests(request):
     return render(request, 'admin/admin_view_requests.html')
+
+def admin_view_balance(request):
+    school_bank_account = SchoolBankAccount.objects.get(id=1)
+    transfers = BankTransfer.objects.values().all()
+    return render(request, 'admin/admin_view_balance.html', {"school_bank_account": school_bank_account,"transfers": transfers})
 
 @user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
 def admin_view_users(request):
@@ -147,19 +157,20 @@ def bank_transfer(request):
     if request.method == 'POST':
         print("new pass")
         print(request.POST.get('new_password'))
-        form = InvoiceForm(request.POST)
+        form = BankTransferForm(request.POST)
         if form.is_valid():
             form.save()
             print("form was _valid")
 
 
             return redirect('home')
+            print("it was valid")
         else:
             print("form was not valid")
             return redirect("home")
 
     else:
-        form = InvoiceForm()
+        form = BankTransferForm()
         return render(request, 'bank_transfer.html', {'form': form})
 
 @login_required(login_url = "log_in")

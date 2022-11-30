@@ -29,7 +29,6 @@ urlpatterns = [
     path("bank_transfer/", views.bank_transfer, name= "bank_transfer"),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('password/', views.password, name='password'),
-
     path('admin/', views.admin_home, name = 'admin_home'),
     path('admin/log_in/', views.admin_log_in, name = 'admin_log_in'),
     path('admin/log_out/', views.admin_log_out, name = 'admin_log_out'),
@@ -37,5 +36,6 @@ urlpatterns = [
     path('admin/view_users/', admin.site.urls, name = 'admin_view_users'),
     path('admin/view_users/', views.admin_home, name = 'admin_view_users'),
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
+    path("admin/view_balance/", views.admin_view_balance, name="admin_view_balance"),
     path('admin/view_bookings/', views.admin_view_bookings, name = 'admin_view_bookings'),
 ]

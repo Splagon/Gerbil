@@ -48,9 +48,11 @@ class User(AbstractUser):
     is_superuser = models.BooleanField(verbose_name = "Director Status")
 
 
-class Invoice(models.Model):
-    """Invoice"""
-    reference_number = models.CharField(blank=False ,max_length = 12)
+class SchoolBankAccount(models.Model):
+    balance = models.FloatField(default= 0.0)
+
+
+class BankTransfer(models.Model):
     invoice_number = models.CharField(blank=False,max_length = 12)
 
 

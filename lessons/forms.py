@@ -2,25 +2,26 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, Invoice
+from .models import User, BankTransfer
 from django.core.validators import RegexValidator
 import datetime
 
 
-class InvoiceForm(forms.ModelForm):
+class BankTransferForm(forms.ModelForm):
     class Meta:
-        model = Invoice
+        model = BankTransfer
         fields =[]
 
-    new_password = forms.CharField(
-    label='Enter reference number',
-    widget=forms.TextInput(),
-    validators=[RegexValidator(
-            regex=r'^[0-9]+-[0-9]+',
-            message='Password must contain an uppercase character, a lowercase '
-                    'character and a number'
-            )]
-            )
+    invoice_num = forms.CharField(
+    label='Enter reference number')
+
+    #,
+    #widget=forms.TextInput(),
+    #validators=[RegexValidator(
+    #        regex=r'^[0-9]+-[0-9]+',
+    #        message='Invoice must be valid'
+    #        )]
+    #        )
 
 
 
@@ -29,12 +30,12 @@ class InvoiceForm(forms.ModelForm):
 
     def save(self):
         super().save(commit=False)
-        invoice = Invoice.objects.create(
-        reference_number = self.cleaned_data.get("new_password").split("-")[0],
-        invoice_number = self.cleaned_data.get("new_password").split("-")[1]
+        money_transfer = BankTransfer.objects.create(
+
+        invoice_number = self.cleaned_data.get("invoice_num")
 
         )
-        return invoice
+        return money_transfer
 
 
 class RequestForm(forms.ModelForm):
