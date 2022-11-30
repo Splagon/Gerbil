@@ -1,38 +1,41 @@
-{% extends 'base.html' %}
-{% block body %}
-<body>
-  <h1>MSMS</h1>
-  <h2>View Requests</h2>
-  <p><a href='{% url "admin_home" %}'>Go Home</a></p>
-  <h3>Active Requests</h3>
-  <table>
-    <thead>
-      <th>Name</th>
-      <th>Fulfilled?</th>
-      <th>Paid?</th>
-    </thead>
-    <tbody>
-      <tr>
-         <td>{{user.first_name}} {{user.last_name}}</td>
-         <td>False</td>
-         <td>False</td>
-      </tr>
-      <tr>
-         <td>{{user.first_name}} {{user.last_name}}</td>
-         <td>False</td>
-         <td>False</td>
-      </tr>
-      <tr>
-         <td>{{user.first_name}} {{user.last_name}}</td>
-         <td>False</td>
-         <td>False</td>
-      </tr>
-      <tr>
-         <td>{{user.first_name}} {{user.last_name}}</td>
-         <td>False</td>
-         <td>False</td>
-      </tr>
-    </tbody>
-  </table>
-</body>
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Email</th>
+                        <th scope="col">Start date</th>
+                        <th scope="col">Preffered time</th>
+                        <th scope="col">Lesson Duration</th>
+                        <th scope="col">No. of lessons</th>
+                        <th scope="col">Interval between lessons</th>
+                        <th scope="col">Teacher</th>
+                        <th scope="col">Instrument</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for value in requests %}
+                      <tr>
+                          {% for user in users %}
+                            {% if user.id == value.username_id %}
+                              <th scope="col">{{user.username}}</th>
+                            {% endif %}
+                          {% endfor %}
+                          <th scope="col">{{value.availability_date}}</th>
+                          <th scope="col">{{value.availability_time}}</th>
+                          <th scope="col">{{value.duration_of_lessons}} mins</th>
+                          <th scope="col">{{value.number_of_lessons}}</th>
+                          <th scope="col">{{value.interval_between_lessons}} week(s)</th>
+                          <th scope="col">{{value.teacher}}</th>
+                          <th scope="col">{{value.instrument}}</th>
+                      </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Request
+from .models import User, Request
 from .forms import RequestForm
 from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, InvoiceForm
 from django.contrib.auth import authenticate, login, logout
@@ -103,11 +103,13 @@ def admin_sign_up(request):
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_requests(request):
-    return render(request, 'admin/admin_view_requests.html')
+    users = User.objects.all().values()
+    requests = Request.objects.all().values()
+    return render(request, 'admin/admin_view_requests.html', {'users': users, 'requests': requests})
 
-@user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
-def admin_view_users(request):
-    return render(request, 'admin/admin_view_users.html')
+#@user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
+#def admin_view_database(request):
+#    return render(request, 'admin/admin_view_database.html')
 
 @login_required(login_url = "log_in")
 def edit_profile(request):
