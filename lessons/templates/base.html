@@ -1,6 +1,7 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+  <div class="container vh-100">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,6 +9,26 @@
     <link href="{% static 'custom.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <title>Music Management System</title>
+    <table style="width:100%">
+      <tr>
+        <td><h1>Gerbil MSMS</h1></td>
+        <td align = "right">
+          {% if user.is_authenticated %}
+            {% if url != "home" %}
+              <a href='{% url "home" %}'>Home</a> |
+            {% endif %}
+            {% if user.is_staff %}
+              <a href='{% url "admin_home" %}'>Admin Area</a> |
+            {% endif %}
+              <a href='{% url "view_profile" %}'>View Profile</a> |
+              <a href='{% url "log_out" %}'>Log Out</a>
+          {% else %}
+            <a href="{% url 'log_in' %}">Log In</a> |
+            <a href='{% url 'sign_up' %}'>Sign up!</a>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
   </head>
   <body>
     {% block body %}
@@ -15,4 +36,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.min.js" integrity="sha384-PsUw7Xwds7x08Ew3exXhqzbhuEYmA2xnwc8BuD6SEr+UmEHlX8/MCltYEodzWA4u" crossorigin="anonymous"></script>
   </body>
+</div>
 </html>

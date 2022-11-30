@@ -2,10 +2,42 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User
+from .models import User, Invoice
 from django.core.validators import RegexValidator
 from .helpers import getDurationsToPrices
 import datetime
+
+
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields =[]
+
+    new_password = forms.CharField(
+    label='Enter reference number',
+    widget=forms.TextInput(),
+    validators=[RegexValidator(
+            regex=r'^[0-9]+-[0-9]+',
+            message='Password must contain an uppercase character, a lowercase '
+                    'character and a number'
+            )]
+            )
+
+
+
+    def clean(self):
+        super().clean()
+
+    def save(self):
+        super().save(commit=False)
+        invoice = Invoice.objects.create(
+        reference_number = self.cleaned_data.get("new_password").split("-")[0],
+        invoice_number = self.cleaned_data.get("new_password").split("-")[1]
+
+        )
+        return invoice
+
+
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
 
@@ -50,10 +82,11 @@ class RequestForm(forms.ModelForm):
         super().clean()
 
 
-    def save(self):
+    def save(self, user):
         """Create a new request."""
         super().save(commit=False)
         request = Request.objects.create(
+            username = user,
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
             number_of_lessons=self.cleaned_data.get('number_of_lessons'),
@@ -101,6 +134,30 @@ class SignUpForm(forms.ModelForm):
                 password = self.cleaned_data.get("password"),
         )
         return user
+
+class PasswordForm(forms.Form):
+    print("test")
+    password = forms.CharField(
+        label='Current password', widget=forms.PasswordInput())
+    new_password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput(),
+        validators=[RegexValidator(
+            regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
+            message='Password must contain an uppercase character, a lowercase '
+                    'character and a number'
+        )]
+    )
+    password_confirmation = forms.CharField(
+        label='Password confirmation', widget=forms.PasswordInput())
+
+    def clean(self):
+        super().clean()
+        new_password = self.cleaned_data.get('new_password')
+        password_confirmation = self.cleaned_data.get('password_confirmation')
+        if new_password != password_confirmation:
+            self.add_error('password_confirmation',
+                        'Confirmation does not match password.')
 
 class AdminSignUpForm(forms.ModelForm):
     class Meta:

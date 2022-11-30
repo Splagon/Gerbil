@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
 {% block body %}
-
 <div id="cover-images">
-  <div class="container vh-100">
-    <h1>MSMS</h1>
+  <div>
     <p>Simple test page</p>
-    <p><a href='#'>Sign up!</a></p>
-    <p><a href='#'>Log in!</a></p>
-    <p><a href='{% url 'request_form' %}'>Request a lesson!</href></p>
+
     </img>
+    <p>
+      {% if user.is_authenticated %}
+        <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
+        <p><a href='{% url 'request_form' %}'>Request a lesson!</href></p>
+        <p><a href='{% url "requests" %}'>View Requests</a></p>
+        <p><a href='{% url "view_bookings" %}'>View Bookings</a></p>
+      {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'log_in' %}">Log In</a>
+        <p><a href='{% url 'sign_up' %}'>Sign up!</a></p>
+      {% endif %}
+    </p>
   </div>
 </div>
 {% endblock %}
-
-
