@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.validators import EmailValidator
 import datetime
+import uuid
 from .helpers import getDurations, getInstruments, getStatuses
 class User(AbstractUser):
     username = models.EmailField(
