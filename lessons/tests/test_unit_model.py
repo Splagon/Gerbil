@@ -9,7 +9,8 @@ class UnitModelTestCase(TestCase):
             first_name='Michael',
             last_name='Kolling',
             username='michael.kolling@kcl.ac.uk',
-            password='password123'
+            password='password123',
+            balance= 0.0
         )
 
     def test_valid_user(self):
@@ -106,5 +107,6 @@ class UnitModelTestCase(TestCase):
             last_name='Murphy',
             username='josh.murphy@kcl.ac.uk',
             password='password123',
+            balance=0.0
         )
         return user

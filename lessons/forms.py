@@ -146,6 +146,7 @@ class SignUpForm(forms.ModelForm):
                 last_name = self.cleaned_data.get("last_name"),
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
+                balance=0.0
         )
         return user
 
@@ -205,7 +206,8 @@ class AdminSignUpForm(forms.ModelForm):
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
                 is_staff = True,
-                is_superuser = self.cleaned_data.get("is_superuser")
+                is_superuser = self.cleaned_data.get("is_superuser"),
+                balance=0.0
             )
         return user
 

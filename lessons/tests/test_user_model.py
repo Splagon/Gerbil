@@ -104,6 +104,7 @@ class UnitModelTestCase(TestCase):
             username='harry.kane@england.co.uk',
             password='ItsComingHome@2022',
             is_staff = False,
-            is_superuser = False
+            is_superuser = False,
+            balance=0.0
         )
         return user

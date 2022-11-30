@@ -8,7 +8,8 @@
       "last_name" : "Johnson",
       "password" : "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
       "is_staff" : true,
-      "is_superuser" : true
+      "is_superuser" : true,
+      "balance":0.0
     }
   }
 ]

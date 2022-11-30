@@ -16,7 +16,8 @@ class SignUpViewTestCase(TestCase):
             "dateOfBirth":"01/01/1995",
             "password" : "Password123",
             "password_confirm" : "Password123",
-            "id": "3"
+            "id": "3",
+            
         }
 
     def test_sign_up_url(self):

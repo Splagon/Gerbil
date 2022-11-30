@@ -6,7 +6,8 @@
         "username": "phildunphy@email.com",
         "first_name": "Phil",
         "last_name": "Dunphy",
-        "dateOfBirth": "1995-02-02"
+        "dateOfBirth": "1995-02-02",
+        "balance": 0.00
         }
     },
     {
@@ -16,7 +17,8 @@
             "username": "clairedunphy@email.com",
             "first_name": "Jay",
             "last_name": "Prichett",
-            "dateOfBirth": "1995-03-03"
+            "dateOfBirth": "1995-03-03",
+            "balance": 0.0
         }
     },
     {
@@ -26,7 +28,8 @@
             "username": "camerontucker@email.com",
             "first_name": "Cameron",
             "last_name": "Tucker",
-            "dateOfBirth": "1995-04-04"
+            "dateOfBirth": "1995-04-04",
+            "balance": 0.0
         }
     }
 ]

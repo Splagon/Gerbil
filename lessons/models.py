@@ -45,6 +45,7 @@ class User(AbstractUser):
 
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
+    balance=models.FloatField()
 
 
 class Invoice(models.Model):
@@ -55,7 +56,7 @@ class Invoice(models.Model):
 
 
 class BankAccount(models.Model):
-    balance = models.FloatField()
+    balance = models.FloatField(default= 0.0)
 
 
 

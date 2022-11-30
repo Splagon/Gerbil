@@ -19,7 +19,8 @@ class LogInViewTestCase(TestCase, LogInTester):
             #'username': '@janedoe',
             password = "Password123",
             is_active=True,
-            id = "3"
+            id = "3",
+            balance=0.0
 
 
             #'new_password': 'Password123',

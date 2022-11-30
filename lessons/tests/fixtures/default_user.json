@@ -8,7 +8,8 @@
       "last_name" : "Deer",
       "password" : "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
       "is_staff" : false,
-      "is_superuser" : false
+      "is_superuser" : false,
+      "balance": 0.0
     }
   }
 ]
