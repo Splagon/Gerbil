@@ -10,7 +10,7 @@ class InvoiceFormTestCase(TestCase):
     #def setUp(self):
     #    self.form_input = {
     #        "password": "12-345"
-        }
+    #    }
 
     #def test_invalid_invoice_form(self):
     #    self.form_input['password'] = 'a'
