@@ -42,7 +42,7 @@ class RequestForm(forms.ModelForm):
             raise forms.ValidationError('Time cannot be after 17:30.')
 
         availability_date = self.cleaned_data['availability_date']
-        if(availability_date < datetime.date.today):
+        if(availability_date < datetime.date.today()):
             self.add_error('availability_date', 'Date cannot be before today')
             raise forms.ValidationError('Date cannot be before today.')
 

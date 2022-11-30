@@ -15,14 +15,23 @@ def home(request):
 
 def requests(request):
     user = request.user
-    dto = datetime.datetime.now()
     requests = Request.objects.all().values()
-    availability_date_dict = {}
+    availability_date_dict = []
+
+
     for req in requests:
         for i in range(int(req['number_of_lessons'])):
-            availability_date_dict[str(req['id']) +  str(i)] = ((req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))))
+            availability_date_dict.append(req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons']))))
+    # After the form displays the dates, it should call a method which clears the dictionary
+    arr=[]
+    
+    for req in requests:
+        dates = []
+        for i in range(int(req['number_of_lessons'])):
+            dates.append(req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons']))))
+        arr.append(dates)
 
-    return render(request, 'requests.html', {'user': user, 'requests': requests, 'availability_dict' :availability_date_dict})
+    return render(request, 'requests.html', {'user': user, 'requests': requests, 'arr' :arr})
 
 # before going to request form, must make sure user is logged in
 def request_form(request):
