@@ -62,5 +62,5 @@ class Request(models.Model):
     totalPrice = models.CharField( max_length=50,default=0,  )
 
 class Term(models.Model):
-    startDate = models.DateField(blank = False, default=datetime.date.today)
-    endDate = models.DateField(blank = False, default=datetime.date.today)
+    startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
+    endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
