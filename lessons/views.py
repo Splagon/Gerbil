@@ -63,7 +63,7 @@ def update_request(request,id):
         interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
-        status = form.cleaned_data.get('status')
+
 
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
@@ -74,7 +74,6 @@ def update_request(request,id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-        request.status = status
 
         request.save()
         return redirect('requests')
