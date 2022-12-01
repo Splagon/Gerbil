@@ -7,8 +7,9 @@ from django.contrib.auth.decorators import login_required, permission_required, 
 from .forms import SignUpForm, LogInForm, AdminSignUpForm
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
-from django.db.models import Q
+import datetime
 import operator
+
 
 def home(request):
     return render(request, 'home.html')
@@ -16,9 +17,21 @@ def home(request):
 @login_required(login_url = "log_in")
 def requests(request):
     user = request.user
-    #requests = Request.objects.get(username = user.username).values()
-    requests = Request.objects.filter(username=user).values()
-    return render(request, 'requests.html', {'user': user, 'requests': requests})
+    requests = Request.objects.all().values()
+    # After the form displays the dates, it should call a method which clears the dictionary
+    dates_of_lessons=[]
+
+    for req in requests:
+        dates = {}
+        for i in range(int(req['number_of_lessons'])):
+            if(req['status'] == "In Progress"):
+                val = "n"
+            else:
+                val = "y"
+            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
+        dates_of_lessons.append(dates)
+
+    return render(request, 'requests.html', {'user': user, 'requests': requests, 'arr' :dates_of_lessons})
 
 @login_required(login_url = "log_in")
 def request_form(request):
@@ -29,7 +42,45 @@ def request_form(request):
             return redirect('requests')
     else:
         form = RequestForm()
-    return render(request, 'request_form.html', {'form': form})
+
+    return render(request, 'request_form.html', {'form': form, })
+
+
+def delete_request(request,id):
+    request = Request.objects.get(id=id)
+    request.delete()
+    return redirect('requests')
+
+def update_request(request,id):
+    requestObject = Request.objects.get(id=id)
+    form = RequestForm(request.POST or None, instance=requestObject)
+    if form.is_valid():
+        # TODO-- Refactor this asap
+        availability_date = form.cleaned_data.get('availability_date')
+        availability_time = form.cleaned_data.get('availability_time')
+        duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
+        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
+        teacher = form.cleaned_data.get('teacher')
+        instrument = form.cleaned_data.get('instrument')
+        status = form.cleaned_data.get('status')
+
+        # Update the records after the user has made changes
+        request = Request.objects.get(id=id)
+        request.availability_date = availability_date
+        request.availability_time = availability_time
+        request.duration_of_lessons = duration_of_lessons
+        request.number_of_lessons = number_of_lessons
+        request.interval_between_lessons = interval_between_lessons
+        request.teacher = teacher
+        request.instrument = instrument
+        request.status = status
+
+        request.save()
+        return redirect('requests')
+
+    return render(request, 'update_request_form.html', {'request': requestObject,'form' : form })
+
 
 def log_in(request):
     if request.method == "POST":
@@ -103,9 +154,83 @@ def admin_sign_up(request):
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_requests(request):
+    user = request.user
     users = User.objects.all().values()
     requests = Request.objects.all().values()
-    return render(request, 'admin/admin_view_requests.html', {'users': users, 'requests': requests})
+
+    dates_of_lessons=[]
+
+    for req in requests:
+        dates = {}
+        for i in range(int(req['number_of_lessons'])):
+            if(req['status'] == "In Progress"):
+                val = "n"
+            else:
+                val = "y"
+            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
+        dates_of_lessons.append(dates)
+    return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests, 'arr': dates_of_lessons})
+
+def admin_update_requests(request, id):
+    requestObject = Request.objects.get(id=id)
+    form = RequestForm(request.POST or None, instance=requestObject)
+    if form.is_valid():
+        # TODO-- Refactor this asap
+        availability_date = form.cleaned_data.get('availability_date')
+        availability_time = form.cleaned_data.get('availability_time')
+        duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
+        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
+        teacher = form.cleaned_data.get('teacher')
+        instrument = form.cleaned_data.get('instrument')
+        status = form.cleaned_data.get('status')
+        # Update the records after the user has made changes
+        request = Request.objects.get(id=id)
+        request.availability_date = availability_date
+        request.availability_time = availability_time
+        request.duration_of_lessons = duration_of_lessons
+        request.number_of_lessons = number_of_lessons
+        request.interval_between_lessons = interval_between_lessons
+        request.teacher = teacher
+        request.instrument = instrument
+        request.status = status
+
+        request.save()
+        return redirect('admin_view_requests')
+
+    return render(request, 'admin/admin_home.html')
+def admin_delete_request(request,id):
+    request = Request.objects.get(id=id)
+    request.delete()
+    return redirect('admin_view_requests')
+
+def admin_book_request_form(request, id):
+    requestObject = Request.objects.get(id=id)
+    form = RequestForm(request.POST or None, instance=requestObject)
+    if form.is_valid():
+        # TODO-- Refactor this asap
+        availability_date = form.cleaned_data.get('availability_date')
+        availability_time = form.cleaned_data.get('availability_time')
+        duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
+        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
+        teacher = form.cleaned_data.get('teacher')
+        instrument = form.cleaned_data.get('instrument')
+        status = 'Booked'
+        # Update the records after the user has made changes
+        request = Request.objects.get(id=id)
+        request.availability_date = availability_date
+        request.availability_time = availability_time
+        request.duration_of_lessons = duration_of_lessons
+        request.number_of_lessons = number_of_lessons
+        request.interval_between_lessons = interval_between_lessons
+        request.teacher = teacher
+        request.instrument = instrument
+        request.status = status
+
+        request.save()
+        return redirect('admin_view_requests')
+    return render(request, 'admin/admin_book_request_form.html', {'request': requestObject,'form' : form })
 
 #@user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
 #def admin_view_database(request):
@@ -168,12 +293,35 @@ def bank_transfer(request):
 def view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-    #return render(request, 'requests.html', {'user': user, 'requests': requests})
-    return render(request, "home.html")
+    print(requests)
+    dates_of_lessons=[]
+
+    for req in requests:
+        dates = {}
+        for i in range(int(req['number_of_lessons'])):
+            if(req['status'] == "In Progress"):
+                val = "n"
+            else:
+                val = "y"
+            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
+        dates_of_lessons.append(dates)
+    print(dates_of_lessons)
+    return render(request, 'bookings.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-    #return render(request, 'requests.html', {'user': user, 'requests': requests})
-    return render(request, "home.html")
+    dates_of_lessons=[]
+
+    for req in requests:
+        dates = {}
+        for i in range(int(req['number_of_lessons'])):
+            if(req['status'] == "In Progress"):
+                val = "n"
+            else:
+                val = "y"
+            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
+        dates_of_lessons.append(dates)
+    print(dates_of_lessons)
+    return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})

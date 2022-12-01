@@ -2,21 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.validators import EmailValidator
-from django import forms
+from django.utils.timezone import now
 import datetime
 import uuid
-INSTRUMENTS_TO_SELECT_FROM = [
-    ('violin', 'violin'),
-    ('double bass', 'double bass'),
-    ('cello', 'cello'),
-]
-
-DURATIONS_TO_SELECT_FROM = [
-    ('30', '30'),
-    ('60', '60'),
-    ('90', '90'),
-    ('120', '120'),
-]
+from .helpers import getDurations, getInstruments, getStatuses
 class User(AbstractUser):
     username = models.EmailField(
         unique = True,
@@ -61,13 +50,16 @@ class Request(models.Model):
     """Request from a student for a lesson"""
     id = models.UUIDField(primary_key = True, default=uuid.uuid4, editable = False)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    availability_date = models.DateTimeField( blank=False, default=datetime.date.today, )
+    availability_date = models.DateField( blank=False, default=now )
     availability_time = models.TimeField(blank=False, default="08:00")
     number_of_lessons = models.CharField(blank=False, max_length=3)
     interval_between_lessons = models.CharField(blank=False, max_length=3)
-    duration_of_lessons = models.CharField(blank=False, max_length=4, choices=DURATIONS_TO_SELECT_FROM)
-    instrument = models.CharField(blank=True, max_length=180, choices=INSTRUMENTS_TO_SELECT_FROM)
+    duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
+    instrument = models.CharField(blank=True, max_length=180, choices=getInstruments())
     teacher = models.CharField(blank=True,max_length=50)
+    status = models.CharField(max_length=50,default="In Progress", )
+    totalPrice = models.CharField( max_length=50,default=0,  )
+
 
 
     class Meta:
