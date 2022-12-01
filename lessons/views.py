@@ -293,7 +293,7 @@ def bank_transfer(request):
 def view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-    print(requests)
+
     dates_of_lessons=[]
 
     for req in requests:
