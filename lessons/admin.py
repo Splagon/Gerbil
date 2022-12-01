@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Request
+from .models import User, Request, Term
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -13,4 +13,10 @@ class UserAdmin(admin.ModelAdmin):
 class RequestAdmin(admin.ModelAdmin):
     list_display = [
         'id','username', 'availability_date', 'number_of_lessons',
+    ]
+
+@admin.register(Term)
+class TermAdmin(admin.ModelAdmin):
+    list_display = [
+        'id','startDate', 'endDate',
     ]

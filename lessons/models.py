@@ -6,6 +6,7 @@ from django.utils.timezone import now
 import datetime
 import uuid
 from .helpers import getDurations, getInstruments, getStatuses
+
 class User(AbstractUser):
     username = models.EmailField(
         unique = True,
@@ -60,7 +61,6 @@ class Request(models.Model):
     status = models.CharField(max_length=50,default="In Progress", )
     totalPrice = models.CharField( max_length=50,default=0,  )
 
-
-
-    class Meta:
-        """Model options."""
+class Term(models.Model):
+    startDate = models.DateField(blank = False, default=datetime.date.today)
+    endDate = models.DateField(blank = False, default=datetime.date.today)
