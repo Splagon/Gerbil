@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Request
+from .models import User, Request
 from .forms import RequestForm
 from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, InvoiceForm
 from django.contrib.auth import authenticate, login, logout
@@ -20,13 +20,13 @@ def requests(request):
     requests = Request.objects.all().values()
     # After the form displays the dates, it should call a method which clears the dictionary
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
@@ -42,7 +42,7 @@ def request_form(request):
             return redirect('requests')
     else:
         form = RequestForm()
-    
+
     return render(request, 'request_form.html', {'form': form, })
 
 
@@ -77,9 +77,9 @@ def update_request(request,id):
 
         request.save()
         return redirect('requests')
-        
+
     return render(request, 'update_request_form.html', {'request': requestObject,'form' : form })
- 
+
 
 def log_in(request):
     if request.method == "POST":
@@ -154,20 +154,21 @@ def admin_sign_up(request):
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_requests(request):
     user = request.user
+    users = User.objects.all().values()
     requests = Request.objects.all().values()
 
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
-    return render(request, 'admin/admin_view_requests.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
+    return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests, 'arr': dates_of_lessons})
 
 def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
@@ -195,13 +196,13 @@ def admin_update_requests(request, id):
 
         request.save()
         return redirect('admin_view_requests')
-        
+
     return render(request, 'admin/admin_home.html')
 def admin_delete_request(request,id):
     request = Request.objects.get(id=id)
     request.delete()
     return redirect('admin_view_requests')
-    
+
 def admin_book_request_form(request, id):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
@@ -230,9 +231,9 @@ def admin_book_request_form(request, id):
         return redirect('admin_view_requests')
     return render(request, 'admin/admin_book_request_form.html', {'request': requestObject,'form' : form })
 
-@user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
-def admin_view_users(request):
-    return render(request, 'admin/admin_view_users.html')
+#@user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
+#def admin_view_database(request):
+#    return render(request, 'admin/admin_view_database.html')
 
 @login_required(login_url = "log_in")
 def edit_profile(request):
@@ -293,13 +294,13 @@ def view_bookings(request):
     requests = Request.objects.all().values()
     print(requests)
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
@@ -311,13 +312,13 @@ def admin_view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
