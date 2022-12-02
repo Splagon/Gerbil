@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from lessons.models import User
 
 
-class UnitModelTestCase(TestCase):
+class UserModelTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             first_name='Michael',
