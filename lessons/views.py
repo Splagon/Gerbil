@@ -18,7 +18,6 @@ def home(request):
 def requests(request):
     user = request.user
     requests = Request.objects.all().values()
-    # After the form displays the dates, it should call a method which clears the dictionary
     dates_of_lessons=[]
     
     for req in requests:
@@ -40,8 +39,7 @@ def request_form(request):
         if form.is_valid():
             form.save(request.user)
             return redirect('requests')
-    else:
-        form = RequestForm()
+    form = RequestForm()
     
     return render(request, 'request_form.html', {'form': form, })
 

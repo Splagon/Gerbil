@@ -52,12 +52,12 @@ class RequestForm(forms.ModelForm):
         model = Request
         fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today() }, ),
-            'availability_time' : forms.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
-            'instrument' : forms.Select(),
-            'interval_between_lessons' : forms.NumberInput(),
-            'number_of_lessons' : forms.NumberInput(),
-            'duration_of_lessons' : forms.Select(),
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today() }, ),
+            'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
+            'instrument' : widgets.Select(),
+            'interval_between_lessons' : widgets.NumberInput(),
+            'number_of_lessons' : widgets.NumberInput(),
+            'duration_of_lessons' : widgets.Select(),
         }
 
         
@@ -81,7 +81,7 @@ class RequestForm(forms.ModelForm):
 
         super().clean()
 
-
+    # Saves a new request form
     def save(self, user):
         """Create a new request."""
         super().save(commit=False)

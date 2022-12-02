@@ -2,12 +2,19 @@
 from django import forms
 from django.test import TestCase
 from lessons.forms import RequestForm
+from lessons.models import Request
+from lessons.models import User
 import datetime
 class RequestFormTestCase(TestCase):
     """Unit tests of the request form."""
 
+    # Get user to identify request form
+    fixtures = [
+        'lessons/tests/fixtures/default_user2.json'
+    ]
 
     def setUp(self):
+        self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
         self.form_input = {
             'availability_date': datetime.date.today(),
             'availability_time': '09:00',
@@ -18,7 +25,7 @@ class RequestFormTestCase(TestCase):
             'teacher': 'Mr Doe'
         }
     
-    def test_valid_sign_up_form(self):
+    def test_valid_request_form_form(self):
         form = RequestForm(data=self.form_input)
         self.assertTrue(form.is_valid())
 
@@ -102,5 +109,21 @@ class RequestFormTestCase(TestCase):
         self.form_input['teacher'] = ()
         form = RequestForm(data=self.form_input)
         self.assertTrue(form.is_valid())
+
+    def test_form_must_save_correctly(self):
+        form=RequestForm(data=self.form_input)
+        before_count = Request.objects.count()
+        form.save(self.user)
+        after_count = Request.objects.count()
+        self.assertEqual(after_count, before_count+1)
+        request = Request.objects.get(username=self.user)
+        self.assertEqual(request.availability_time.strftime('%H:%M'), "09:00")
+        self.assertEqual(request.duration_of_lessons, '30')
+        self.assertEqual(request.interval_between_lessons, '5')
+        self.assertEqual(request.instrument, 'violin')
+        self.assertEqual(request.teacher,'Mr Doe')
+
+
+
 
    
