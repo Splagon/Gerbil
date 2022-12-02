@@ -2,9 +2,10 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, BankTransfer
+from .models import User, Term, BankTransfer
 from django.core.validators import RegexValidator
 from .helpers import getDurationsToPrices
+from django.db.models import Q
 import datetime
 
 
@@ -67,7 +68,6 @@ class RequestForm(forms.ModelForm):
             'number_of_lessons' : forms.NumberInput(),
             'duration_of_lessons' : forms.Select(),
         }
-
 
     def clean(self):
         """Clean the data and generate messages for any errors."""
@@ -207,6 +207,7 @@ class AdminSignUpForm(forms.ModelForm):
             )
         return user
 
+
 class UserForm(forms.ModelForm):
     class Meta:
         """Form options."""
@@ -214,3 +215,73 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ["username", "first_name", "last_name", "dateOfBirth"]
         widgets = {"dateOfBirth": widgets.DateInput(attrs={'type': 'date'})}
+
+
+class TermForm(forms.ModelForm):
+    """Form enabling students to make lesson requests."""
+    def __init__(self, *args, **kwargs):
+        self.idNum = kwargs.pop('idNum', None)
+        super(TermForm,self).__init__(*args, **kwargs)
+
+    class Meta:
+        labels = {
+            'startDate' : 'Please select the start date for the term',
+            'endDate' : 'Please select the start date for the term',
+        }
+        model = Term
+        fields = ['startDate','endDate']
+        widgets = {
+            'startDate' : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date'}, ),
+            'endDate'   : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date'}, )
+        }
+
+    def clean(self):
+        """Clean the data and generate messages for any errors."""
+
+        currStartDate = self.cleaned_data['startDate']
+        currEndDate = self.cleaned_data['endDate']
+
+        isValidationError = False
+        errorMessage = ""
+        if(currEndDate < currStartDate):
+            errorMessage = 'End date cannot be before start date'
+            self.add_error('endDate', errorMessage)
+            isValidationError = True
+
+        errorMessage = 'Date cannot be more than 2 years in the past.'
+        if(currStartDate <= datetime.date.today() - datetime.timedelta(days=365*2)):
+            self.add_error('startDate', errorMessage)
+            isValidationError = True
+
+        if(currEndDate <= datetime.date.today() - datetime.timedelta(days=365*2)):
+            self.add_error('endDate', errorMessage)
+            isValidationError = True
+
+        currentTerms = list(Term.objects.exclude(id=self.idNum).values())
+        overlappingTerms = []
+        for term in currentTerms:
+            startDate = term.get('startDate')
+            endDate = term.get('endDate')
+            if (not((currEndDate < startDate and currStartDate < startDate) or (currEndDate > endDate and currStartDate > endDate))):
+                overlappingTerms.append(term)
+
+        if (len(overlappingTerms) > 0):
+            errorMessage = 'Term dates overlap with a term from ' + str(overlappingTerms[0].get('startDate')) + ' to '  + str(overlappingTerms[0].get('endDate'))
+            self.add_error('startDate', errorMessage)
+            self.add_error('endDate', errorMessage)
+            isValidationError = True
+
+        if (isValidationError):
+            raise forms.ValidationError(errorMessage)
+
+        super().clean()
+
+
+    def save(self):
+        """Create a new request."""
+        super().save(commit=False)
+        term = Term.objects.create(
+            startDate = self.cleaned_data['startDate'],
+            endDate = self.cleaned_data['endDate']
+        )
+        return term

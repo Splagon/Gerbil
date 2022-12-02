@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import User, Request,BankTransfer,Invoice, SchoolBankAccount
+from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
 from .forms import RequestForm
 from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
-from .forms import SignUpForm, LogInForm, AdminSignUpForm
+from .forms import SignUpForm, LogInForm, AdminSignUpForm, TermForm
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 import datetime
@@ -252,10 +252,6 @@ def admin_book_request_form(request, id, requesterId):
         return redirect('admin_view_requests')
     return render(request, 'admin/admin_book_request_form.html', {'request': requestObject,'form' : form })
 
-#@user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
-#def admin_view_database(request):
-#    return render(request, 'admin/admin_view_database.html')
-
 @login_required(login_url = "log_in")
 def edit_profile(request):
     current_user = request.user
@@ -391,7 +387,7 @@ def admin_check_student_balance_and_transactions(request):
 def view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-    print(requests)
+
     dates_of_lessons=[]
 
     for req in requests:
@@ -423,3 +419,39 @@ def admin_view_bookings(request):
         dates_of_lessons.append(dates)
     print(dates_of_lessons)
     return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_view_terms(request):
+    terms = Term.objects.filter(endDate__gte = datetime.datetime.today()).values()
+    return render(request, 'admin/admin_view_terms.html', {'terms': terms})
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_add_term(request):
+    if request.method == 'POST':
+        form = TermForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_view_terms')
+    else:
+        form = TermForm()
+
+    return render(request, 'admin/admin_add_term.html', {'form': form})
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_edit_term(request,id):
+    termInstance = Term.objects.get(id=id)
+    form = TermForm(request.POST or None, instance=termInstance, idNum = id)
+    if form.is_valid():
+        # Update the records after the user has made changes
+        term = Term.objects.get(id=id)
+        term.startDate = form.cleaned_data.get('startDate')
+        term.endDate = form.cleaned_data.get('endDate')
+        term.save()
+        return redirect('admin_view_terms')
+    return render(request, 'admin/admin_edit_term.html', {'term': termInstance, 'form' : form })
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_delete_term(request,id):
+    request = Term.objects.get(id=id)
+    request.delete()
+    return redirect('admin_view_terms')
