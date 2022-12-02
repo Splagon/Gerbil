@@ -2,40 +2,49 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, Invoice
+from .models import User, Term, BankTransfer
 from django.core.validators import RegexValidator
 from .helpers import getDurationsToPrices
+from django.db.models import Q
 import datetime
 
 
-class InvoiceForm(forms.ModelForm):
+class BankTransferForm(forms.ModelForm):
     class Meta:
-        model = Invoice
+        model = BankTransfer
         fields =[]
 
-    new_password = forms.CharField(
-    label='Enter reference number',
+    inv_number = forms.CharField(
+    label='Enter invoice number:',
     widget=forms.TextInput(),
     validators=[RegexValidator(
-            regex=r'^[0-9]+-[0-9]+',
-            message='Password must contain an uppercase character, a lowercase '
-                    'character and a number'
+    regex=r'^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$',
+
+    #regex=r'^[0-9]+-[0-9]+',
+
+            message='Invoice  format is not valid'
             )]
             )
+
+
 
 
 
     def clean(self):
         super().clean()
 
-    def save(self):
+    def save(self,user,amount):
         super().save(commit=False)
-        invoice = Invoice.objects.create(
-        reference_number = self.cleaned_data.get("new_password").split("-")[0],
-        invoice_number = self.cleaned_data.get("new_password").split("-")[1]
 
+        bank_transfer = BankTransfer.objects.create(
+        invoice_number= self.cleaned_data.get("inv_number"),
+        username=user,
+        amount=amount,
+        student_id= user.id
         )
-        return invoice
+
+        #)
+        return bank_transfer
 
 
 class RequestForm(forms.ModelForm):
@@ -60,14 +69,13 @@ class RequestForm(forms.ModelForm):
             'duration_of_lessons' : forms.Select(),
         }
 
-        
     def clean(self):
         """Clean the data and generate messages for any errors."""
 
         availability_time = self.cleaned_data['availability_time']
         if availability_time < datetime.time(hour=8, minute=0, second=0):
             raise forms.ValidationError('Time cannot be before 8.')
-            
+
         elif availability_time > datetime.time(hour=17, minute=30, second=0):
             raise forms.ValidationError('Time cannot be after 17:30.')
 
@@ -95,8 +103,12 @@ class RequestForm(forms.ModelForm):
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
             totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
-            status = 'In Progress'
+            status = 'In Progress',
+            requesterId= user.id
+
         )
+
+
         return request
 
 class LogInForm(forms.Form):
@@ -195,6 +207,7 @@ class AdminSignUpForm(forms.ModelForm):
             )
         return user
 
+
 class UserForm(forms.ModelForm):
     class Meta:
         """Form options."""
@@ -202,3 +215,73 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ["username", "first_name", "last_name", "dateOfBirth"]
         widgets = {"dateOfBirth": widgets.DateInput(attrs={'type': 'date'})}
+
+
+class TermForm(forms.ModelForm):
+    """Form enabling students to make lesson requests."""
+    def __init__(self, *args, **kwargs):
+        self.idNum = kwargs.pop('idNum', None)
+        super(TermForm,self).__init__(*args, **kwargs)
+
+    class Meta:
+        labels = {
+            'startDate' : 'Please select the start date for the term',
+            'endDate' : 'Please select the start date for the term',
+        }
+        model = Term
+        fields = ['startDate','endDate']
+        widgets = {
+            'startDate' : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date'}, ),
+            'endDate'   : forms.DateInput(format='%d/%m/%Y', attrs={'type' : 'date'}, )
+        }
+
+    def clean(self):
+        """Clean the data and generate messages for any errors."""
+
+        currStartDate = self.cleaned_data['startDate']
+        currEndDate = self.cleaned_data['endDate']
+
+        isValidationError = False
+        errorMessage = ""
+        if(currEndDate < currStartDate):
+            errorMessage = 'End date cannot be before start date'
+            self.add_error('endDate', errorMessage)
+            isValidationError = True
+
+        errorMessage = 'Date cannot be more than 2 years in the past.'
+        if(currStartDate <= datetime.date.today() - datetime.timedelta(days=365*2)):
+            self.add_error('startDate', errorMessage)
+            isValidationError = True
+
+        if(currEndDate <= datetime.date.today() - datetime.timedelta(days=365*2)):
+            self.add_error('endDate', errorMessage)
+            isValidationError = True
+
+        currentTerms = list(Term.objects.exclude(id=self.idNum).values())
+        overlappingTerms = []
+        for term in currentTerms:
+            startDate = term.get('startDate')
+            endDate = term.get('endDate')
+            if (not((currEndDate < startDate and currStartDate < startDate) or (currEndDate > endDate and currStartDate > endDate))):
+                overlappingTerms.append(term)
+
+        if (len(overlappingTerms) > 0):
+            errorMessage = 'Term dates overlap with a term from ' + str(overlappingTerms[0].get('startDate')) + ' to '  + str(overlappingTerms[0].get('endDate'))
+            self.add_error('startDate', errorMessage)
+            self.add_error('endDate', errorMessage)
+            isValidationError = True
+
+        if (isValidationError):
+            raise forms.ValidationError(errorMessage)
+
+        super().clean()
+
+
+    def save(self):
+        """Create a new request."""
+        super().save(commit=False)
+        term = Term.objects.create(
+            startDate = self.cleaned_data['startDate'],
+            endDate = self.cleaned_data['endDate']
+        )
+        return term

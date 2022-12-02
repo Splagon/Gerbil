@@ -1,9 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-<html>
-<head>
-  <title>MSMS</title>
-</head>
 <body>
   {% if user.is_superuser %}
     <h2>Director Home Page</h2>
@@ -15,6 +11,9 @@
       <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
       <p><a href='{% url "admin_view_requests" %}'>View Requests</a></p>
       <p><a href='{% url "admin_view_bookings" %}'>View Bookings</a></p>
+      <p><a href='{% url "admin_view_terms" %}'>View Terms</a></p>
+      <p><a href='{% url "admin_view_school_balance_and_transfers" %}'>View School´s Account Balance and Incoming Transfers</a></p>
+      <p><a href='{% url "admin_check_student_balance_and_transactions" %}'>View Balance of Students and Their Transactions</a></p>
       {% if user.is_superuser %}
         <p><a href='{% url "admin_view_database" %}'>View Database</a></p>
         <p><a href='{% url "admin_sign_up" %}'>Sign Up New Admins</a></p>
@@ -25,6 +24,5 @@
       <a href="{% url 'admin_log_in' %}">Log In</a>
     {% endif %}
   </p>
-  </body>
-</html>
+</body>
 {% endblock %}
