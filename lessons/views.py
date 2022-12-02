@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Request
+from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
 from .forms import RequestForm
-from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, InvoiceForm
+from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
-from .forms import SignUpForm, LogInForm, AdminSignUpForm
+from .forms import SignUpForm, LogInForm, AdminSignUpForm, TermForm
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 import datetime
@@ -19,13 +19,13 @@ def requests(request):
     user = request.user
     requests = Request.objects.all().values()
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
@@ -39,9 +39,11 @@ def request_form(request):
         if form.is_valid():
             form.save(request.user)
             return redirect('requests')
-    form = RequestForm()
-    
+    else:
+        form = RequestForm()
+
     return render(request, 'request_form.html', {'form': form, })
+
 
 
 def delete_request(request,id):
@@ -61,7 +63,7 @@ def update_request(request,id):
         interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
-        status = form.cleaned_data.get('status')
+
 
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
@@ -72,13 +74,12 @@ def update_request(request,id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-        request.status = status
 
         request.save()
         return redirect('requests')
-        
+
     return render(request, 'update_request_form.html', {'request': requestObject,'form' : form })
- 
+
 
 def log_in(request):
     if request.method == "POST":
@@ -153,20 +154,21 @@ def admin_sign_up(request):
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_requests(request):
     user = request.user
+    users = User.objects.all().values()
     requests = Request.objects.all().values()
 
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
-    return render(request, 'admin/admin_view_requests.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
+    return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests, 'arr': dates_of_lessons})
 
 def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
@@ -194,14 +196,30 @@ def admin_update_requests(request, id):
 
         request.save()
         return redirect('admin_view_requests')
-        
+
     return render(request, 'admin/admin_home.html')
 def admin_delete_request(request,id):
     request = Request.objects.get(id=id)
     request.delete()
     return redirect('admin_view_requests')
+
+def create_invoice(id):
+    request = Request.objects.get(id=id)
+    amount = request.totalPrice
+    user = request.username
+    user.balance-= float(amount)
+    user.save()
     
-def admin_book_request_form(request, id):
+    #print(str(request.requesterId)+"-"+str(request.id))
+    invoice = Invoice.objects.create(
+    invoice_number= str(request.id),
+    student_id = request.requesterId
+    )
+
+    invoice.save()
+
+
+def admin_book_request_form(request, id, requesterId):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
@@ -214,6 +232,7 @@ def admin_book_request_form(request, id):
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
         status = 'Booked'
+
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
         request.availability_date = availability_date
@@ -225,13 +244,12 @@ def admin_book_request_form(request, id):
         request.instrument = instrument
         request.status = status
 
+        create_invoice(id)
         request.save()
+
+
         return redirect('admin_view_requests')
     return render(request, 'admin/admin_book_request_form.html', {'request': requestObject,'form' : form })
-
-@user_passes_test(operator.attrgetter('is_superuser'), login_url = "admin_log_in")
-def admin_view_users(request):
-    return render(request, 'admin/admin_view_users.html')
 
 @login_required(login_url = "log_in")
 def edit_profile(request):
@@ -268,37 +286,115 @@ def password(request):
 
 @login_required(login_url = "log_in")
 def bank_transfer(request):
+
     if request.method == 'POST':
-        print("new pass")
-        print(request.POST.get('new_password'))
-        form = InvoiceForm(request.POST)
+        form = BankTransferForm(request.POST)
         if form.is_valid():
-            form.save()
-            print("form was _valid")
+
+            exists = Invoice.objects.filter(invoice_number =form.cleaned_data.get('inv_number')).exists()
+            print(exists)
+
+            if(exists == True):
 
 
-            return redirect('home')
+                amount = Request.objects.get(id=form.cleaned_data.get('inv_number'))
+
+                requested = Request.objects.filter(id=form.cleaned_data.get('inv_number')).exists()
+                print(requested)
+                if(requested == False):
+
+
+                    user = request.user
+                    user.balance += float(amount.totalPrice)
+                    #invoice paid set to true
+                    user.save()
+
+
+
+                    form.save(request.user,amount.totalPrice)
+
+                    school_bank_account = SchoolBankAccount.objects.get(id=1)
+                    school_bank_account.balance += float(amount.totalPrice)
+                    school_bank_account.save()
+
+                    return redirect('home')
+                else:
+                    form = BankTransferForm()
+                    print("hahah")
+                    return render(request, 'bank_transfer.html', {'form': form})
+
+            else:
+
+                form = BankTransferForm()
+                print("aa")
+
+                return render(request, 'bank_transfer.html', {'form': form})
+
+
+
+
         else:
-            print("form was not valid")
+            print("form wasnt valid")
             return redirect("home")
-
     else:
-        form = InvoiceForm()
+
+        form = BankTransferForm()
         return render(request, 'bank_transfer.html', {'form': form})
+
+@login_required(login_url = "log_in")
+def balance_and_transactions(request):
+    user= request.user
+    return render(request, "balance_and_transactions.html",{"user":user})
+
+def admin_view_user_invoice(request,id):
+    user = User.objects.get(id=id)
+    user_invoices= Invoice.objects.filter(student_id=user.id)
+    return render(request, "view_invoices.html",{"user":user,"user_invoices":user_invoices})
+
+def admin_view_user_transfers(request,id):
+    user = User.objects.get(id=id)
+    user_transfers= BankTransfer.objects.filter(student_id=user.id)
+    return render(request, "view_transfers.html",{"user":user,"user_transfers":user_transfers})
+
+
+def view_invoices(request):
+    user= request.user
+    user_invoices= Invoice.objects.filter(student_id=user.id)
+    return render(request, "view_invoices.html",{"user":user,"user_invoices":user_invoices})
+
+
+def view_transfers(request):
+    user= request.user
+    user_transfers= BankTransfer.objects.filter(username=user.id)
+    return render(request, "view_transfers.html",{"user":user,"user_transfers":user_transfers})
+
+@login_required(login_url = "log_in")
+def admin_view_school_balance_and_transfers(request):
+    school_balance = SchoolBankAccount.objects.get(id=1)
+    transfers = BankTransfer.objects.all().values()
+    return render(request, 'admin/admin_view_school_balance_and_transfers.html', {'school_balance': school_balance, 'transfers': transfers})
+
+@login_required(login_url = "log_in")
+def admin_check_student_balance_and_transactions(request):
+    users = User.objects.filter(is_superuser = False, is_staff = False)
+
+    return render(request, "admin/admin_check_student_balance_and_transactions.html", {"users":users})
+
+
 
 @login_required(login_url = "log_in")
 def view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-    print(requests)
+
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
@@ -310,15 +406,51 @@ def admin_view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
     dates_of_lessons=[]
-    
+
     for req in requests:
         dates = {}
         for i in range(int(req['number_of_lessons'])):
             if(req['status'] == "In Progress"):
                 val = "n"
-            else: 
+            else:
                 val = "y"
             dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
         dates_of_lessons.append(dates)
     print(dates_of_lessons)
     return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_view_terms(request):
+    terms = Term.objects.filter(endDate__gte = datetime.datetime.today()).values()
+    return render(request, 'admin/admin_view_terms.html', {'terms': terms})
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_add_term(request):
+    if request.method == 'POST':
+        form = TermForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_view_terms')
+    else:
+        form = TermForm()
+
+    return render(request, 'admin/admin_add_term.html', {'form': form})
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_edit_term(request,id):
+    termInstance = Term.objects.get(id=id)
+    form = TermForm(request.POST or None, instance=termInstance, idNum = id)
+    if form.is_valid():
+        # Update the records after the user has made changes
+        term = Term.objects.get(id=id)
+        term.startDate = form.cleaned_data.get('startDate')
+        term.endDate = form.cleaned_data.get('endDate')
+        term.save()
+        return redirect('admin_view_terms')
+    return render(request, 'admin/admin_edit_term.html', {'term': termInstance, 'form' : form })
+
+@user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
+def admin_delete_term(request,id):
+    request = Term.objects.get(id=id)
+    request.delete()
+    return redirect('admin_view_terms')
