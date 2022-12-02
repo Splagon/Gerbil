@@ -25,7 +25,7 @@ class TermAdmin(admin.ModelAdmin):
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
     list_display=[
-    "invoice_number","student_id"
+    "invoice_number","student_id", "unique_reference_number"
     ]
 
 @admin.register(BankTransfer)
@@ -38,4 +38,3 @@ class BankTransferAdmin(admin.ModelAdmin):
 @admin.register(SchoolBankAccount)
 class SchoolBankAccountAdmin(admin.ModelAdmin):
     list_display=["balance"]
-
