@@ -1,0 +1,36 @@
+
+<div class="container">
+
+  <div class="row">
+
+        <div class="col-12">
+          <table class="table">
+          <p><a href='{% url "admin_home" %}'>Go Home</a></p>
+          <p>School´s Bank account balance:</p>
+          <h1>{{school_bank_account.balance}} </h1>
+
+          <p>Incoming Transfers:</p>
+
+          <thead>
+              <tr>
+                  <th scope="col">Invoice number</th>
+                  <th scope="col">Transaction by   </th>
+                  <th scope="col">Amount</th>
+
+              </tr>
+          </thead>
+          <tbody>
+              {% for value in transfers %}
+              <tr>
+
+                  <th scope="col">{{value.invoice_number}}</th>
+              </tr>
+              {% endfor %}
+
+
+
+          </tbody>
+        </table>
+        </div>
+    </div>
+</div>
