@@ -26,9 +26,9 @@
                     {% if value.status == "In Progress" %}
                         <tr class="h-25 overflow-auto" style="white-space:nowrap">
                             <td>
-                                <a href="{% url 'admin_book_request_form' value.id %}" class="btn btn-primary">
+                                <a href="{% url 'admin_book_request_form' value.id value.requesterId %}" class="btn btn-primary">
                                     Book
-                          <th scope="col">Request No. </th>      </button>
+                          
                             </td>
                             <td class="font-weight-bold">{{value.id}}</td>
                             <td >

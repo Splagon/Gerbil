@@ -37,14 +37,34 @@ class User(AbstractUser):
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
 
+    balance = models.FloatField(default=0.0)
+
     def __str__(self):
         return self.username
 
 
 class Invoice(models.Model):
     """Invoice"""
-    reference_number = models.CharField(blank=False ,max_length = 12)
-    invoice_number = models.CharField(blank=False,max_length = 12)
+
+    invoice_number=models.CharField(blank=False, max_length=50)
+    student_id =models.IntegerField(default=0)
+    paid = models.BooleanField(default=False)
+
+
+
+
+
+class BankTransfer(models.Model):
+    invoice_number = models.CharField(blank=False, max_length=50)
+    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.FloatField(default=0)
+    student_id=models.IntegerField(default=0)
+
+
+class SchoolBankAccount(models.Model):
+    balance= models.FloatField(default=0.0)
+
+
 
 
 class Request(models.Model):
@@ -60,6 +80,7 @@ class Request(models.Model):
     teacher = models.CharField(blank=True,max_length=50)
     status = models.CharField(max_length=50,default="In Progress", )
     totalPrice = models.CharField( max_length=50,default=0,  )
+    requesterId = models.IntegerField(default=0)
 
 class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)

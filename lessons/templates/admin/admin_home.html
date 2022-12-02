@@ -12,6 +12,8 @@
       <p><a href='{% url "admin_view_requests" %}'>View Requests</a></p>
       <p><a href='{% url "admin_view_bookings" %}'>View Bookings</a></p>
       <p><a href='{% url "admin_view_terms" %}'>View Terms</a></p>
+      <p><a href='{% url "admin_view_school_balance_and_transfers" %}'>View School´s Account Balance and Incoming Transfers</a></p>
+      <p><a href='{% url "admin_check_student_balance_and_transactions" %}'>View Balance of Students and Their Transactions</a></p>
       {% if user.is_superuser %}
         <p><a href='{% url "admin_view_database" %}'>View Database</a></p>
         <p><a href='{% url "admin_sign_up" %}'>Sign Up New Admins</a></p>
