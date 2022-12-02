@@ -34,6 +34,7 @@
                         <td scope="col">{{value.instrument}}</td>
                         <td scope="col">{{value.totalPrice}}</td>
                         <td scope="col">{{value.status}}</td>
+                        <td scope="col">{{value.lesson_dates}}</td>
 
 
                     </tr>
@@ -42,7 +43,7 @@
 
             </tbody>
         </table>
-        <table class="table table-responsive mb-12">
+        {% comment %} <table class="table table-responsive mb-12">
             <thead class="" style="white-space:nowrap">
                 <tr>
                     <th> Lesson Dates</th>
@@ -59,7 +60,7 @@
                     </tr>
                 {% endfor %}
             </tbody>
-        </table>
+        </table> {% endcomment %}
 
 
     </div>

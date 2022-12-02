@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
 from .forms import RequestForm
+from django.http import HttpResponseForbidden
+
 from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
@@ -18,19 +20,10 @@ def home(request):
 def requests(request):
     user = request.user
     requests = Request.objects.all().values()
-    dates_of_lessons=[]
 
-    for req in requests:
-        dates = {}
-        for i in range(int(req['number_of_lessons'])):
-            if(req['status'] == "In Progress"):
-                val = "n"
-            else:
-                val = "y"
-            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
-        dates_of_lessons.append(dates)
+    return render(request, 'requests.html', {'user': user, 'requests': requests}) 
 
-    return render(request, 'requests.html', {'user': user, 'requests': requests, 'arr' :dates_of_lessons})
+        
 
 @login_required(login_url = "log_in")
 def request_form(request):
@@ -156,19 +149,7 @@ def admin_view_requests(request):
     user = request.user
     users = User.objects.all().values()
     requests = Request.objects.all().values()
-
-    dates_of_lessons=[]
-
-    for req in requests:
-        dates = {}
-        for i in range(int(req['number_of_lessons'])):
-            if(req['status'] == "In Progress"):
-                val = "n"
-            else:
-                val = "y"
-            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
-        dates_of_lessons.append(dates)
-    return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests, 'arr': dates_of_lessons})
+    return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests})
 
 def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
@@ -386,38 +367,13 @@ def admin_check_student_balance_and_transactions(request):
 def view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-
-    dates_of_lessons=[]
-
-    for req in requests:
-        dates = {}
-        for i in range(int(req['number_of_lessons'])):
-            if(req['status'] == "In Progress"):
-                val = "n"
-            else:
-                val = "y"
-            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
-        dates_of_lessons.append(dates)
-    print(dates_of_lessons)
-    return render(request, 'bookings.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
+    return render(request, 'bookings.html', {'user': user, 'requests': requests})
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_bookings(request):
     user = request.user
     requests = Request.objects.all().values()
-    dates_of_lessons=[]
-
-    for req in requests:
-        dates = {}
-        for i in range(int(req['number_of_lessons'])):
-            if(req['status'] == "In Progress"):
-                val = "n"
-            else:
-                val = "y"
-            dates[val + str(req['id']) + str(i)] = req['availability_date'] + datetime.timedelta(weeks=(i * int(req['interval_between_lessons'])))
-        dates_of_lessons.append(dates)
-    print(dates_of_lessons)
-    return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
+    return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, })
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_terms(request):

@@ -81,6 +81,18 @@ class Request(models.Model):
     status = models.CharField(max_length=50,default="In Progress", )
     totalPrice = models.CharField( max_length=50,default=0,  )
     requesterId = models.IntegerField(default=0)
+        
+    
+    def get_lesson_dates(self):
+        lesson_dates=[]
+        for i in range(int(self.number_of_lessons)):
+            lesson_dates.append(self.availability_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons))))
+        return lesson_dates
+    # Computes the lesson dates for a given request
+    lesson_dates = property(get_lesson_dates)
+
+
+
 
 class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
