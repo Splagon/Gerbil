@@ -2,40 +2,48 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, Invoice
+from .models import User, BankTransfer
 from django.core.validators import RegexValidator
 from .helpers import getDurationsToPrices
 import datetime
 
 
-class InvoiceForm(forms.ModelForm):
+class BankTransferForm(forms.ModelForm):
     class Meta:
-        model = Invoice
+        model = BankTransfer
         fields =[]
 
-    new_password = forms.CharField(
-    label='Enter reference number',
+    inv_number = forms.CharField(
+    label='Enter invoice number:',
     widget=forms.TextInput(),
     validators=[RegexValidator(
-            regex=r'^[0-9]+-[0-9]+',
-            message='Password must contain an uppercase character, a lowercase '
-                    'character and a number'
+    regex=r'^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$',
+
+    #regex=r'^[0-9]+-[0-9]+',
+
+            message='Invoice  format is not valid'
             )]
             )
+
+
 
 
 
     def clean(self):
         super().clean()
 
-    def save(self):
+    def save(self,user,amount):
         super().save(commit=False)
-        invoice = Invoice.objects.create(
-        reference_number = self.cleaned_data.get("new_password").split("-")[0],
-        invoice_number = self.cleaned_data.get("new_password").split("-")[1]
 
+        bank_transfer = BankTransfer.objects.create(
+        invoice_number= self.cleaned_data.get("inv_number"),
+        username=user,
+        amount=amount,
+        student_id= user.id
         )
-        return invoice
+
+        #)
+        return bank_transfer
 
 
 class RequestForm(forms.ModelForm):
@@ -60,14 +68,14 @@ class RequestForm(forms.ModelForm):
             'duration_of_lessons' : forms.Select(),
         }
 
-        
+
     def clean(self):
         """Clean the data and generate messages for any errors."""
 
         availability_time = self.cleaned_data['availability_time']
         if availability_time < datetime.time(hour=8, minute=0, second=0):
             raise forms.ValidationError('Time cannot be before 8.')
-            
+
         elif availability_time > datetime.time(hour=17, minute=30, second=0):
             raise forms.ValidationError('Time cannot be after 17:30.')
 
@@ -95,8 +103,12 @@ class RequestForm(forms.ModelForm):
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
             totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
-            status = 'In Progress'
+            status = 'In Progress',
+            requesterId= user.id
+
         )
+
+
         return request
 
 class LogInForm(forms.Form):

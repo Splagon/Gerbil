@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import User, Request
+from .models import User, Request,BankTransfer,Invoice, SchoolBankAccount
 from .forms import RequestForm
-from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, InvoiceForm
+from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from .forms import SignUpForm, LogInForm, AdminSignUpForm
@@ -44,6 +44,7 @@ def request_form(request):
         form = RequestForm()
 
     return render(request, 'request_form.html', {'form': form, })
+
 
 
 def delete_request(request,id):
@@ -203,7 +204,23 @@ def admin_delete_request(request,id):
     request.delete()
     return redirect('admin_view_requests')
 
-def admin_book_request_form(request, id):
+def create_invoice(id):
+    request = Request.objects.get(id=id)
+    amount = request.totalPrice
+    user = request.username
+    user.balance-= float(amount)
+    user.save()
+    
+    #print(str(request.requesterId)+"-"+str(request.id))
+    invoice = Invoice.objects.create(
+    invoice_number= str(request.id),
+    student_id = request.requesterId
+    )
+
+    invoice.save()
+
+
+def admin_book_request_form(request, id, requesterId):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
@@ -216,6 +233,7 @@ def admin_book_request_form(request, id):
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
         status = 'Booked'
+
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
         request.availability_date = availability_date
@@ -227,7 +245,10 @@ def admin_book_request_form(request, id):
         request.instrument = instrument
         request.status = status
 
+        create_invoice(id)
         request.save()
+
+
         return redirect('admin_view_requests')
     return render(request, 'admin/admin_book_request_form.html', {'request': requestObject,'form' : form })
 
@@ -270,23 +291,101 @@ def password(request):
 
 @login_required(login_url = "log_in")
 def bank_transfer(request):
+
     if request.method == 'POST':
-        print("new pass")
-        print(request.POST.get('new_password'))
-        form = InvoiceForm(request.POST)
+        form = BankTransferForm(request.POST)
         if form.is_valid():
-            form.save()
-            print("form was _valid")
+
+            exists = Invoice.objects.filter(invoice_number =form.cleaned_data.get('inv_number')).exists()
+            print(exists)
+
+            if(exists == True):
 
 
-            return redirect('home')
+                amount = Request.objects.get(id=form.cleaned_data.get('inv_number'))
+
+                requested = Request.objects.filter(id=form.cleaned_data.get('inv_number')).exists()
+                print(requested)
+                if(requested == False):
+
+
+                    user = request.user
+                    user.balance += float(amount.totalPrice)
+                    #invoice paid set to true
+                    user.save()
+
+
+
+                    form.save(request.user,amount.totalPrice)
+
+                    school_bank_account = SchoolBankAccount.objects.get(id=1)
+                    school_bank_account.balance += float(amount.totalPrice)
+                    school_bank_account.save()
+
+                    return redirect('home')
+                else:
+                    form = BankTransferForm()
+                    print("hahah")
+                    return render(request, 'bank_transfer.html', {'form': form})
+
+            else:
+
+                form = BankTransferForm()
+                print("aa")
+
+                return render(request, 'bank_transfer.html', {'form': form})
+
+
+
+
         else:
-            print("form was not valid")
+            print("form wasnt valid")
             return redirect("home")
-
     else:
-        form = InvoiceForm()
+
+        form = BankTransferForm()
         return render(request, 'bank_transfer.html', {'form': form})
+
+@login_required(login_url = "log_in")
+def balance_and_transactions(request):
+    user= request.user
+    return render(request, "balance_and_transactions.html",{"user":user})
+
+def admin_view_user_invoice(request,id):
+    user = User.objects.get(id=id)
+    user_invoices= Invoice.objects.filter(student_id=user.id)
+    return render(request, "view_invoices.html",{"user":user,"user_invoices":user_invoices})
+
+def admin_view_user_transfers(request,id):
+    user = User.objects.get(id=id)
+    user_transfers= BankTransfer.objects.filter(student_id=user.id)
+    return render(request, "view_transfers.html",{"user":user,"user_transfers":user_transfers})
+
+
+def view_invoices(request):
+    user= request.user
+    user_invoices= Invoice.objects.filter(student_id=user.id)
+    return render(request, "view_invoices.html",{"user":user,"user_invoices":user_invoices})
+
+
+def view_transfers(request):
+    user= request.user
+    user_transfers= BankTransfer.objects.filter(username=user.id)
+    return render(request, "view_transfers.html",{"user":user,"user_transfers":user_transfers})
+
+@login_required(login_url = "log_in")
+def admin_view_school_balance_and_transfers(request):
+    school_balance = SchoolBankAccount.objects.get(id=1)
+    transfers = BankTransfer.objects.all().values()
+    return render(request, 'admin/admin_view_school_balance_and_transfers.html', {'school_balance': school_balance, 'transfers': transfers})
+
+@login_required(login_url = "log_in")
+def admin_check_student_balance_and_transactions(request):
+    users = User.objects.filter(is_superuser = False, is_staff = False)
+
+    return render(request, "admin/admin_check_student_balance_and_transactions.html", {"users":users})
+
+
 
 @login_required(login_url = "log_in")
 def view_bookings(request):

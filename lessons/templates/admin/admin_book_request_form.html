@@ -7,7 +7,7 @@
       <h1>Book Request... </h1>
 
       <form action="" method="post">
-        {% csrf_token %} 
+        {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with request=request %}
         <div class=" text-center">
           <input type="submit" value="Book Lesson" class="btn btn-secondary" />
