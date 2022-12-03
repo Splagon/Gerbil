@@ -86,3 +86,14 @@ class Request(models.Model):
 class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
+
+class Adult(User):
+    def __str__(self):
+        return self.username
+
+class AdultChildRelationship(models.Model):
+    # if adult deleted, all associated child relationships gone
+    adult = models.ForeignKey(Adult, on_delete=models.CASCADE, blank=False)
+    # if child delete, all associated adults gone
+    child = models.CharField(max_length=50,blank=False)
+    
