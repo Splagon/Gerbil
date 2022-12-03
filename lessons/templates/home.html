@@ -1,25 +1,26 @@
 {% extends 'base.html' %}
 {% block body %}
-<div id="cover-images">
-  <div>
-    <p>Simple test page</p>
-
-    </img>
-    <p>
-      {% if user.is_authenticated %}
-        <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
-        <p><a href='{% url 'request_form' %}'>Request a lesson!</href></p>
-        <p><a href='{% url "requests" %}'>View Requests</a></p>
-        <p><a href='{% url "view_bookings" %}'>View Bookings</a></p>
-        <p><a href='{% url "bank_transfer" %}'>Make a bank transfer</a></p>
-        <p><a href='{% url "balance_and_transactions" %}'>See balance and transactions</a></p>
-        
-      {% else %}
-        <p>You are not logged in</p>
-        <a href="{% url 'log_in' %}">Log In</a>
-        <p><a href='{% url 'sign_up' %}'>Sign up!</a></p>
-      {% endif %}
-    </p>
+  <div id="cover-images">
+    <div class="container vh-100">
+      <div class="row h-100">
+        <div class="col-12 my-auto">
+          <div class="card cover-card offset-sm-2 offset-md-4 offset-lg-7">
+            <h1 class="cover-heading">Music Management System</h1>
+            {% if user.is_authenticated %}
+            <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
+            <p><a href='{% url "request_form" %}'>Request a lesson!</href></p>
+            <p><a href='{% url "requests" %}'>View Requests</a></p>
+            <p><a href='{% url "view_bookings" %}'>View Bookings</a></p>
+            <p><a href='{% url "bank_transfer" %}'>Make a bank transfer</a></p>
+            <p><a href='{% url "balance_and_transactions" %}'>See balance and transactions</a></p>
+            {% else %}
+            <p>You are not logged in</p>
+            <a href="{% url 'log_in' %}">Log In</a>
+            <p><a href='{% url "sign_up" %}'>Sign up!</a></p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 {% endblock %}
