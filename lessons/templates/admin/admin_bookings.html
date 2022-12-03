@@ -45,31 +45,14 @@
                         <td scope="col">{{value.instrument}}</td>
                         <td scope="col">{{value.totalPrice}}</td>
                         <td scope="col">{{value.status}}</td>
-
+                        {% for date in value.lesson_dates %}
+                            <td scope="col">{{date}}</td>
+                        {% endfor %}
 
                     </tr>
                     {% endif%}
                 {% endfor %}
 
-            </tbody>
-        </table>
-        <table class="table table-responsive mb-12">
-            <thead class="" style="white-space:nowrap">
-                <tr>
-                    <th> Lesson Dates</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                {% for dates in arr%}
-                <tr>
-                    {% for key, date in dates.items%}
-                        {% if key.0 == "y" %}
-                            <td> {{date}}</td>
-                        {% endif %}
-                    {%endfor%}
-                </tr>
-            {% endfor %}
             </tbody>
         </table>
 

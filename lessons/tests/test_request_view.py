@@ -1,7 +1,6 @@
 """Tests of the feed view."""
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
-from lessons.forms import RequestForm
 from lessons.models import User, Request
 from lessons.tests.helpers import create_requests, reverse_with_next
 
@@ -25,7 +24,7 @@ class RequestViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'requests.html')
-        
+
     def test_get_request_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)

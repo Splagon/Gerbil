@@ -129,3 +129,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #user model used for authentication
 AUTH_USER_MODEL = "lessons.User"
+
+# Login URL for redirecting users from login protected views
+LOGIN_URL = 'log_in'

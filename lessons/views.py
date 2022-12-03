@@ -19,8 +19,7 @@ def home(request):
 @login_required(login_url = "log_in")
 def requests(request):
     user = request.user
-    requests = Request.objects.all().values()
-
+    requests = Request.objects.all()
     return render(request, 'requests.html', {'user': user, 'requests': requests}) 
 
         
@@ -58,6 +57,7 @@ def update_request(request,id):
         instrument = form.cleaned_data.get('instrument')
 
 
+
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
         request.availability_date = availability_date
@@ -67,6 +67,7 @@ def update_request(request,id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
+
 
         request.save()
         return redirect('requests')
@@ -148,7 +149,7 @@ def admin_sign_up(request):
 def admin_view_requests(request):
     user = request.user
     users = User.objects.all().values()
-    requests = Request.objects.all().values()
+    requests = Request.objects.all()
     return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests})
 
 def admin_update_requests(request, id):
@@ -366,13 +367,13 @@ def admin_check_student_balance_and_transactions(request):
 @login_required(login_url = "log_in")
 def view_bookings(request):
     user = request.user
-    requests = Request.objects.all().values()
+    requests = Request.objects.all()
     return render(request, 'bookings.html', {'user': user, 'requests': requests})
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")
 def admin_view_bookings(request):
     user = request.user
-    requests = Request.objects.all().values()
+    requests = Request.objects.all()
     return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, })
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url = "admin_log_in")

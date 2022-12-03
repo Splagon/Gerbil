@@ -19,6 +19,7 @@
                     <th scope="col">Instrument</th>
                     <th scope="col">Total Price</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Lesson Dates</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +57,9 @@
                             <td scope="col">{{value.instrument}}</td>
                             <td scope="col">{{value.totalPrice}}</td>
                             <td scope="col">{{value.status}}</td>
+                            {% for date in value.lesson_dates %}
+                                <td scope="col">{{date}}</td>
+                            {% endfor %}
 
 
                         </tr>

@@ -4,64 +4,47 @@
     <h2> List of Requests </h2>
     <a href="/">Back to home</a>
     <a href="/request-lesson">Back to Requests page</a>
-    <div class=" d-flex justify-content-around nowrap ">
-
     <h3>List of Fulfilled Requests</h3>
     <div class=" d-flex justify-content-around nowrap ">
-        <table class="table-responsive table">
-            <thead class="text-left">
-                <tr class="overflow-auto" style="white-space:nowrap">
-                    <th scope="col">Request No. </th>
-                    <th scope="col">Delete</th>
-                    <th scope="col">Update</th>
-                    <th scope="col">Availability time</th>
-                    <th scope="col">Lesson time</th>
-                    <th scope="col">Teacher</th>
-                    <th scope="col">Instrument</th>
-                    <th scope="col">Total Price</th>
-                    <th scope="col">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for value in requests %}
-                    {% if value.status == "Booked" %}
-                    <tr class="h-25 overflow-auto" style="white-space:nowrap">
-
-                        <td class="font-weight-bold">{{value.id}}</td>
-                        <td scope="col">{{value.availability_time}}</td>
-                        <td scope="col">{{value.duration_of_lessons}}</td>
-                        <td scope="col">{{value.teacher}}</td>
-                        <td scope="col">{{value.instrument}}</td>
-                        <td scope="col">{{value.totalPrice}}</td>
-                        <td scope="col">{{value.status}}</td>
-                        <td scope="col">{{value.lesson_dates}}</td>
-
-
+        <div class=" d-flex justify-content-around nowrap ">
+            <table class="table-responsive table">
+                <thead class="text-left">
+                    <tr class="overflow-auto" style="white-space:nowrap">
+                        <th scope="col">Request No. </th>
+                        <th scope="col">Delete</th>
+                        <th scope="col">Update</th>
+                        <th scope="col">Availability time</th>
+                        <th scope="col">Lesson time</th>
+                        <th scope="col">Teacher</th>
+                        <th scope="col">Instrument</th>
+                        <th scope="col">Total Price</th>
+                        <th scope="col">Status</th>
                     </tr>
-                    {% endif%}
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for value in requests %}
+                        {% if value.status == "Booked" %}
+                        <tr class="h-25 overflow-auto" style="white-space:nowrap">
 
-            </tbody>
-        </table>
-        {% comment %} <table class="table table-responsive mb-12">
-            <thead class="" style="white-space:nowrap">
-                <tr>
-                    <th> Lesson Dates</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for dates in arr%}
-                    <tr>
-                        {% for key, date in dates.items%}
-                            {% if key.0 == "y" %}
-                                <td> {{date}}</td>
-                            {% endif %}
-                        {%endfor%}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table> {% endcomment %}
+                            <td class="font-weight-bold">{{value.id}}</td>
+                            <td scope="col">{{value.availability_time}}</td>
+                            <td scope="col">{{value.duration_of_lessons}}</td>
+                            <td scope="col">{{value.teacher}}</td>
+                            <td scope="col">{{value.instrument}}</td>
+                            <td scope="col">{{value.totalPrice}}</td>
+                            <td scope="col">{{value.status}}</td>
+                            {% for date in value.lesson_dates %}
+                                    <td scope="col">{{date}}</td>
+                            {% endfor %}
 
+
+                        </tr>
+                        {% endif%}
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
 
     </div>
 </div>
