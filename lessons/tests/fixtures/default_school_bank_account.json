@@ -1,0 +1,9 @@
+[
+  {
+    "model" : "lessons.schoolbankaccount",
+    "pk" : 1,
+    "fields" : {
+      "balance" : 0.0
+    }
+  }
+]
