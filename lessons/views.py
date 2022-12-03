@@ -19,20 +19,27 @@ def home(request):
 @login_required(login_url="log_in")
 def requests(request):
     user = request.user
-    requests = Request.objects.all().values()
+    requests = Request.objects.filter(username=user)
+    #requests = Request.objects.all().values()
     # After the form displays the dates, it should call a method which clears the dictionary
     dates_of_lessons = []
 
     for req in requests:
         dates = {}
-        for i in range(int(req['number_of_lessons'])):
-            if (req['status'] == "In Progress"):
+        #for i in range(int(req['number_of_lessons'])):
+        for i in range(int(req.number_of_lessons)):
+            if (req.status == "In Progress"):
+            #if (req['status'] == "In Progress"):
                 val = "n"
             else:
                 val = "y"
-            dates[val + str(req['id']) + str(i)] = req['availability_date'] + \
-                datetime.timedelta(
-                    weeks=(i * int(req['interval_between_lessons'])))
+                #
+            dates[val + str(req.id) + str(i)] = req.availability_date +\
+            datetime.timedelta(weeks=(i * int(req.interval_between_lessons)))
+            #dates[val + str(req['id']) + str(i)] = req['availability_date'] + \
+            #datetime.timedelta(
+                    #weeks=(i * int(req['interval_between_lessons'])))
+
         dates_of_lessons.append(dates)
 
     return render(request, 'requests.html', {'user': user, 'requests': requests, 'arr': dates_of_lessons})
