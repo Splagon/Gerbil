@@ -47,18 +47,19 @@ urlpatterns = [
 
     path('admin/view_database/', admin.site.urls, name = 'admin_view_database'),
     path('admin/view_database/', views.admin_home, name = 'admin_view_database'),
-    
+
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
     path('admin/view_bookings/', views.admin_view_bookings, name = 'admin_view_bookings'),
     path('admin/update_request/<uuid:id>', views.update_request, name = 'admin_update_requests'),
     path('admin/delete_request/<uuid:id>', views.delete_request, name = 'admin_delete_requests'),
     path('admin/book_request/<uuid:id>/<int:requesterId>', views.admin_book_request_form, name = 'admin_book_request_form'),
-    
+
     path('admin/view_terms/', views.admin_view_terms, name='admin_view_terms'),
     path('admin/add_term/', views.admin_add_term, name='admin_add_term'),
     path('admin/delete_term/<int:id>', views.admin_delete_term, name='admin_delete_term'),
     path('admin/edit_term/<int:id>', views.admin_edit_term, name='admin_edit_term'),
-    
+    path("admin_update_invoice/<uuid:id>/<str:old_price>", views.update_invoice, name="update_invoice"),
+
     path('admin/view_school_balance_and_transfers/', views.admin_view_school_balance_and_transfers, name= "admin_view_school_balance_and_transfers"),
     path('admin/create_invoice/<uuid:id>', views.create_invoice, name='admin_create_invoice')
 ]
