@@ -52,10 +52,6 @@ class Invoice(models.Model):
     amount = models.FloatField(default=0.0)
     currently_paid = models.FloatField(default=0.0)
 
-
-
-
-
 class BankTransfer(models.Model):
     invoice_number = models.CharField(blank=False, max_length=50)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -65,8 +61,6 @@ class BankTransfer(models.Model):
 
 class SchoolBankAccount(models.Model):
     balance= models.FloatField(default=0.0)
-
-
 
 
 class Request(models.Model):
