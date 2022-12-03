@@ -3,7 +3,7 @@ from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
 from .models import User, Term, BankTransfer
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator,MinValueValidator,MaxValueValidator
 from .helpers import getDurationsToPrices
 from django.db.models import Q
 import datetime
@@ -27,19 +27,27 @@ class BankTransferForm(forms.ModelForm):
             )
 
 
+    paid_amount = forms.FloatField(min_value=0.01, max_value=9999.99,
+    label="Enter amount to pay",
+    widget= forms.NumberInput(attrs={
+                'max': '9999.9',    # For maximum number
+                'min': '0.01',    # For minimum number
+            }),validators=[MinValueValidator(0.01), MaxValueValidator(9999.99)])
+
+
 
 
 
     def clean(self):
         super().clean()
 
-    def save(self,user,amount):
+    def save(self,user):
         super().save(commit=False)
 
         bank_transfer = BankTransfer.objects.create(
         invoice_number= self.cleaned_data.get("inv_number"),
         username=user,
-        amount=amount,
+        amount=self.cleaned_data.get("paid_amount"),
         student_id= user.id
         )
 
