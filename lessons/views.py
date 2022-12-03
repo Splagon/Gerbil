@@ -50,7 +50,7 @@ def update_request(request, id):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
-        # TODO-- Refactor this asap
+
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
         duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
@@ -177,7 +177,6 @@ def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
-        # TODO-- Refactor this asap
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
         duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
@@ -186,7 +185,6 @@ def admin_update_requests(request, id):
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
-        status = form.cleaned_data.get('status')
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
         request.availability_date = availability_date
@@ -196,7 +194,6 @@ def admin_update_requests(request, id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-        request.status = status
 
         request.save()
         return redirect('admin_view_requests')
@@ -246,7 +243,6 @@ def admin_book_request_form(request, id, requesterId):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
-        # TODO-- Refactor this asap
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
         duration_of_lessons = form.cleaned_data.get('duration_of_lessons')

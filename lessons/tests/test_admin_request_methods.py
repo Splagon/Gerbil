@@ -29,21 +29,30 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
         self.update_url = reverse('admin_update_requests', kwargs={'id': self.request.id})
         self.view_requests_url = reverse('admin_view_requests')
 
-    def test_delete_request_url(self):
+    def test_admin_delete_request_url(self):
         self.assertEqual(self.delete_url,f'/admin/delete_request/{self.request.id}')
 
-    def test_view_request_url(self):
+    def test_admin_view_request_url(self):
         self.assertEqual(self.view_requests_url, f'/admin/view_requests/')
-        
+        self.client.get(self.view_requests_url, follow=True)
 
-    def test_update_request_url(self):
+    def test_admin_login_required(self):
+        response = self.client.get(self.view_requests_url)
+        self.assertRedirects(response, reverse('admin_log_in')+'?next=/admin/'+'view_requests/')  
+
+    def test_admin_get_view_requests(self):
+        self.client.login(username=self.user.username, password='Password123')
+        response = self.client.get(self.view_requests_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'admin/admin_view_requests.html')
+
+    def test_admin_update_request_url(self):
         self.assertEqual(self.update_url,f'/admin/update_request/{self.request.id}')
 
-    def test_is_user_staff_type(self):
+    def test_admin_is_user_staff_type(self):
         self.assertTrue(self.user, operator.attrgetter('is_staff'))
-
-
-    def test_delete_request_after_toggle(self):
+        
+    def test_admin_delete_request_after_toggle(self):
         self.client.login(username = self.user.username, password='Password123')
         self.assertTrue(self._is_logged_in())
         requests_before = len(Request.objects.values())
@@ -51,9 +60,27 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
         requests_after = len(Request.objects.values())
         self.assertEquals(requests_before, requests_after+1)
 
-    def test_update_request_after_toggle(self):
+    def test_admin_update_request_after_toggle(self):
         self.client.login(username = self.user.username, password='Password123')
         requests_before = len(Request.objects.values())
+        response = self.client.post(
+            self.update_url,
+            {
+                'username' : self.user,
+                'availability_date' : "2023-02-26",
+                'availability_time' : "08:30",
+                'instrument' : "double bass",
+                'number_of_lessons' : 3,
+                'interval_between_lessons' : 5,
+                'duration_of_lessons' : 30
+            }
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.request.refresh_from_db()
+
+        self.assertEqual(self.request.number_of_lessons, 3 )
+
         self.client.get(self.update_url, follow=True)
         requests_after = len(Request.objects.values())
         self.assertEquals(requests_before, requests_after)
