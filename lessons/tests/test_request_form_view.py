@@ -18,10 +18,10 @@ class RequestFormViewTestCase(TestCase):
         self.user = User.objects.get(username='jonathandeer@example.com')
         self.url = reverse('request_form')
 
-    def test_feed_url(self):
+    def test_request_url(self):
         self.assertEqual(self.url,'/request-lesson/')
 
-    def test_get_feed(self):
+    def test_get_request(self):
         self.client.login(username=self.user.username, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -29,3 +29,9 @@ class RequestFormViewTestCase(TestCase):
         form = response.context['form']
         self.assertTrue(isinstance(form, RequestForm))
         self.assertFalse(form.is_bound)
+    
+    def test_get_request_redirects_when_logged_in(self):
+        self.client.login(username=self.user.username, password="Password123")
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('requests')
+        self.assertTemplateUsed(response, 'request_form.html')
