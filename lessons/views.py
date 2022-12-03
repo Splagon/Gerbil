@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required, 
 from .forms import SignUpForm, LogInForm, AdminSignUpForm, TermForm
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
+from .helpers import getDurationsToPrices
 import datetime
 import operator
 
@@ -64,7 +65,10 @@ def update_request(request,id):
         interval_between_lessons = form.cleaned_data.get('interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
+        totalPrice= int(form.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
 
+        old_request = Request.objects.get(id=id)
+        old_price = old_request.totalPrice
 
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
@@ -75,9 +79,16 @@ def update_request(request,id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-
+        request.totalPrice = totalPrice
         request.save()
+
+        invoice_exists = Invoice.objects.filter(invoice_number =str(id)).exists()
+        if(invoice_exists):
+            update_invoice(id, str(old_price))
+
         return redirect('requests')
+
+
 
     return render(request, 'update_request_form.html', {'request': requestObject,'form' : form })
 
@@ -210,14 +221,32 @@ def create_invoice(id):
     user = request.username
     user.balance-= float(amount)
     user.save()
-    
-    #print(str(request.requesterId)+"-"+str(request.id))
-    invoice = Invoice.objects.create(
-    invoice_number= str(request.id),
-    student_id = request.requesterId
-    )
 
+    invoice = Invoice.objects.create(
+    unique_reference_number = str(request.requesterId)+"-"+str(request.id),
+    invoice_number= str(request.id),
+    student_id = request.requesterId,
+    amount = float(request.totalPrice)
+    )
     invoice.save()
+
+def update_invoice(id, old_price):
+    request = Request.objects.get(id=id)
+    new_total = request.totalPrice
+
+    user=request.username
+    user.balance += float(old_price)
+    user.balance -= float(new_total)
+    user.save()
+
+    invoice = Invoice.objects.get(invoice_number = str(id))
+    invoice.amount= new_total
+    invoice.save()
+
+
+
+    #print(str(request.requesterId)+"-"+str(request.id))
+
 
 
 def admin_book_request_form(request, id, requesterId):
@@ -294,40 +323,50 @@ def bank_transfer(request):
 
             exists = Invoice.objects.filter(invoice_number =form.cleaned_data.get('inv_number')).exists()
             print(exists)
-
+            #15945615-7f29-4079-b567-a5a7ac6647a4
             if(exists == True):
+                print("c1")
 
 
                 amount = Request.objects.get(id=form.cleaned_data.get('inv_number'))
 
                 requested = Request.objects.filter(id=form.cleaned_data.get('inv_number')).exists()
                 print(requested)
-                if(requested == False):
+                if(requested == True):
+                    invoice = Invoice.objects.get(invoice_number =form.cleaned_data.get('inv_number'))
+                    paid = invoice.paid
+                    print(paid)
+                    print("aa")
 
+                    if(paid == False):
 
-                    user = request.user
-                    user.balance += float(amount.totalPrice)
-                    #invoice paid set to true
-                    user.save()
+                        user = request.user
+                        user.balance += float(amount.totalPrice)
+                        invoice = Invoice.objects.get(invoice_number =form.cleaned_data.get('inv_number'))
+                        invoice.paid = True
+                        invoice.save()
+                        user.save()
+                        form.save(request.user,amount.totalPrice)
 
+                        school_bank_account = SchoolBankAccount.objects.get(id=1)
+                        school_bank_account.balance += float(amount.totalPrice)
+                        school_bank_account.save()
+                        print("succesful transfer")
+                        return redirect('home')
 
+                    else:
+                        print("invoice has been paid already")
+                        return render(request, 'bank_transfer.html', {'form': form})
 
-                    form.save(request.user,amount.totalPrice)
-
-                    school_bank_account = SchoolBankAccount.objects.get(id=1)
-                    school_bank_account.balance += float(amount.totalPrice)
-                    school_bank_account.save()
-
-                    return redirect('home')
                 else:
                     form = BankTransferForm()
-                    print("hahah")
+
                     return render(request, 'bank_transfer.html', {'form': form})
 
             else:
 
                 form = BankTransferForm()
-                print("aa")
+
 
                 return render(request, 'bank_transfer.html', {'form': form})
 
