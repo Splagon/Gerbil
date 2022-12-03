@@ -1,0 +1,46 @@
+<div class="container ">
+    <h2> List of Students </h2>
+    <a class="float-left" href="{% url "admin_home" %}">Back to home</a>
+
+    <div class=" d-flex justify-content-around nowrap ">
+        <table class="table-responsive table">
+            <thead class="text-left">
+                <tr class="overflow-auto" style="white-space:nowrap">
+                    <th scope="col">Student ID</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+
+                    <th scope="col">Balance</th>
+                    <th scope="col">Invoices</th>
+                    <th scope="col">Transfers</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                 %}
+
+                        <tr class="h-25 overflow-auto" style="white-space:nowrap">
+
+                            {% for user in users %}
+
+
+
+
+                            <td scope="col">{{user.id}}</td>
+                            <td scope="col">{{user.first_name}}</td>
+                            <td scope="col">{{user.last_name}}</td>
+                            <td scope="col">{{user.balance}}</td>
+                            <td>
+                                <a href="{% url 'admin_view_user_invoice' user.id %}" class="btn btn-primary">
+                                    View Invoices</td>
+
+                                  <td>  <a href="{% url 'admin_view_user_transfers' user.id %}" class="btn btn-primary">
+                                        View Transfers</td>
+
+                        </tr>
+
+
+                {% endfor %}
+
+            </tbody>
+        </table>

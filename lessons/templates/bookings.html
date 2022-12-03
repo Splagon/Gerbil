@@ -26,8 +26,8 @@
                 {% for value in requests %}
                     {% if value.status == "Booked" %}
                     <tr class="h-25 overflow-auto" style="white-space:nowrap">
-                    
-                        <td class="font-weight-bold">{{value.id}}</td>              
+
+                        <td class="font-weight-bold">{{value.id}}</td>
                         <td scope="col">{{value.availability_time}}</td>
                         <td scope="col">{{value.duration_of_lessons}}</td>
                         <td scope="col">{{value.teacher}}</td>
@@ -35,17 +35,17 @@
                         <td scope="col">{{value.totalPrice}}</td>
                         <td scope="col">{{value.status}}</td>
 
-                        
-                    </tr>   
+
+                    </tr>
                     {% endif%}
                 {% endfor %}
 
             </tbody>
-        </table>  
+        </table>
         <table class="table table-responsive mb-12">
             <thead class="" style="white-space:nowrap">
                 <tr>
-                    <th> Lesson Dates</th>   
+                    <th> Lesson Dates</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,7 +53,7 @@
                     <tr>
                         {% for key, date in dates.items%}
                             {% if key.0 == "y" %}
-                                <td> {{date}}</td>   
+                                <td> {{date}}</td>
                             {% endif %}
                         {%endfor%}
                     </tr>

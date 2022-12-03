@@ -1,0 +1,18 @@
+[
+    {
+        "model": "lessons.term",
+        "pk": 1,
+        "fields": {
+          "startDate": "2023-1-1",
+          "endDate": "2023-1-31"
+        }
+    },
+    {
+        "model": "lessons.term",
+        "pk": 2,
+        "fields": {
+          "startDate": "2023-2-1",
+          "endDate": "2023-2-28"
+        }
+    }
+]

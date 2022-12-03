@@ -1,0 +1,43 @@
+
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container ">
+    <h2> Transfer of {{user.first_name}} {{user.last_name}}</h2>
+    <a href="/">Back to home</a>
+
+    <div class=" d-flex justify-content-around nowrap ">
+        <table class="table-responsive table">
+            <thead class="text-left">
+                <tr class="overflow-auto" style="white-space:nowrap">
+                    <th scope="col">Invoice number </th>
+                    <th scope="col">Amount </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for value in user_transfers %}
+
+                        <tr>
+
+
+
+                            <td scope="col">{{value.invoice_number}}</td>
+                            <td scope="col">{{value.amount}}</td>
+                            
+
+
+
+                        </tr>
+
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+</div>
+{% endblock %}
