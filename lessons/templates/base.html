@@ -12,30 +12,6 @@
 
   <body>
   <title>Music Management System</title>
-  <div class="container">
-    <table style="width:100%">
-      <tr>
-        <td>
-          <h1>Gerbil MSMS</h1>
-        </td>
-        <td align="right">
-          {% if user.is_authenticated %}
-          {% if url != "home" %}
-          <a href='{% url "home" %}'>Home</a> |
-          {% endif %}
-          {% if user.is_staff %}
-          <a href='{% url "admin_home" %}'>Admin Area</a> |
-          {% endif %}
-          <a href='{% url "view_profile" %}'>View Profile</a> |
-          <a href='{% url "log_out" %}'>Log Out</a>
-          {% else %}
-          <a href="{% url 'log_in' %}">Log In</a> |
-          <a href='{% url 'sign_up' %}'>Sign up!</a>
-          {% endif %}
-        </td>
-      </tr>
-    </table>
-    </div>
     {% block body %}
     {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
