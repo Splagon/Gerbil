@@ -50,7 +50,9 @@ urlpatterns = [
 
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
     path('admin/view_bookings/', views.admin_view_bookings, name = 'admin_view_bookings'),
+
     path('admin/update_request/<uuid:id>', views.admin_update_requests, name = 'admin_update_requests'),
+
     path('admin/delete_request/<uuid:id>', views.admin_delete_request, name = 'admin_delete_requests'),
     path('admin/book_request/<uuid:id>/<int:requesterId>', views.admin_book_request_form, name = 'admin_book_request_form'),
 

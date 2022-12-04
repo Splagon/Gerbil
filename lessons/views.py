@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
 from .forms import RequestForm
 from django.http import HttpResponseForbidden
-
+import uuid
 from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
@@ -22,9 +22,9 @@ def home(request):
 def requests(request):
     user = request.user
     requests = Request.objects.all()
-    return render(request, 'requests.html', {'user': user, 'requests': requests}) 
+    return render(request, 'requests.html', {'user': user, 'requests': requests})
 
-        
+
 
 
 @login_required(login_url="log_in")
@@ -185,6 +185,10 @@ def admin_update_requests(request, id):
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
+        totalPrice = int(form.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
+        old_request = Request.objects.get(id=id)
+        old_price = old_request.totalPrice
+
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
         request.availability_date = availability_date
@@ -194,8 +198,13 @@ def admin_update_requests(request, id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-
+        request.totalPrice = totalPrice
         request.save()
+
+        invoice_exists = Invoice.objects.filter(invoice_number=str(id)).exists()
+        if (invoice_exists):
+            update_invoice(id, str(old_price))
+
         return redirect('admin_view_requests')
 
     return render(request, 'admin/admin_home.html')
@@ -218,7 +227,8 @@ def create_invoice(id):
         unique_reference_number=str(request.requesterId)+"-"+str(request.id),
         invoice_number=str(request.id),
         student_id=request.requesterId,
-        amount=float(request.totalPrice)
+        amount=float(request.totalPrice),
+        currently_paid = 0.0
     )
     invoice.save()
 
@@ -236,7 +246,10 @@ def update_invoice(id, old_price):
     invoice.amount = new_total
     invoice.save()
 
-    # print(str(request.requesterId)+"-"+str(request.id))
+    school_bank_account = SchoolBankAccount.objects.get(id=1)
+    school_bank_account.balance -= float(old_price)
+    school_bank_account.balance += float(new_total)
+    school_bank_account.save()
 
 
 def admin_book_request_form(request, id, requesterId):
@@ -311,67 +324,89 @@ def bank_transfer(request):
     if request.method == 'POST':
         form = BankTransferForm(request.POST)
         if form.is_valid():
-
-            exists = Invoice.objects.filter(
+            invoice_exists = Invoice.objects.filter(
                 invoice_number=form.cleaned_data.get('inv_number')).exists()
-            print(exists)
-            # 15945615-7f29-4079-b567-a5a7ac6647a4
-            if (exists == True):
-                print("c1")
-
-                amount = Request.objects.get(
-                    id=form.cleaned_data.get('inv_number'))
-
-                requested = Request.objects.filter(
-                    id=form.cleaned_data.get('inv_number')).exists()
-                print(requested)
-                if (requested == True):
+            print(invoice_exists)
+            if (invoice_exists):
+                print("invoice exists")
+                request_exists = Request.objects.filter(
+                id= uuid.UUID(form.cleaned_data.get('inv_number'))).exists()
+                if(request_exists):
+                    print("request_exists")
+                    amount = Request.objects.get(id=form.cleaned_data.get('inv_number'))
                     invoice = Invoice.objects.get(
-                        invoice_number=form.cleaned_data.get('inv_number'))
+                    invoice_number=form.cleaned_data.get('inv_number'))
+                    user = request.user
+                    amount_paid_by_user = float(form.cleaned_data.get("paid_amount"))
+                    invoice = Invoice.objects.get(
+                    invoice_number=form.cleaned_data.get('inv_number'))
+                    school_bank_account = SchoolBankAccount.objects.get(id=1)
                     paid = invoice.paid
-                    print(paid)
-                    print("aa")
 
                     if (paid == False):
+                        if(amount_paid_by_user == invoice.amount):
+                            user.balance += invoice.amount
+                            #the user is returned the amount they owed
+                            school_bank_account.balance += amount_paid_by_user
+                            invoice.paid = True
+                            invoie.currently_paid = invoice.amount
 
-                        user = request.user
-                        user.balance += float(amount.totalPrice)
-                        invoice = Invoice.objects.get(
-                            invoice_number=form.cleaned_data.get('inv_number'))
-                        invoice.paid = True
-                        invoice.save()
+                        if(amount_paid_by_user > invoice.amount):
+                            user.balance += invoice.amount
+                            print("amount is greater")
+                            amount_to_refund_to_user = amount_paid_by_user - invoice.amount
+                            #The user is given the extra money they paid
+                            user.balance+= amount_to_refund_to_user
+                            school_bank_account.balance += float(amount_paid_by_user-amount_to_refund_to_user)
+                            invoice.paid = True
+                            invoice.currently_paid = invoice.amount
+
+                        if(amount_paid_by_user < invoice.amount):
+                            user.balance += amount_paid_by_user
+                            print("amount is less")
+                            previous_amount_paid = invoice.currently_paid
+                            school_bank_account.balance += amount_paid_by_user
+                            invoice.currently_paid+= amount_paid_by_user
+                            if(invoice.currently_paid >= invoice.amount):
+                                invoice.paid = True
+                                amount_to_refund_to_user =invoice.currently_paid- invoice.amount
+                                user.balance+= amount_to_refund_to_user
+                                invoice.currently_paid = invoice.amount
+                                school_bank_account.balance -= (amount_paid_by_user- invoice.amount)
+                            else:
+                                invoice.paid = False
+                                user.balance += amount_paid_by_user
+                                school_bank_account.balance += amount_paid_by_user
+                                invoice.currently_paid+= amount_paid_by_user
+
+                        form.save(request.user)
                         user.save()
-                        form.save(request.user, amount.totalPrice)
-
-                        school_bank_account = SchoolBankAccount.objects.get(
-                            id=1)
-                        school_bank_account.balance += float(amount.totalPrice)
+                        invoice.save()
                         school_bank_account.save()
-                        print("succesful transfer")
                         return redirect('home')
 
                     else:
-                        print("invoice has been paid already")
+                        print("invoice has been paid")
+                        form = BankTransferForm()
                         return render(request, 'bank_transfer.html', {'form': form})
-
                 else:
+                    print("request didnt exist")
                     form = BankTransferForm()
-
                     return render(request, 'bank_transfer.html', {'form': form})
 
             else:
-
+                print("invoice didnt exist")
                 form = BankTransferForm()
-
                 return render(request, 'bank_transfer.html', {'form': form})
-
         else:
             print("form wasnt valid")
-            return redirect("home")
+            form = BankTransferForm()
+            return render(request, 'bank_transfer.html', {'form': form})
     else:
-
+        #print("wasnt POST")
         form = BankTransferForm()
         return render(request, 'bank_transfer.html', {'form': form})
+
 
 
 @login_required(login_url="log_in")
