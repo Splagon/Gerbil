@@ -22,9 +22,10 @@
                 </thead>
                 <tbody>
                     {% for value in requests %}
+                        
                         {% if value.status == "In Progress" %}
                             <tr class="text-center font-weight-bold">
-                                {% for key,date in value.lesson_dates.items %} 
+                                {% comment %} {% for key,date in value.lesson_dates.items %}  {% endcomment %}
                                     <tr>
                                         {% if key == 0 %}
                                             <td class="font-weight-bold">{{value.id}}</td>
@@ -47,13 +48,14 @@
                                         <td></td>
                                         <td></td> 
                                         {% endif %}
-                                        <td scope="col">{{date}}
+                                        
+                                        {{terms}}
                                         <td scope="col">{{value.availability_time}}</td>
                                         <td scope="col">{{value.duration_of_lessons}}</td>
                                         <td scope="col">{{value.teacher}}</td>
                                         <td scope="col">{{value.instrument}}</td>                                
                                     </tr>
-                                {% endfor%}
+                                {% comment %} {% endfor%} {% endcomment %}
                                     
                                                         
                             </tr>

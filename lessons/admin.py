@@ -12,7 +12,8 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
     list_display = [
-        'id','username', 'availability_date', 'number_of_lessons',
+        'id','username', 'availability_date',
+        #'number_of
     ]
 
 

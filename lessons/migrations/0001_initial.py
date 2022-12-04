@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('availability_date', models.DateField(default=django.utils.timezone.now)),
                 ('availability_time', models.TimeField(default='08:00')),
-                ('number_of_lessons', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)])),
+                # ('number_of_lessons', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)])),
                 ('interval_between_lessons', models.IntegerField(validators=[django.core.validators.MinValueValidator(0)])),
                 ('duration_of_lessons', models.CharField(choices=[('30', '30'), ('45', '45'), ('60', '60')], max_length=4)),
                 ('instrument', models.CharField(blank=True, choices=[('violin', 'violin'), ('double bass', 'double bass'), ('cello', 'cello')], max_length=180)),

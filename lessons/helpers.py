@@ -16,11 +16,17 @@ DURATION_TO_PRICES = {
     '60' : 40
 }
 
+DAYS_IN_WEEK = [
+    ('Monday' ,'Monday'),
+    ('Tuesday' , 'Tuesday'),
+    ('Wednesday' , 'Wednesday'),
+    ('Thursday' , 'Thursday'),
+    ('Friday' , 'Friday')   
+]
 
-
-STATUSES = [
-    ('in_progress', 'in_progress'),
-    ('fulfilled', 'fulfilled')
+INTERVAL_BETWEEN_LESSONS = [
+    ('1', 1),
+    ('2', 2)
 ]
 
 
@@ -31,8 +37,11 @@ def getInstruments():
 def getDurations():
     return DURATIONS
 
-def getStatuses():
-    return STATUSES
+def getDaysInWeek():
+    return DAYS_IN_WEEK
+
+def getIntervalsBetweenLessons():
+    return INTERVAL_BETWEEN_LESSONS
 
 def getDurationsToPrices(duration):
     return DURATION_TO_PRICES[duration]

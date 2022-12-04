@@ -20,7 +20,7 @@ class RequestFormTestCase(TestCase):
             'availability_time': '09:00',
             'duration_of_lessons': 30,
             'interval_between_lessons': 5,
-            'number_of_lessons': 2,
+            # 'number_of_lessons': 2,
             'instrument': 'violin',
             'teacher': 'Mr Doe'
         }
@@ -42,7 +42,7 @@ class RequestFormTestCase(TestCase):
         self.assertTrue(isinstance(duration_of_lessons_widget, forms.Select))
 
         self.assertIn('interval_between_lessons', form.fields)
-        self.assertIn('number_of_lessons', form.fields)
+        # self.assertIn('number_of_lessons', form.fields)
 
     def test_valid_request_form_(self):
         form = RequestForm(data=self.form_input)

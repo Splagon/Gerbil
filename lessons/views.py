@@ -22,7 +22,10 @@ def home(request):
 def requests(request):
     user = request.user
     requests = Request.objects.all()
-    return render(request, 'requests.html', {'user': user, 'requests': requests}) 
+    terms = Term.objects.filter(
+        endDate__gte=datetime.datetime.today()).values().first()['startDate']
+
+    return render(request, 'requests.html', {'user': user, 'requests': requests, 'terms' : terms}) 
 
         
 
@@ -54,13 +57,13 @@ def update_request(request, id):
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
         duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
-        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        # number_of_lessons = form.cleaned_data.get('number_of_lessons')
         interval_between_lessons = form.cleaned_data.get(
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
-        totalPrice = int(form.cleaned_data.get('number_of_lessons')) * \
-            getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
+        # totalPrice = int(form.cleaned_data.get('number_of_lessons')) * \
+        #     getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
 
         old_request = Request.objects.get(id=id)
         old_price = old_request.totalPrice
@@ -71,7 +74,7 @@ def update_request(request, id):
         request.availability_date = availability_date
         request.availability_time = availability_time
         request.duration_of_lessons = duration_of_lessons
-        request.number_of_lessons = number_of_lessons
+        # request.number_of_lessons = number_of_lessons
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
@@ -180,7 +183,7 @@ def admin_update_requests(request, id):
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
         duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
-        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        # number_of_lessons = form.cleaned_data.get('number_of_lessons')
         interval_between_lessons = form.cleaned_data.get(
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
@@ -190,7 +193,7 @@ def admin_update_requests(request, id):
         request.availability_date = availability_date
         request.availability_time = availability_time
         request.duration_of_lessons = duration_of_lessons
-        request.number_of_lessons = number_of_lessons
+        # request.number_of_lessons = number_of_lessons
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
@@ -246,7 +249,7 @@ def admin_book_request_form(request, id, requesterId):
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
         duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
-        number_of_lessons = form.cleaned_data.get('number_of_lessons')
+        # number_of_lessons = form.cleaned_data.get('number_of_lessons')
         interval_between_lessons = form.cleaned_data.get(
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
@@ -258,7 +261,7 @@ def admin_book_request_form(request, id, requesterId):
         request.availability_date = availability_date
         request.availability_time = availability_time
         request.duration_of_lessons = duration_of_lessons
-        request.number_of_lessons = number_of_lessons
+        # request.number_of_lessons = number_of_lessons
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument

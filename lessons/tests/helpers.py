@@ -17,7 +17,8 @@ def create_requests(user, from_count, to_count):
         number_of_lessons = 5
         instrument= 'violin'
         teacher = f'Request__{count}'
-        request = Request(username=username, availability_date=availability_date, availability_time=availability_time, duration_of_lessons=duration_of_lessons,number_of_lessons=number_of_lessons, interval_between_lessons=interval_between_lessons, teacher=teacher, instrument=instrument)
+        #number_of_lessons=number_of_lessons,
+        request = Request(username=username, availability_date=availability_date, availability_time=availability_time, duration_of_lessons=duration_of_lessons, interval_between_lessons=interval_between_lessons, teacher=teacher, instrument=instrument)
         request.save()
 
 def reverse_with_next(url_name, next_url):
