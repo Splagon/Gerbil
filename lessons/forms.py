@@ -2,7 +2,7 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, Term, BankTransfer
+from .models import User, Term, BankTransfer, Adult
 from django.core.validators import RegexValidator
 from .helpers import getDurationsToPrices
 from django.db.models import Q
@@ -119,8 +119,9 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         #User
         model = get_user_model()
-        fields = ["username", "first_name","last_name", "dateOfBirth"]
-        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
+        fields = ["username", "first_name","last_name", "dateOfBirth", "is_adult"]
+        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'}),
+                   "is_adult":widgets.CheckboxInput}
     password = forms.CharField(label="Password",
                             widget=forms.PasswordInput(),
                             validators=[RegexValidator(
@@ -138,13 +139,25 @@ class SignUpForm(forms.ModelForm):
 
     def save(self):
         super().save(commit=False)
-        user = User.objects.create_user(
+        is_adult = self.cleaned_data.get("is_adult")
+        if(is_adult):
+            user = Adult.objects.create_user(
                 self.cleaned_data.get("username"),
                 first_name = self.cleaned_data.get("first_name"),
                 last_name = self.cleaned_data.get("last_name"),
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
-        )
+                is_adult = self.cleaned_data.get("is_adult")
+            )
+        else:
+            user = User.objects.create_user(
+                    self.cleaned_data.get("username"),
+                    first_name = self.cleaned_data.get("first_name"),
+                    last_name = self.cleaned_data.get("last_name"),
+                    dateOfBirth = self.cleaned_data.get("dateOfBirth"),
+                    password = self.cleaned_data.get("password"),
+                    is_adult = self.cleaned_data.get("is_adult")
+            )
         return user
 
 class PasswordForm(forms.Form):

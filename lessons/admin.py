@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import User, Request, Term, Invoice,BankTransfer, SchoolBankAccount
+from .models import User, Request, Term, Invoice,BankTransfer, SchoolBankAccount, Adult
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users"""
     site_header = "MSMS Administration"
     list_display = [
-        'username','first_name', 'last_name', 'is_active',
+        'username','first_name', 'last_name', 'is_active', 'is_adult'
     ]
 
 @admin.register(Request)
@@ -38,3 +38,10 @@ class BankTransferAdmin(admin.ModelAdmin):
 @admin.register(SchoolBankAccount)
 class SchoolBankAccountAdmin(admin.ModelAdmin):
     list_display=["balance"]
+
+@admin.register(Adult)
+class AdultAdmin(admin.ModelAdmin):
+    list_display = [
+        'username','first_name', 'last_name', 'is_active', 'is_adult'
+    ]
+
