@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block body %}
+<div id="cover-images">
+  <div>
+    <h2>Add a child</h2>
+
+    </img>
+    <p>
+      {% if user.is_authenticated %}
+        <p>Adding a child as {{ user.first_name }} {{ user.last_name }} </p>
+        <p><a href='{% url "home" %}'>Go back</href></p>
+
+      
+        
+        
+
+        
+      {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'log_in' %}">Log In</a>
+        <p><a href='{% url 'sign_up' %}'>Sign up!</a></p>
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}

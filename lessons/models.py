@@ -89,6 +89,8 @@ class Term(models.Model):
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
 
 class Adult(User):
+    class Meta:
+        verbose_name = "Adult"
     # This class is a subclass of user, uses multi-table inheritance
     # An adult object will appear as a user and as an adult
     def __str__(self):

@@ -2,7 +2,7 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, Term, BankTransfer, Adult
+from .models import User, Term, BankTransfer, Adult, AdultChildRelationship
 from django.core.validators import RegexValidator
 from .helpers import getDurationsToPrices
 from django.db.models import Q
@@ -298,3 +298,16 @@ class TermForm(forms.ModelForm):
             endDate = self.cleaned_data['endDate']
         )
         return term
+    
+class AdultChildRelationForm(forms.ModelForm):
+    class Meta:
+        model = AdultChildRelationship
+        fields=["adult", "child"]
+    
+    def save(self):
+        super().save(commit=False)
+        rel = AdultChildRelationship.objects.create(
+            adult = self.cleaned_data.get("adult"),
+            child = self.cleaned_data.get("child")
+        )
+        return rel

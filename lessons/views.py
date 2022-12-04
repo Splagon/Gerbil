@@ -15,6 +15,10 @@ import operator
 def home(request):
     return render(request, 'home.html')
 
+def add_child(request):
+    return render(request, 'add_child.html')
+
+
 
 @login_required(login_url="log_in")
 def requests(request):

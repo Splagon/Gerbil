@@ -21,6 +21,9 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('requests/', views.requests, name='requests'),
     path('request-lesson/', views.request_form, name='request_form'),
+    
+    path('add_child/', views.add_child, name='add_child'),
+    
     path('delete_request/<uuid:id>', views.delete_request, name='delete-request'),
     path('update_request/<uuid:id>', views.update_request, name='update-request'),
     path("admin/view_user_invoice/<int:id>", views.admin_view_user_invoice, name ="admin_view_user_invoice"),
