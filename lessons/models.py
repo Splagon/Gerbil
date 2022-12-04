@@ -47,13 +47,11 @@ class User(AbstractUser):
 class Invoice(models.Model):
     """Invoice"""
     unique_reference_number = models.CharField(blank=False,max_length= 100)
-    invoice_number=models.CharField(blank=False, max_length=50)
+    invoice_number=models.CharField(blank=False, max_length=36)
     student_id =models.IntegerField(default=0)
     paid = models.BooleanField(default=False)
     amount = models.FloatField(default=0.0)
-
-
-
+    currently_paid = models.FloatField(default=0.0)
 
 
 class BankTransfer(models.Model):
@@ -86,7 +84,7 @@ class Request(models.Model):
 
     def __str__(self):
         return self.username
-        
+
     @property
     def lesson_dates(self):
         lesson_dates={}

@@ -27,5 +27,3 @@ class AddTermViewTestCase(TestCase):
         form = response.context["form"]
         self.assertTrue(isinstance(form,BankTransferForm))
         self.assertFalse(form.is_bound)
-
-    
