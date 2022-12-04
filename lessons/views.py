@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
 from .forms import RequestForm
-from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
+from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm, AdultChildRelationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from .forms import SignUpForm, LogInForm, AdminSignUpForm, TermForm
@@ -16,7 +16,15 @@ def home(request):
     return render(request, 'home.html')
 
 def add_child(request):
-    return render(request, 'add_child.html')
+    if request.method == 'POST':
+        form = AdultChildRelationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('add_child')
+    else:
+        form = AdultChildRelationForm()
+
+    return render(request, 'add_child.html', {'form': form, })
 
 
 

@@ -23,6 +23,15 @@ class SignUpFormTestCase(TestCase):
             password = "Password123", 
             is_adult = False
         )
+        self.child2 = User.objects.create_user(
+            first_name = "Bella",
+            last_name = "Belle",
+            username= "bella.belle@kcl.ac.uk",
+            dateOfBirth="2008-01-01",
+            password = "Password123", 
+            is_adult = False
+        )
+        
         self.form_input = {
             "adult" : self.adult,
             "child" : "jimmy.john@kcl.ac.uk"
@@ -50,9 +59,10 @@ class SignUpFormTestCase(TestCase):
         after = AdultChildRelationship.objects.count()
         self.assertEqual(before+1, after)
     
+    
     def test_multiple_children(self):
         form = AdultChildRelationForm(data=self.form_input)
-        self.form_input["child"] = "none@none.org" # does not exist
+        self.form_input["child"] = "bella.belle@kcl.ac.uk" # does not exist
         form2 = AdultChildRelationForm(data=self.form_input)
         self.assertTrue(form.is_valid())
         before = AdultChildRelationship.objects.count()
@@ -78,9 +88,6 @@ class SignUpFormTestCase(TestCase):
     
     def test_get_invalid_child_from_relation(self):
         self.form_input["child"] = "none@none.org"
-        form = AdultChildRelationForm(data=self.form_input)
-        self.assertTrue(form.is_valid())
-        form.save()
-        rel = AdultChildRelationship.objects.get(adult=self.adult,child="none@none.org")
-        
-        self.assertFalse(User.objects.filter(username=rel.child).exists())
+        with self.assertRaises(ValueError):
+            form = AdultChildRelationForm(data=self.form_input)
+            form.save()

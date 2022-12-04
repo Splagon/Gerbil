@@ -304,6 +304,14 @@ class AdultChildRelationForm(forms.ModelForm):
         model = AdultChildRelationship
         fields=["adult", "child"]
     
+    def clean(self):
+        super().clean()
+        the_child = self.cleaned_data.get("child")
+        if User.objects.filter(username=the_child).exists():
+            pass
+        else:
+            self.add_error("child","Child email does not correspond with any existing user in our database.")
+    
     def save(self):
         super().save(commit=False)
         rel = AdultChildRelationship.objects.create(
