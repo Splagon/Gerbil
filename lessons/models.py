@@ -89,10 +89,10 @@ class Request(models.Model):
         
     @property
     def lesson_dates(self):
-        lesson_dates=[]
+        lesson_dates={}
         for i in range(int(self.number_of_lessons)):
-            lesson_date = self.availability_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons)))
-            lesson_dates.append(lesson_date)
+            lesson_date= self.availability_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons)))
+            lesson_dates[i] = lesson_date
         return lesson_dates
 
 
