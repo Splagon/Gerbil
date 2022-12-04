@@ -429,7 +429,8 @@ def view_bookings(request):
 def admin_view_bookings(request):
     user = request.user
     requests = Request.objects.all()
-    return render(request, 'admin/admin_bookings.html', {'user': user, 'requests': requests, })
+    users = User.objects.all()
+    return render(request, 'admin/admin_bookings.html', {'user': user,'users': users, 'requests': requests, })
 
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
