@@ -3,13 +3,8 @@ from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
 from .models import User, Term, BankTransfer
-<<<<<<< HEAD
-from django.core.validators import RegexValidator,MinValueValidator,MaxValueValidator
-from .helpers import getDurationsToPrices
-=======
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 # from .helpers import getDurationsToPrices
->>>>>>> add_term_dates_to_requests_model
 from django.db.models import Q
 import datetime
 

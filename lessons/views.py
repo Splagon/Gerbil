@@ -191,7 +191,7 @@ def admin_update_requests(request, id):
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
-        totalPrice = int(form.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
+        # totalPrice = int(form.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
         old_request = Request.objects.get(id=id)
         old_price = old_request.totalPrice
 
@@ -204,7 +204,7 @@ def admin_update_requests(request, id):
         request.interval_between_lessons = interval_between_lessons
         request.teacher = teacher
         request.instrument = instrument
-        request.totalPrice = totalPrice
+        # request.totalPrice = totalPrice
         request.save()
 
         invoice_exists = Invoice.objects.filter(invoice_number=str(id)).exists()
@@ -355,7 +355,7 @@ def bank_transfer(request):
                             #the user is returned the amount they owed
                             school_bank_account.balance += amount_paid_by_user
                             invoice.paid = True
-                            invoie.currently_paid = invoice.amount
+                            invoice.currently_paid = invoice.amount
 
                         if(amount_paid_by_user > invoice.amount):
                             user.balance += invoice.amount
