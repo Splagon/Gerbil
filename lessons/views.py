@@ -34,9 +34,17 @@ def view_child(request):
     child_array = []
     
     relations = AdultChildRelationship.objects.filter(adult=i_am).all().values()
+    print(relations)
     for r in relations:
         child_array.append(User.objects.get(username=r["child"]))
     return render(request, "view_child.html", {"children":child_array})
+
+def delete_child(request, name):
+    user = request.user
+    i_am = Adult.objects.get(username=user.username)
+    relation = AdultChildRelationship.objects.get(adult=i_am, child=name)
+    relation.delete()
+    return redirect('view_child')
 
 
 
@@ -78,7 +86,7 @@ def request_form(request):
 def delete_request(request, id):
     request = Request.objects.get(id=id)
     request.delete()
-    return redirect('requests')
+    return render(request, )
 
 
 def update_request(request, id):
