@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.validators import EmailValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.timezone import now
 import datetime
 import uuid
-from .helpers import getDurations, getInstruments, getStatuses
+from .helpers import getDurations, getInstruments, getIntervalBetweenLessons
 
 class User(AbstractUser):
     username = models.EmailField(
@@ -46,14 +47,12 @@ class User(AbstractUser):
 
 class Invoice(models.Model):
     """Invoice"""
-    unique_reference_number = models.CharField(blank=False,max_length= 35)
-    invoice_number=models.CharField(blank=False, max_length=50)
+    unique_reference_number = models.CharField(blank=False,max_length= 100)
+    invoice_number=models.CharField(blank=False, max_length=36)
     student_id =models.IntegerField(default=0)
     paid = models.BooleanField(default=False)
     amount = models.FloatField(default=0.0)
-
-
-
+    currently_paid = models.FloatField(default=0.0)
 
 
 class BankTransfer(models.Model):
@@ -75,14 +74,40 @@ class Request(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     availability_date = models.DateField( blank=False, default=now )
     availability_time = models.TimeField(blank=False, default="08:00")
-    number_of_lessons = models.CharField(blank=False, max_length=3)
-    interval_between_lessons = models.CharField(blank=False, max_length=3)
+    # number_of_lessons = models.IntegerField(blank=False, validators=[MinValueValidator(0), MaxValueValidator(20)])
+    interval_between_lessons = models.CharField(blank=False, choices=getIntervalBetweenLessons(), max_length=2 )
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
     instrument = models.CharField(blank=True, max_length=180, choices=getInstruments())
     teacher = models.CharField(blank=True,max_length=50)
     status = models.CharField(max_length=50,default="In Progress", )
     totalPrice = models.CharField( max_length=50,default=0,  )
     requesterId = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.username
+
+    @property
+    def lesson_dates(self):
+
+        terms = Term.objects.filter(
+        endDate__gte=datetime.datetime.today()).values()
+
+        if(len(terms) > 0):
+            end_of_term_date = terms.first()['endDate']
+        else:
+            end_of_term_date = datetime.date.today()
+        # Finds the difference in weeks between two dates by finding the consecutive mondays
+        startOfTerm = (self.availability_date - datetime.timedelta(days=self.availability_date.weekday()))
+        endOfTerm = (end_of_term_date - datetime.timedelta(days=end_of_term_date.weekday()))
+        numWeeks = (endOfTerm - startOfTerm).days / 7
+
+        lesson_dates = {}
+        for i in range(int(numWeeks)):
+            lesson_date= self.availability_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons)))
+            lesson_dates[i] = lesson_date
+        return lesson_dates
+
+
 
 class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
