@@ -17,6 +17,15 @@
           
           <input type="submit" value="Add child">
         </form>
+
+        {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+
+
       {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'log_in' %}">Log In</a>

@@ -315,7 +315,10 @@ class AdultChildRelationForm(forms.ModelForm):
                 self.add_error("child","Cannot add yourself as a child.")
             else:
                 if User.objects.filter(username=the_child).exists():
-                    pass
+                    if AdultChildRelationship.objects.filter(adult=the_adult, child=the_child).exists():
+                        self.add_error("adult", "This relationship already exists")
+                    else:
+                        pass
                 else:
                     self.add_error("child","Child email does not correspond with any existing user in our database.")
         

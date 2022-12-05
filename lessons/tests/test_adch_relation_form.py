@@ -62,14 +62,31 @@ class SignUpFormTestCase(TestCase):
     
     def test_multiple_children(self):
         form = AdultChildRelationForm(data=self.form_input)
-        self.form_input["child"] = "bella.belle@kcl.ac.uk" # does not exist
-        form2 = AdultChildRelationForm(data=self.form_input)
+        
+        new_form_input = {
+            "adult" : self.adult,
+            "child" : "bella.belle@kcl.ac.uk"
+        }
+        
+        form2 = AdultChildRelationForm(data=new_form_input)
         self.assertTrue(form.is_valid())
         before = AdultChildRelationship.objects.count()
         form.save()
         form2.save()
+        
         after = AdultChildRelationship.objects.count()
         self.assertEqual(before+2, after)
+    
+    def test_cannot_add_same_child(self):
+        form = AdultChildRelationForm(data=self.form_input)
+        form2 = AdultChildRelationForm(data=self.form_input)
+        self.assertTrue(form.is_valid())
+        before = AdultChildRelationship.objects.count()
+        with self.assertRaises(ValueError):
+            form.save()
+            form2.save()
+        after = AdultChildRelationship.objects.count()
+        self.assertEqual(before+1, after)
     
     def test_get_valid_child_from_relation(self):
         form = AdultChildRelationForm(data=self.form_input)

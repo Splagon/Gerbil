@@ -13,6 +13,7 @@ import operator
 
 
 def home(request):
+    
     return render(request, 'home.html')
 
 def add_child(request):
@@ -20,6 +21,7 @@ def add_child(request):
         form = AdultChildRelationForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.info(request, "Successfully added child!")            
             return redirect('add_child')
     else:
         form = AdultChildRelationForm()
