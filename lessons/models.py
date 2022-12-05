@@ -37,7 +37,8 @@ class User(AbstractUser):
 
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
-
+    is_adult = models.BooleanField(verbose_name = "Adult Status", default=False)
+    
     balance = models.FloatField(default=0.0)
 
     def __str__(self):
@@ -111,3 +112,18 @@ class Request(models.Model):
 class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
+
+class Adult(User):
+    class Meta:
+        verbose_name = "Adult"
+    # This class is a subclass of user, uses multi-table inheritance
+    # An adult object will appear as a user and as an adult
+    def __str__(self):
+        return self.username
+
+class AdultChildRelationship(models.Model):
+    # if adult deleted, all associated child relationships gone
+    adult = models.ForeignKey(Adult, on_delete=models.CASCADE, blank=False)
+    # if child delete, all associated adults gone
+    child = models.CharField(max_length=50,blank=False)
+    

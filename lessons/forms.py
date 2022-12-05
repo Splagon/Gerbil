@@ -2,9 +2,11 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, Term, BankTransfer
+
+from .models import User, Term, BankTransfer, Adult, AdultChildRelationship
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 # from .helpers import getDurationsToPrices
+
 from django.db.models import Q
 import datetime
 
@@ -129,8 +131,9 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         #User
         model = get_user_model()
-        fields = ["username", "first_name","last_name", "dateOfBirth"]
-        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
+        fields = ["username", "first_name","last_name", "dateOfBirth", "is_adult"]
+        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'}),
+                   "is_adult":widgets.CheckboxInput}
     password = forms.CharField(label="Password",
                             widget=forms.PasswordInput(),
                             validators=[RegexValidator(
@@ -148,13 +151,25 @@ class SignUpForm(forms.ModelForm):
 
     def save(self):
         super().save(commit=False)
-        user = User.objects.create_user(
+        is_adult = self.cleaned_data.get("is_adult")
+        if(is_adult):
+            user = Adult.objects.create_user(
                 self.cleaned_data.get("username"),
                 first_name = self.cleaned_data.get("first_name"),
                 last_name = self.cleaned_data.get("last_name"),
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
-        )
+                is_adult = self.cleaned_data.get("is_adult")
+            )
+        else:
+            user = User.objects.create_user(
+                    self.cleaned_data.get("username"),
+                    first_name = self.cleaned_data.get("first_name"),
+                    last_name = self.cleaned_data.get("last_name"),
+                    dateOfBirth = self.cleaned_data.get("dateOfBirth"),
+                    password = self.cleaned_data.get("password"),
+                    is_adult = self.cleaned_data.get("is_adult")
+            )
         return user
 
 class PasswordForm(forms.Form):
@@ -295,3 +310,35 @@ class TermForm(forms.ModelForm):
             endDate = self.cleaned_data['endDate']
         )
         return term
+    
+class AdultChildRelationForm(forms.ModelForm):
+    class Meta:
+        model = AdultChildRelationship
+        fields=["adult", "child"]
+    
+    def clean(self):
+        super().clean()
+        the_adult = self.cleaned_data.get("adult")
+        the_child = self.cleaned_data.get("child")
+        if the_adult == None:
+            self.add_error("adult","No adult assigned (this should not be possible)")
+        else:
+            if the_adult.username == the_child:
+                self.add_error("child","Cannot add yourself as a child.")
+            else:
+                if User.objects.filter(username=the_child).exists():
+                    if AdultChildRelationship.objects.filter(adult=the_adult, child=the_child).exists():
+                        self.add_error("child", "This relationship already exists")
+                    else:
+                        pass
+                else:
+                    self.add_error("child","Child email has invalid format or does not correspond with any existing user in our database.")
+        
+    
+    def save(self):
+        super().save(commit=False)
+        rel = AdultChildRelationship.objects.create(
+            adult = self.cleaned_data.get("adult"),
+            child = self.cleaned_data.get("child")
+        )
+        return rel
