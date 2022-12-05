@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import User
+from lessons.models import User, Request, Term
 from django.db.utils import IntegrityError
 
 class Command(BaseCommand):
@@ -12,27 +12,15 @@ class Command(BaseCommand):
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
-        user_count = 0
+        self.create_terms()
+        self.create_all_users()
+        self.allUsers = User.objects.all()
 
-        # creates the predefined users
-        try:
-            self.create_johndoe_student()
-            self.create_petrapickles_admin()
-            self.create_martymajor_director()
-        except (IntegrityError):
-            pass
-
-        # creates all the random users
-        while user_count < Command.USER_COUNT:
-            print(f'Seeding user {user_count}',  end='\r')
-            try:
-                self.create_user()
-            except (IntegrityError):
-                continue
-            user_count += 1
-        print('User seeding complete')
+    def create_terms():
 
     def create_all_users(self):
+        user_count = 0
+
         # creates the predefined users
         try:
             self.create_johndoe_student()
@@ -73,9 +61,15 @@ class Command(BaseCommand):
             username="john.doe@example.org",
             first_name="John",
             last_name="Doe",
-            dateOfBirth=self.faker.date_between('-30y', 'today'),
+            dateOfBirth=self.faker.date_between('-50y', 'today'),
             password=Command.PASSWORD
         )
+
+        request = Request()
+        request.username = User.objects.filter(username="john.doe@example.org")
+        request.availability_time = 
+
+
 
     def create_petrapickles_admin(self):
         User.objects.create_user(

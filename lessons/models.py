@@ -8,6 +8,8 @@ import datetime
 import uuid
 from .helpers import getDurations, getInstruments, getStatuses
 
+allUsers = []
+
 class User(AbstractUser):
     username = models.EmailField(
         unique = True,
@@ -40,6 +42,12 @@ class User(AbstractUser):
 
     balance = models.FloatField(default=0.0)
 
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        allUsers.append(self)
+        # print(allUsers)
+    
     def __str__(self):
         return self.username
 
@@ -94,9 +102,6 @@ class Request(models.Model):
             lesson_date = self.availability_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons)))
             lesson_dates.append(lesson_date)
         return lesson_dates
-
-
-
 
 class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
