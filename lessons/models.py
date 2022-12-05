@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.timezone import now
 import datetime
 import uuid
-from .helpers import getDurations, getInstruments, getStatuses
+from .helpers import getDurations, getInstruments, getIntervalBetweenLessons
 
 class User(AbstractUser):
     username = models.EmailField(
@@ -75,8 +75,8 @@ class Request(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     availability_date = models.DateField( blank=False, default=now )
     availability_time = models.TimeField(blank=False, default="08:00")
-    number_of_lessons = models.IntegerField(blank=False, validators=[MinValueValidator(0), MaxValueValidator(20)])
-    interval_between_lessons = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
+    # number_of_lessons = models.IntegerField(blank=False, validators=[MinValueValidator(0), MaxValueValidator(20)])
+    interval_between_lessons = models.CharField(blank=False, choices=getIntervalBetweenLessons(), max_length=2 )
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
     instrument = models.CharField(blank=True, max_length=180, choices=getInstruments())
     teacher = models.CharField(blank=True,max_length=50)
@@ -89,15 +89,21 @@ class Request(models.Model):
         
     @property
     def lesson_dates(self):
-        lesson_dates={}
-        for i in range(int(self.number_of_lessons)):
+        end_of_term_date = Term.objects.filter(
+        endDate__gte=datetime.datetime.today()).values().first()['endDate']
+        # Finds the difference in weeks between two dates by finding the consecutive mondays
+        startOfTerm = (self.availability_date - datetime.timedelta(days=self.availability_date.weekday()))
+        endOfTerm = (end_of_term_date - datetime.timedelta(days=end_of_term_date.weekday()))
+        numWeeks = (startOfTerm - endOfTerm).days / 7
+
+        lesson_dates = {}
+        for i in range(int(numWeeks)):
             lesson_date= self.availability_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons)))
             lesson_dates[i] = lesson_date
         return lesson_dates
 
 
 
-
 class Term(models.Model):
-    startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
-    endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
+    startDate = models.DateField(blank = False, unique = True, default=datetime.date(year=2022, month=9, day=1))
+    endDate = models.DateField(blank = False, unique = True, default=datetime.date(year=2022, month=10, day=23))

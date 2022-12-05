@@ -22,7 +22,7 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
             availability_time = "08:30",
             instrument = "violin",
             interval_between_lessons = 5,
-            number_of_lessons = 5,
+            # number_of_lessons = 5,
             duration_of_lessons = 30
         )
 
@@ -39,7 +39,7 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
                 'availability_date' : "2023-02-26",
                 'availability_time' : "08:30",
                 'instrument' : "double bass",
-                'number_of_lessons' : 3,
+                # 'number_of_lessons' : 3,
                 'interval_between_lessons' : 5,
                 'duration_of_lessons' : 30
             }
@@ -48,7 +48,7 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
         self.assertEqual(response.status_code, 302)
         self.request.refresh_from_db()
 
-        self.assertEqual(self.request.number_of_lessons, 3 )
+        # self.assertEqual(self.request.number_of_lessons, 3 )
 
         self.client.get(self.booking_url, follow=True)
         requests_after = len(Request.objects.values())
