@@ -104,5 +104,6 @@ class Request(models.Model):
         return lesson_dates
 
 class Term(models.Model):
+    termName = models.CharField(default="blank", max_length=50)
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
