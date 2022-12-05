@@ -1,12 +1,14 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import User, Request, Term
+from lessons.models import User, Request
+from lessons.models import Term
 from django.db.utils import IntegrityError
 import datetime
 
 class Command(BaseCommand):
     PASSWORD = "Password123"
     USER_COUNT = 100
+    # Makes a dictionary for the term dates
     TERM_START_DATES = {
         1 : datetime.datetime(2022, 9, 1),
         2 : datetime.datetime(2022, 10, 31),
@@ -34,14 +36,22 @@ class Command(BaseCommand):
         self.create_all_users()
         self.allUsers = User.objects.all()
 
-    def create_terms():
-        
-        pass
+    def create_terms(self):
+        """Uses the dictionaries to add data for the term dates"""
+        startDates = Command.TERM_START_DATES
+        endDates = Command.TERM_END_DATES
+        for i in range(len(startDates)):
+            term = Term()
+            term.termName = f'Term {i}'
+            term.startDate = startDates[i+1]
+            term.endDate = endDates[i+1]
+            term.save()
+            print(f'Seeding term {i+1}',  end='\r')
+        print('Term seeding complete')
 
 
     def create_all_users(self):
         user_count = 0
-
         # creates the predefined users
         try:
             self.create_johndoe_student()
@@ -86,9 +96,9 @@ class Command(BaseCommand):
             password=Command.PASSWORD
         )
 
-        request = Request()
-        request.username = User.objects.filter(username="john.doe@example.org")
-        request.availability_time = 
+        # request = Request()
+        # request.username = User.objects.filter(username="john.doe@example.org")
+        # request.availability_time = 
 
 
 
