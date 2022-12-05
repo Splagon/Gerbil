@@ -1,0 +1,16 @@
+[
+    {
+      "model" : "lessons.user",
+      "pk" : 1,
+      "fields" : {
+        "username" : "jimmy.john@kcl.ac.uk",
+        "first_name" : "Jimmy",
+        "last_name" : "John",
+        "dateOfBirth": "2007-01-01",
+        "password" : "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+        "is_adult" : false,
+        "is_staff" : false,
+        "is_superuser" : false
+      }
+    }
+  ]

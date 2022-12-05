@@ -2,9 +2,11 @@ from django import forms
 from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
-from .models import User, Term, BankTransfer
-from django.core.validators import RegexValidator
-from .helpers import getDurationsToPrices
+
+from .models import User, Term, BankTransfer, Adult, AdultChildRelationship
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+# from .helpers import getDurationsToPrices
+
 from django.db.models import Q
 import datetime
 
@@ -25,6 +27,12 @@ class BankTransferForm(forms.ModelForm):
             message='Invoice  format is not valid'
             )]
             )
+    paid_amount = forms.FloatField(min_value=0.01, max_value=9999.99,
+    label="Enter amount to pay",
+    widget= forms.NumberInput(attrs={
+                'max': '9999.9',
+                'min': '0.01',
+            }),validators=[MinValueValidator(0.01), MaxValueValidator(9999.99)])
 
 
 
@@ -33,13 +41,13 @@ class BankTransferForm(forms.ModelForm):
     def clean(self):
         super().clean()
 
-    def save(self,user,amount):
+    def save(self,user):
         super().save(commit=False)
 
         bank_transfer = BankTransfer.objects.create(
         invoice_number= self.cleaned_data.get("inv_number"),
         username=user,
-        amount=amount,
+        amount=self.cleaned_data.get("paid_amount"),
         student_id= user.id
         )
 
@@ -49,8 +57,10 @@ class BankTransferForm(forms.ModelForm):
 
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
-
+   
     class Meta:
+        start_of_term_date = Term.objects.filter(
+        endDate__gte=datetime.datetime.today()).values().first()['startDate']
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
@@ -59,13 +69,15 @@ class RequestForm(forms.ModelForm):
             'teacher' : 'Please select a preferred teacher',
         }
         model = Request
-        fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
+        # 'number_of_lessons'
+        # Replace datetime.date.today with start of term date so that a day of the week can be established
+        fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today() }, ),
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
-            'interval_between_lessons' : widgets.NumberInput(),
-            'number_of_lessons' : widgets.NumberInput(),
+            'interval_between_lessons' : widgets.Select(),
+            # 'number_of_lessons' : widgets.NumberInput(),
             'duration_of_lessons' : widgets.Select(),
         }
 
@@ -97,12 +109,12 @@ class RequestForm(forms.ModelForm):
             username = user,
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
-            number_of_lessons=self.cleaned_data.get('number_of_lessons'),
+            # number_of_lessons=self.cleaned_data.get('number_of_lessons'),
             interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
-            totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
+            # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
 
@@ -119,8 +131,9 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         #User
         model = get_user_model()
-        fields = ["username", "first_name","last_name", "dateOfBirth"]
-        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
+        fields = ["username", "first_name","last_name", "dateOfBirth", "is_adult"]
+        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'}),
+                   "is_adult":widgets.CheckboxInput}
     password = forms.CharField(label="Password",
                             widget=forms.PasswordInput(),
                             validators=[RegexValidator(
@@ -138,13 +151,25 @@ class SignUpForm(forms.ModelForm):
 
     def save(self):
         super().save(commit=False)
-        user = User.objects.create_user(
+        is_adult = self.cleaned_data.get("is_adult")
+        if(is_adult):
+            user = Adult.objects.create_user(
                 self.cleaned_data.get("username"),
                 first_name = self.cleaned_data.get("first_name"),
                 last_name = self.cleaned_data.get("last_name"),
                 dateOfBirth = self.cleaned_data.get("dateOfBirth"),
                 password = self.cleaned_data.get("password"),
-        )
+                is_adult = self.cleaned_data.get("is_adult")
+            )
+        else:
+            user = User.objects.create_user(
+                    self.cleaned_data.get("username"),
+                    first_name = self.cleaned_data.get("first_name"),
+                    last_name = self.cleaned_data.get("last_name"),
+                    dateOfBirth = self.cleaned_data.get("dateOfBirth"),
+                    password = self.cleaned_data.get("password"),
+                    is_adult = self.cleaned_data.get("is_adult")
+            )
         return user
 
 class PasswordForm(forms.Form):
@@ -285,3 +310,35 @@ class TermForm(forms.ModelForm):
             endDate = self.cleaned_data['endDate']
         )
         return term
+    
+class AdultChildRelationForm(forms.ModelForm):
+    class Meta:
+        model = AdultChildRelationship
+        fields=["adult", "child"]
+    
+    def clean(self):
+        super().clean()
+        the_adult = self.cleaned_data.get("adult")
+        the_child = self.cleaned_data.get("child")
+        if the_adult == None:
+            self.add_error("adult","No adult assigned (this should not be possible)")
+        else:
+            if the_adult.username == the_child:
+                self.add_error("child","Cannot add yourself as a child.")
+            else:
+                if User.objects.filter(username=the_child).exists():
+                    if AdultChildRelationship.objects.filter(adult=the_adult, child=the_child).exists():
+                        self.add_error("child", "This relationship already exists")
+                    else:
+                        pass
+                else:
+                    self.add_error("child","Child email has invalid format or does not correspond with any existing user in our database.")
+        
+    
+    def save(self):
+        super().save(commit=False)
+        rel = AdultChildRelationship.objects.create(
+            adult = self.cleaned_data.get("adult"),
+            child = self.cleaned_data.get("child")
+        )
+        return rel
