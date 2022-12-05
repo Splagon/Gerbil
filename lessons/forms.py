@@ -306,11 +306,19 @@ class AdultChildRelationForm(forms.ModelForm):
     
     def clean(self):
         super().clean()
+        the_adult = self.cleaned_data.get("adult")
         the_child = self.cleaned_data.get("child")
-        if User.objects.filter(username=the_child).exists():
-            pass
+        if the_adult == None:
+            self.add_error("adult","No adult assigned (this should not be possible)")
         else:
-            self.add_error("child","Child email does not correspond with any existing user in our database.")
+            if the_adult.username == the_child:
+                self.add_error("child","Cannot add yourself as a child.")
+            else:
+                if User.objects.filter(username=the_child).exists():
+                    pass
+                else:
+                    self.add_error("child","Child email does not correspond with any existing user in our database.")
+        
     
     def save(self):
         super().save(commit=False)

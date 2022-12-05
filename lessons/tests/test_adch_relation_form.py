@@ -91,3 +91,9 @@ class SignUpFormTestCase(TestCase):
         with self.assertRaises(ValueError):
             form = AdultChildRelationForm(data=self.form_input)
             form.save()
+    
+    def test_set_self_as_child(self):
+        self.form_input["child"] = "none@michael.kolling@kcl.ac.uk"
+        with self.assertRaises(ValueError):
+            form = AdultChildRelationForm(data=self.form_input)
+            form.save()
