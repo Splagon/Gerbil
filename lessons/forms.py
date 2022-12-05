@@ -316,11 +316,11 @@ class AdultChildRelationForm(forms.ModelForm):
             else:
                 if User.objects.filter(username=the_child).exists():
                     if AdultChildRelationship.objects.filter(adult=the_adult, child=the_child).exists():
-                        self.add_error("adult", "This relationship already exists")
+                        self.add_error("child", "This relationship already exists")
                     else:
                         pass
                 else:
-                    self.add_error("child","Child email does not correspond with any existing user in our database.")
+                    self.add_error("child","Child email has invalid format or does not correspond with any existing user in our database.")
         
     
     def save(self):

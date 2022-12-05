@@ -14,6 +14,8 @@
           {% csrf_token %}
       
           {{ form.as_p }}
+
+          <p>(You need to enter the child's username, which will be an email)</p>
           
           <input type="submit" value="Add child">
         </form>
