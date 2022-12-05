@@ -3,8 +3,13 @@ from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
 from .models import User, Term, BankTransfer
+<<<<<<< HEAD
 from django.core.validators import RegexValidator,MinValueValidator,MaxValueValidator
 from .helpers import getDurationsToPrices
+=======
+from django.core.validators import RegexValidator
+# from .helpers import getDurationsToPrices
+>>>>>>> add_term_dates_to_requests_model
 from django.db.models import Q
 import datetime
 
@@ -55,8 +60,10 @@ class BankTransferForm(forms.ModelForm):
 
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
-
+   
     class Meta:
+        start_of_term_date = Term.objects.filter(
+        endDate__gte=datetime.datetime.today()).values().first()['startDate']
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
@@ -65,13 +72,15 @@ class RequestForm(forms.ModelForm):
             'teacher' : 'Please select a preferred teacher',
         }
         model = Request
-        fields = ['availability_date','availability_time', 'number_of_lessons','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
+        # 'number_of_lessons'
+        # Replace datetime.date.today with start of term date so that a day of the week can be established
+        fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today() }, ),
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
-            'interval_between_lessons' : widgets.NumberInput(),
-            'number_of_lessons' : widgets.NumberInput(),
+            'interval_between_lessons' : widgets.Select(),
+            # 'number_of_lessons' : widgets.NumberInput(),
             'duration_of_lessons' : widgets.Select(),
         }
 
@@ -103,12 +112,12 @@ class RequestForm(forms.ModelForm):
             username = user,
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
-            number_of_lessons=self.cleaned_data.get('number_of_lessons'),
+            # number_of_lessons=self.cleaned_data.get('number_of_lessons'),
             interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
-            totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
+            # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
 
