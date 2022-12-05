@@ -2,10 +2,28 @@ from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
 from lessons.models import User, Request, Term
 from django.db.utils import IntegrityError
+import datetime
 
 class Command(BaseCommand):
     PASSWORD = "Password123"
     USER_COUNT = 100
+    TERM_START_DATES = {
+        1 : datetime.datetime(2022, 9, 1),
+        2 : datetime.datetime(2022, 10, 31),
+        3 : datetime.datetime(2023, 1, 3),
+        4 : datetime.datetime(2023, 2, 20),
+        5 : datetime.datetime(2023, 4, 17),
+        6 : datetime.datetime(2023, 6, 5),
+    }
+    TERM_END_DATES = {
+        1: datetime.datetime(2022, 10, 21),
+        2: datetime.datetime(2022, 12, 16),
+        3: datetime.datetime(2023, 2, 10),
+        4: datetime.datetime(2023, 3, 31),
+        5: datetime.datetime(2023, 5, 26),
+        6: datetime.datetime(2023, 7, 21),
+    }
+
 
     def __init__(self):
         super().__init__()
@@ -17,6 +35,9 @@ class Command(BaseCommand):
         self.allUsers = User.objects.all()
 
     def create_terms():
+        
+        pass
+
 
     def create_all_users(self):
         user_count = 0
