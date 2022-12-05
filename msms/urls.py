@@ -22,6 +22,8 @@ urlpatterns = [
     path('requests/', views.requests, name='requests'),
     path('request-lesson/', views.request_form, name='request_form'),
     
+    path('request_form_child/<str:name>', views.request_form_child, name='request_form_child'),
+    
     path('add_child/', views.add_child, name='add_child'),
     path("view_child",views.view_child, name="view_child"),
     path("delete_child/<str:name>", views.delete_child, name="delete_child"),

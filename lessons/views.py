@@ -46,6 +46,17 @@ def delete_child(request, name):
     relation.delete()
     return redirect('view_child')
 
+def request_form_child(request, name):
+    if request.method == 'POST':
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            the_child = User.objects.get(username = name)
+            form.save(the_child)
+            return redirect('view_child')
+    else:
+        form = RequestForm()
+    return render(request, "request_form_for_child.html", {"child_name":name, "form":form})
+
 
 
 @login_required(login_url="log_in")
@@ -86,7 +97,7 @@ def request_form(request):
 def delete_request(request, id):
     request = Request.objects.get(id=id)
     request.delete()
-    return render(request, )
+    return render(request, 'requests.html')
 
 
 def update_request(request, id):
