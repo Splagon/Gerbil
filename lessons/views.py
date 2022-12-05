@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
+from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount, AdultChildRelationship, Adult
 from .forms import RequestForm
 from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm, AdultChildRelationForm
 from django.contrib.auth import authenticate, login, logout
@@ -27,6 +27,16 @@ def add_child(request):
         form = AdultChildRelationForm()
 
     return render(request, 'add_child.html', {'form': form, })
+
+def view_child(request):
+    user = request.user
+    i_am = Adult.objects.get(username=user.username)
+    child_array = []
+    
+    relations = AdultChildRelationship.objects.filter(adult=i_am).all().values()
+    for r in relations:
+        child_array.append(User.objects.get(username=r["child"]))
+    return render(request, "view_child.html", {"children":child_array})
 
 
 

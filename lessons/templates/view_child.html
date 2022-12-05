@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block body %}
+<div id="cover-images">
+  <div>
+    <h2>Add a child</h2>
+
+    </img>
+    <p>
+      {% if user.is_authenticated %}
+        <p>Viewing {{ user.first_name }} {{ user.last_name }}'s children </p>
+        <p><a href='{% url "home" %}'>Go back to home page</a></p>
+        <p><a href='{% url "add_child" %}'>Go back to adding children</a></p>
+
+
+        <table class="table table-responsive mb-12">
+          <thead class="" style="white-space:nowrap">
+              <tr>
+                  <th scope="col">Child username</th>   
+                  <th scope="col">First name</th>
+                  <th scope="col">Last name</th>
+                  <th scope="col">Date of birth</th>
+              </tr>
+          </thead>
+          <tbody>
+
+            {% for c in children%}
+              <tr>
+                <td> {{c.username}}</td>   
+                <td> {{c.first_name}}</td>
+                <td> {{c.last_name}}</td>
+                <td> {{c.dateOfBirth}}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+
+
+      {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'log_in' %}">Log In</a>
+        <p><a href='{% url 'sign_up' %}'>Sign up!</a></p>
+      {% endif %}
+    </p>
+    
+  </div>
+</div>
+{% endblock %}

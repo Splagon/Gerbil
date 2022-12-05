@@ -27,6 +27,7 @@ class AddChildViewTestCase(TestCase):
             "child" : "jimmy.john@kcl.ac.uk"
         }
     
+        
     def test_sign_up_url(self):
         self.assertEqual(self.url,"/add_child/")
     
@@ -103,8 +104,8 @@ class AddChildViewTestCase(TestCase):
     
     """Below tests don't work but the view itself works as intended.
     These tests may need rewriting, as with the above tests;
-    it is possible the above tests are passing the tests
-    for the wrong reasons"""
+    it is possible the above tests are passing for the wrong 
+    reasons"""
     # def test_unsuccessful_add_same_child(self):
     #     before_count = AdultChildRelationship.objects.count()
     #     response = self.client.post(self.url, self.form_input)
