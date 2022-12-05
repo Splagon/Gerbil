@@ -21,7 +21,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
             availability_date = "2022-12-29",
             availability_time = "08:30",
             instrument = "violin",
-            interval_between_lessons = 5,
+            interval_between_lessons = 1,
             # number_of_lessons = 5,
             duration_of_lessons = 30
         )
@@ -71,7 +71,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
                 'availability_time' : "08:30",
                 'instrument' : "double bass",
                 # 'number_of_lessons' : 3,
-                'interval_between_lessons' : 5,
+                'interval_between_lessons' : 1,
                 'duration_of_lessons' : 30
             }
         )

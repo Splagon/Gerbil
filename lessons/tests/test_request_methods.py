@@ -55,7 +55,7 @@ class RequestMethodsTestCase(TestCase):
                 'availability_time' : "08:30",
                 'instrument' : "double bass",
                 # 'number_of_lessons' : 3,
-                'interval_between_lessons' : 5,
+                'interval_between_lessons' : 1,
                 'duration_of_lessons' : 30
             }
         )

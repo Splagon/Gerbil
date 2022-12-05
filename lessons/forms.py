@@ -51,8 +51,8 @@ class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
    
     class Meta:
-        # start_of_term_date = Term.objects.filter(
-        # endDate__gte=datetime.datetime.today()).values().first()['startDate']
+        start_of_term_date = Term.objects.filter(
+        endDate__gte=datetime.datetime.today()).values().first()['startDate']
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
@@ -65,7 +65,7 @@ class RequestForm(forms.ModelForm):
         # Replace datetime.date.today with start of term date so that a day of the week can be established
         fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today(), 'max' : datetime.date.today() + datetime.timedelta(days=7) }, ),
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
             'interval_between_lessons' : widgets.Select(),

@@ -22,6 +22,7 @@ def home(request):
 def requests(request):
     user = request.user
     requests = Request.objects.all()
+
     return render(request, 'requests.html', {'user': user, 'requests': requests}) 
 
         
@@ -29,15 +30,22 @@ def requests(request):
 
 @login_required(login_url="log_in")
 def request_form(request):
+    error_message = ""
     if request.method == 'POST':
         form = RequestForm(request.POST)
         if form.is_valid():
-            form.save(request.user)
-            return redirect('requests')
+            terms = Term.objects.filter(
+            endDate__gte=datetime.datetime.today()).values()
+            if len(terms) > 0 :
+                form.save(request.user)
+                return redirect('requests')
+            else: 
+                error_message = "Please contact your administrator. Issue concerns no term dates defined"
+
     else:
         form = RequestForm()
 
-    return render(request, 'request_form.html', {'form': form, })
+    return render(request, 'request_form.html', {'form': form, 'error_messages': error_message})
 
 
 def delete_request(request, id):

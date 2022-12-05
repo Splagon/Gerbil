@@ -89,12 +89,18 @@ class Request(models.Model):
         
     @property
     def lesson_dates(self):
-        end_of_term_date = Term.objects.filter(
-        endDate__gte=datetime.datetime.today()).values().first()['endDate']
+
+        terms = Term.objects.filter(
+        endDate__gte=datetime.datetime.today()).values()
+
+        if(len(terms) > 0):
+            end_of_term_date = terms.first()['endDate']
+        else:
+            end_of_term_date = datetime.date.today()
         # Finds the difference in weeks between two dates by finding the consecutive mondays
         startOfTerm = (self.availability_date - datetime.timedelta(days=self.availability_date.weekday()))
         endOfTerm = (end_of_term_date - datetime.timedelta(days=end_of_term_date.weekday()))
-        numWeeks = (startOfTerm - endOfTerm).days / 7
+        numWeeks = (endOfTerm - startOfTerm).days / 7
 
         lesson_dates = {}
         for i in range(int(numWeeks)):
@@ -105,5 +111,5 @@ class Request(models.Model):
 
 
 class Term(models.Model):
-    startDate = models.DateField(blank = False, unique = True, default=datetime.date(year=2022, month=9, day=1))
-    endDate = models.DateField(blank = False, unique = True, default=datetime.date(year=2022, month=10, day=23))
+    startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
+    endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
