@@ -21,6 +21,7 @@ def home(request):
 
 @login_required(login_url="log_in")
 def add_child(request):
+    user = request.user
     if request.method == 'POST':
         form = AdultChildRelationForm(request.POST)
         if form.is_valid():
@@ -29,6 +30,8 @@ def add_child(request):
             return redirect('add_child')
     else:
         form = AdultChildRelationForm()
+        current_adult = Adult.objects.filter(username=user.username)
+        form.fields["adult"].queryset = current_adult
 
     return render(request, 'add_child.html', {'form': form, })
 
