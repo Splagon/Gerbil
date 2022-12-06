@@ -24,7 +24,7 @@ class RequestFormTestCase(TestCase):
             'instrument': 'violin',
             'teacher': 'Mr Doe'
         }
-    
+
 
 
     def test_form_has_necessary_fields(self):
@@ -61,8 +61,3 @@ class RequestFormTestCase(TestCase):
         self.assertEqual(request.interval_between_lessons, '1')
         self.assertEqual(request.instrument, 'violin')
         self.assertEqual(request.teacher,'Mr Doe')
-
-
-
-
-   

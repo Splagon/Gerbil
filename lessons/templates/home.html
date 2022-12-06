@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
-{% block body %}
+{% extends 'base_content.html' %}
+{% block content %}
 <div id="cover-images">
   <div>
     <p>Simple test page</p>
@@ -19,9 +19,9 @@
         {% else %}
           <p></p>
         {% endif %}
-        
 
-        
+
+
       {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'log_in' %}">Log In</a>

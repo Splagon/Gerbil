@@ -1,3 +1,5 @@
+{% extends 'base_content.html' %}
+{% block content %}
 <div class="container ">
     <h2> List of Students </h2>
     <a  href='{% url "admin_home"%}'>Go Home</a>
@@ -44,3 +46,6 @@
 
             </tbody>
         </table>
+    </div>
+</div>
+{% endblock %}

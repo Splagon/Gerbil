@@ -2,7 +2,7 @@ from django.test import TestCase
 from django import forms
 from lessons.forms import SignUpForm
 from django.urls import reverse
-from ..models import User, Adult
+from lessons.models import User, Adult
 from django.contrib.auth.hashers import check_password
 
 class SignUpViewTestCase(TestCase):
@@ -51,7 +51,7 @@ class SignUpViewTestCase(TestCase):
         response_url = reverse("home")
         self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
         self.assertTemplateUsed(response, "home.html")
-    
+
     def test_successful_sign_up_not_adult(self):
         before_count = User.objects.count()
         before_count_adult = Adult.objects.count()
@@ -63,7 +63,7 @@ class SignUpViewTestCase(TestCase):
         response_url = reverse("home")
         self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
         self.assertTemplateUsed(response, "home.html")
-    
+
     def test_successful_sign_up_is_adult(self):
         self.form_input["is_adult"] = True
         before_count = User.objects.count()

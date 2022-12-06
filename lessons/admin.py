@@ -13,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
 class RequestAdmin(admin.ModelAdmin):
     #'number_of_lessons'
     list_display = [
-        'id','username', 'availability_date', 
+        'id','username', 'availability_date',
     ]
 
 
@@ -51,4 +51,3 @@ class AdultChildRelationAdmin(admin.ModelAdmin):
     list_display = [
         "adult", "child"
     ]
-

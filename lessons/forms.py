@@ -57,9 +57,31 @@ class BankTransferForm(forms.ModelForm):
 
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
-   
+
     class Meta:
-        start_of_term_date = datetime.date.today()
+        start_of_term_date = datetime.datetime.today()
+        query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
+        if (query):
+            start_of_term_date = query.first().get('startDate')
+        labels = {
+            'availability_date' : 'Please select a date for your first lesson',
+            'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
+            'instrument' : 'Please select the instrument you\'d like to start having lessons in',
+            'interval_between_lessons' : 'Interval between lessons(in weeks)',
+            'teacher' : 'Please select a preferred teacher',
+        }
+        model = Request
+        # 'number_of_lessons'
+        # Replace datetime.date.today with start of term date so that a day of the week can be established
+        fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
+        widgets = {
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
+            'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
+            'instrument' : widgets.Select(),
+            'interval_between_lessons' : widgets.Select(),
+            # 'number_of_lessons' : widgets.NumberInput(),
+            'duration_of_lessons' : widgets.Select(),
+        }
 
     def clean(self):
         """Clean the data and generate messages for any errors."""
@@ -153,7 +175,6 @@ class SignUpForm(forms.ModelForm):
         return user
 
 class PasswordForm(forms.Form):
-    print("test")
     password = forms.CharField(
         label='Current password', widget=forms.PasswordInput())
     new_password = forms.CharField(
@@ -290,12 +311,12 @@ class TermForm(forms.ModelForm):
             endDate = self.cleaned_data['endDate']
         )
         return term
-    
+
 class AdultChildRelationForm(forms.ModelForm):
     class Meta:
         model = AdultChildRelationship
         fields=["adult", "child"]
-    
+
     def clean(self):
         super().clean()
         the_adult = self.cleaned_data.get("adult")
@@ -303,7 +324,7 @@ class AdultChildRelationForm(forms.ModelForm):
         if the_adult == None:
             self.add_error("adult","No adult assigned (this should not be possible)")
         else:
-            if the_adult.username == the_child:
+            if the_adult == the_child:
                 self.add_error("child","Cannot add yourself as a child.")
             else:
                 if User.objects.filter(username=the_child).exists():
@@ -313,8 +334,8 @@ class AdultChildRelationForm(forms.ModelForm):
                         pass
                 else:
                     self.add_error("child","Child email has invalid format or does not correspond with any existing user in our database.")
-        
-    
+
+
     def save(self):
         super().save(commit=False)
         rel = AdultChildRelationship.objects.create(

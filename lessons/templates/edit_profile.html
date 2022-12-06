@@ -1,9 +1,5 @@
-<html>
-
-<head>
-    <title>MSMS</title>
-</head>
-
+{% extends 'base_content.html' %}
+{% block content %}
 <body>
     <h1>Edit Profile</h1>
     <form action='{% url "edit_profile" %}' method="post">
@@ -15,5 +11,4 @@
     </form>
     <p><a href='{% url 'view_profile' %}'>Return to Profile</a></p>
 </body>
-
-</html>
+{% endblock %}

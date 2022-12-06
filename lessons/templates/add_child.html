@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
-{% block body %}
+{% extends 'base_content.html' %}
+{% block content %}
 <div id="cover-images">
   <div>
     <h2>Add a child</h2>
@@ -13,11 +13,11 @@
 
         <form action='{% url "add_child" %}' method="post">
           {% csrf_token %}
-      
+
           {{ form.as_p }}
 
           <p>(You need to enter the child's username, which will be an email)</p>
-          
+
           <input type="submit" value="Add child">
         </form>
 
@@ -35,7 +35,7 @@
         <p><a href='{% url 'sign_up' %}'>Sign up!</a></p>
       {% endif %}
     </p>
-    
+
   </div>
 </div>
 {% endblock %}
