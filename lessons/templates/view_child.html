@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
-{% block body %}
+{% extends 'base_content.html' %}
+{% block content %}
 <div id="cover-images">
   <div>
     <h2>Add a child</h2>
@@ -15,7 +15,7 @@
         <table class="table table-responsive mb-12">
           <thead class="" style="white-space:nowrap">
               <tr>
-                  <th scope="col">Child username</th>   
+                  <th scope="col">Child username</th>
                   <th scope="col">First name</th>
                   <th scope="col">Last name</th>
                   <th scope="col">Date of birth</th>
@@ -27,7 +27,7 @@
 
             {% for c in children%}
               <tr>
-                <td> {{c.username}}</td>   
+                <td> {{c.username}}</td>
                 <td> {{c.first_name}}</td>
                 <td> {{c.last_name}}</td>
                 <td> {{c.dateOfBirth}}</td>
@@ -47,7 +47,7 @@
                       <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
                       <path d="M14 3v5h5M12 18v-6M9 15h6"/>
                     </svg>
-                    
+
                   </a>
                 </td>
 
@@ -63,7 +63,7 @@
         <p><a href='{% url 'sign_up' %}'>Sign up!</a></p>
       {% endif %}
     </p>
-    
+
   </div>
 </div>
 {% endblock %}

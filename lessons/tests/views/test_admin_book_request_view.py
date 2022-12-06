@@ -11,7 +11,7 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
     fixtures = [
         'lessons/tests/fixtures/default_admin.json'
     ]
-    
+
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='danielthomas@example.com')
@@ -22,12 +22,10 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
             availability_time = "08:30",
             instrument = "violin",
             interval_between_lessons = 1,
-            # number_of_lessons = 5,
             duration_of_lessons = 30
         )
 
         self.booking_url = reverse('admin_book_request_form', kwargs={'id': self.request.id, 'requesterId': self.request.requesterId})
-
 
     def test_admin_book_request_after_toggle(self):
         self.client.login(username = self.user.username, password='Password123')
@@ -39,7 +37,6 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
                 'availability_date' : "2023-02-26",
                 'availability_time' : "08:30",
                 'instrument' : "double bass",
-                # 'number_of_lessons' : 3,
                 'interval_between_lessons' : 1,
                 'duration_of_lessons' : 30
             }
@@ -47,9 +44,6 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
 
         self.assertEqual(response.status_code, 302)
         self.request.refresh_from_db()
-
-        # self.assertEqual(self.request.number_of_lessons, 3 )
-
         self.client.get(self.booking_url, follow=True)
         requests_after = len(Request.objects.values())
         self.assertEquals(requests_before, requests_after)

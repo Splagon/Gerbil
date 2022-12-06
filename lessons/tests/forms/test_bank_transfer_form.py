@@ -3,7 +3,7 @@
 from django import forms
 from django.test import TestCase
 from lessons.forms import BankTransferForm
-from ..models import Invoice
+from lessons.models import Invoice
 
 class BankTransferFormTestCase(TestCase):
     fixtures = ['lessons/tests/fixtures/default_invoice.json']

@@ -57,10 +57,12 @@ class BankTransferForm(forms.ModelForm):
 
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
-   
+
     class Meta:
-        start_of_term_date = Term.objects.filter(
-        endDate__gte=datetime.datetime.today()).values().first()['startDate']
+        start_of_term_date = datetime.datetime.today()
+        query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
+        if (query):
+            start_of_term_date = query.first().get('startDate')
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
@@ -173,7 +175,6 @@ class SignUpForm(forms.ModelForm):
         return user
 
 class PasswordForm(forms.Form):
-    print("test")
     password = forms.CharField(
         label='Current password', widget=forms.PasswordInput())
     new_password = forms.CharField(
@@ -310,12 +311,12 @@ class TermForm(forms.ModelForm):
             endDate = self.cleaned_data['endDate']
         )
         return term
-    
+
 class AdultChildRelationForm(forms.ModelForm):
     class Meta:
         model = AdultChildRelationship
         fields=["adult", "child"]
-    
+
     def clean(self):
         super().clean()
         the_adult = self.cleaned_data.get("adult")
@@ -323,7 +324,7 @@ class AdultChildRelationForm(forms.ModelForm):
         if the_adult == None:
             self.add_error("adult","No adult assigned (this should not be possible)")
         else:
-            if the_adult.username == the_child:
+            if the_adult == the_child:
                 self.add_error("child","Cannot add yourself as a child.")
             else:
                 if User.objects.filter(username=the_child).exists():
@@ -333,8 +334,8 @@ class AdultChildRelationForm(forms.ModelForm):
                         pass
                 else:
                     self.add_error("child","Child email has invalid format or does not correspond with any existing user in our database.")
-        
-    
+
+
     def save(self):
         super().save(commit=False)
         rel = AdultChildRelationship.objects.create(

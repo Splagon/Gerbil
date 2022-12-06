@@ -2,7 +2,7 @@ from django.test import TestCase
 from django import forms
 from lessons.forms import AdminSignUpForm
 from django.urls import reverse
-from ..models import User
+from lessons.models import User
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import authenticate, login
 

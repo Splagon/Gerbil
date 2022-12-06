@@ -1,4 +1,3 @@
-
 {% extends 'base_content.html' %}
 {% block content %}
 <div class="container">
@@ -26,7 +25,7 @@
                         {{value.lesson_dates}}
                         {% if value.status == "In Progress" %}
                             <tr class="text-center font-weight-bold">
-                                {% for key,date in value.lesson_dates.items %} 
+                                {% for key,date in value.lesson_dates.items %}
                                     <tr>
                                         {% if key == 0 %}
                                             <td class="font-weight-bold">{{value.id}}</td>
@@ -47,23 +46,23 @@
                                         {% else %}
                                         <td></td>
                                         <td></td>
-                                        <td></td> 
+                                        <td></td>
                                         {% endif %}
                                         <td scope="col">{{date}}
                                         <td scope="col">{{value.availability_time}}</td>
                                         <td scope="col">{{value.duration_of_lessons}}</td>
                                         <td scope="col">{{value.teacher}}</td>
-                                        <td scope="col">{{value.instrument}}</td>                                
+                                        <td scope="col">{{value.instrument}}</td>
                                     </tr>
                                 {% endfor%}
-                                    
-                                                        
+
+
                             </tr>
                         {% endif%}
                     {% endfor %}
-                
+
                 </tbody>
-            </table>  
+            </table>
         </div>
     </div>
 </div>
