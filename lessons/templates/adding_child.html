@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container">
+  <h2 class="text-center underline-text"><u>Add Child</u></h2>
+  <form action="{% url 'add_child' user.id%}" method="post">
+    {% csrf_token %} 
+    {% include 'partials/bootstrap_form.html' with form=form %}
+    <div class=" text-center">
+      <input type="submit" value="Add Child" class="btn btn-primary" />
+    </div>
+  </form>
+</div>
+{% endblock %}

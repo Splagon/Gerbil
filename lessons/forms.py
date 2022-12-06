@@ -1,5 +1,5 @@
 from django import forms
-from .models import Request
+from .models import Request ,Child
 from django.contrib.auth import get_user_model
 from django.forms import widgets
 
@@ -73,7 +73,7 @@ class RequestForm(forms.ModelForm):
         model = Request
         # 'number_of_lessons'
         # Replace datetime.date.today with start of term date so that a day of the week can be established
-        fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher', 'student']
+        fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher',]
         widgets = {
             'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today(), 'max' : datetime.date.today() + datetime.timedelta(days=6) }, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
@@ -117,7 +117,6 @@ class RequestForm(forms.ModelForm):
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
-            student = self.cleaned_data.get('student'),
             # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
@@ -135,7 +134,7 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         #User
         model = get_user_model()
-        fields = ["username", "first_name","last_name", "dateOfBirth" ,"number_of_students", "child_name", "child_age"]
+        fields = ["username", "first_name","last_name", "dateOfBirth" ]
         widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
     password = forms.CharField(label="Password",
                             widget=forms.PasswordInput(),
@@ -160,69 +159,34 @@ class SignUpForm(forms.ModelForm):
             last_name = self.cleaned_data.get("last_name"),
             dateOfBirth = self.cleaned_data.get("dateOfBirth"),
             password = self.cleaned_data.get("password"),
-            number_of_students = self.cleaned_data.get("number_of_students")
+
         )
            
         return user
 
-# class AddChildForm(forms.ModelForm):
-#     labels = {
-#             'name' : 'Please select a date for your first lesson',
-#     }
-#     model = Request
-#     # 'number_of_lessons'
-#     # Replace datetime.date.today with start of term date so that a day of the week can be established
-#     fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
-#     widgets = {
-#         'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
-#         'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
-#         'instrument' : widgets.Select(),
-#         'interval_between_lessons' : widgets.Select(),
-#         # 'number_of_lessons' : widgets.NumberInput(),
-#         'duration_of_lessons' : widgets.Select(),
-#     }
+class AddChildForm(forms.ModelForm):
+    class Meta:
+        labels = {
+                'name' : 'Please select a date for your first lesson',
+        }
+        model = Child
 
-#     def clean(self):
-#         """Clean the data and generate messages for any errors."""
+        fields = ['child_name','child_age' ]
 
-#         availability_time = self.cleaned_data['availability_time']
-#         if availability_time < datetime.time(hour=8, minute=0, second=0):
-#             raise forms.ValidationError('Time cannot be before 8.')
+    def clean(self):
+        """Clean the data and generate messages for any errors."""
+        super().clean()
 
-#         elif availability_time > datetime.time(hour=17, minute=30, second=0):
-#             raise forms.ValidationError('Time cannot be after 17:30.')
-
-#         availability_date = self.cleaned_data['availability_date']
-#         if(availability_date < datetime.date.today()):
-#             self.add_error('availability_date', 'Date cannot be before today')
-#             raise forms.ValidationError('Date cannot be before today.')
-
-#         if(availability_date >= datetime.date.today() + datetime.timedelta(days=365*2)):
-#             raise forms.ValidationError('Date cannot be more than 2 years in the future.')
-
-#         super().clean()
-
-#     # Saves a new request form
-#     def save(self, user):
-#         """Create a new request."""
-#         super().save(commit=False)
-#         request = Request.objects.create(
-#             username = user,
-#             availability_date=self.cleaned_data.get('availability_date'),
-#             availability_time=self.cleaned_data.get('availability_time'),
-#             # number_of_lessons=self.cleaned_data.get('number_of_lessons'),
-#             interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
-#             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
-#             instrument=self.cleaned_data.get('instrument'),
-#             teacher=self.cleaned_data.get('teacher'),
-#             # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
-#             status = 'In Progress',
-#             requesterId= user.id
-
-#         )
-
-
-#         return request
+    # Saves a new request form
+    def save(self, user):
+        """Create a new request."""
+        super().save(commit=False)
+        child = Child.objects.create(
+            user_id = user,
+            child_name =self.cleaned_data.get('child_name'),
+            child_age =self.cleaned_data.get('child_age'),
+        )
+        return child
 
 
 class PasswordForm(forms.Form):

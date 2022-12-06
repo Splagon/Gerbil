@@ -13,9 +13,10 @@
         <p><a href='{% url "view_bookings" %}'>View Bookings</a></p>
         <p><a href='{% url "bank_transfer" %}'>Make a bank transfer</a></p>
         <p><a href='{% url "balance_and_transactions" %}'>See balance and transactions</a></p>
-
+        <p><a href='{% url "view_children" user.id %}'> View children </a></p>
+        <p><a href='{% url "add_child" user.id%}'><b>Add a child</b></href></p>
         {% comment %} {% if user.is_adult %}
-          <p><a href='{% url "add_child" %}'><b>Add a child</b></href></p>
+         
         {% else %}
           <p></p>
         {% endif %} {% endcomment %}

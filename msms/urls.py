@@ -25,9 +25,9 @@ urlpatterns = [
     # path('request_form_child/<str:name>', views.request_form_child, name='request_form_child'),
     
     # path('add_child/', views.add_child, name='add_child'),
-    # path("view_child",views.view_child, name="view_child"),
+    path("view_children/<int:id>",views.view_children, name="view_children"),
     # path("delete_child/<str:name>", views.delete_child, name="delete_child"),
-    # path('add_child/<int:id>', views.add_child, name = 'add_child'),
+    path('add_child/<int:id>', views.add_child, name = 'add_child'),
     
     path('delete_request/<uuid:id>', views.delete_request, name='delete-request'),
     path('update_request/<uuid:id>', views.update_request, name='update-request'),

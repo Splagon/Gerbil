@@ -1,0 +1,28 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+        <div class="col-12">
+            <h2> List of Children </h2>
+            <a href="/">Back to home</a>
+            <a href="/request-lesson">Back to Requests page</a>
+            <table class="table">
+                <thead class="text-left">
+                    <tr>
+                        <th scope="col">Child Name</th>
+                        <th scope="col">Child Age</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for child in children%}
+                        <td>{{child.child_age}}</td>
+                        <td>{{child.child_name}}</td>
+                    {% endfor %}
+
+
+                </tbody>
+            </table>  
+        </div>
+    </div>
+</div>
+{% endblock %}

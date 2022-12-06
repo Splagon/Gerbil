@@ -34,16 +34,10 @@ class User(AbstractUser):
         null=True,
         verbose_name = "Date of Birth"
     )
-    child_name = models.CharField(blank=False, verbose_name = "Student's name", max_length=50, default = "")
+    
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
-    number_of_students = models.PositiveIntegerField(
-        verbose_name = "Number of children / students",
-        validators = [MinValueValidator(1), MaxValueValidator(20)],
-        default=1
-    )
-
-    child_age = models.IntegerField(blank=False, verbose_name = "Student's age", default = 15, validators=[MinValueValidator(5), MaxValueValidator(80)])
+  
 
     balance = models.FloatField(default=0.0)
 
@@ -86,7 +80,6 @@ class Request(models.Model):
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
     instrument = models.CharField(blank=True, max_length=180, choices=getInstruments())
     teacher = models.CharField(blank=True,max_length=50)
-    student = models.CharField(verbose_name = "Register a student", max_length=50) # want to add a choices field for each child
     status = models.CharField(max_length=50,default="In Progress", )
     totalPrice = models.CharField( max_length=50,default=0,  )
     requesterId = models.IntegerField(default=0)
@@ -124,6 +117,12 @@ class Request(models.Model):
 class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
+
+
+class Child(models.Model):
+    user_id = models.ForeignKey(User,on_delete=models.CASCADE, unique=False)
+    child_name = models.CharField(blank=False, verbose_name = "Student's name", max_length=50, default = "")
+    child_age = models.IntegerField(blank=False, verbose_name = "Student's age", default = 15, validators=[MinValueValidator(5), MaxValueValidator(80)])
 
 # class Adult(User):
 #     class Meta:

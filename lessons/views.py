@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
+from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount ,Child
 # , AdultChildRelationship, Adult
 from .forms import RequestForm
 
-from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
+from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm, AddChildForm
 # AdultChildRelationForm
 from django.http import HttpResponseForbidden
 import uuid
@@ -22,21 +22,28 @@ def home(request):
     
     return render(request, 'home.html')
 
-# @login_required(login_url="log_in")
-# def add_child(request):
-#     if request.method == 'POST':
-#         form = AddChildForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.info(request, "Successfully added child!")   
-#             # Redirect back to home if successful         
-#             return redirect('')
+@login_required(login_url="log_in")
+def add_child(request, id): 
+    user = User.objects.get(id=id)
+    if request.method == 'POST':
+        form = AddChildForm(request.POST or None,instance=User.objects.get(id=id))
+        if form.is_valid():
+            form.save(user)
+            messages.info(request, "Successfully added child!")   
+            return redirect('home')
+    else:
+        form = AddChildForm()
 
-#     else:
-#         form = AddChildForm()
+    return render(request, 'adding_child.html', {'form': form, })
 
-#     return render(request, 'add_child.html', {'form': form, })
 
+
+@login_required(login_url="log_in")
+def view_children(request, id): 
+    user = request.user
+    # children = Child.objects.filter(id=id).all()
+    children = Child.objects.all()
+    return render(request, 'view_children.html', {'user': user, 'children': children })
 # def view_child(request):
 #     user = request.user
 #     i_am = Adult.objects.get(username=user.username)
