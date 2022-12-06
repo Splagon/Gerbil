@@ -142,10 +142,7 @@ class Command(BaseCommand):
             print(f'Getting random term data.',  end='\r')
 
     def get_random_status(self):
-        if Command.REQUEST_FULFILL_PROBABILITY < random():
-            return "Booked"
-        else:
-            return "In Progress"
+        return "Booked" if Command.REQUEST_FULFILL_PROBABILITY > random() else "In Progress"
 
     def create_petrapickles_admin(self):
         User.objects.create_user(
