@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.timezone import now
 import datetime
 import uuid
-from .helpers import getDurations, getInstruments, getStatuses
+from .helpers import getDurations, getInstruments,getIntervalBetweenLessons
 
 class User(AbstractUser):
     username = models.EmailField(
@@ -40,12 +40,6 @@ class User(AbstractUser):
     is_adult = models.BooleanField(verbose_name = "Adult Status", default=False)
     
     balance = models.FloatField(default=0.0)
-
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        allUsers.append(self)
-        # print(allUsers)
     
     def __str__(self):
         return self.username

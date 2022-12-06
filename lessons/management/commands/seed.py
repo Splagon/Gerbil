@@ -5,11 +5,13 @@ from lessons.models import Term
 from django.db.utils import IntegrityError
 import datetime
 from random import randint, random
+from .helpers import getDurations, getInstruments,getIntervalBetweenLessons
 
 class Command(BaseCommand):
     PASSWORD = "Password123"
     USER_COUNT = 100
     NUMBER_OF_TERMS = 6
+    REQUEST_FULFILL_PROBABILITY = 0.75
     # Makes a dictionary for the term dates
     TERM_START_DATES = {
         1 : datetime.datetime(2022, 9, 1),
@@ -37,6 +39,7 @@ class Command(BaseCommand):
         self.create_terms()
         self.create_all_users()
         self.allUsers = User.objects.all()
+        self.create_requests()
 
     def create_terms(self):
         """Uses the dictionaries to add data for the term dates"""
@@ -106,22 +109,36 @@ class Command(BaseCommand):
         request = Request()
         request.username = self.get_random_user()
         request.availability_date = self.get_random_term_date()
-        request.number_of_lessons
-        pass
+        request.interval_between_lessons = randint(1,2)
+        #Creates a random int between 0 and length of duration
+        randDuration = randint(0, len(getDurations())-1)
+        request.duration_of_lessons = getDurations()[randDuration][0]
+        #Random int for instrument
+        randInstrument = randint(0, len(getInstruments())-1)
+        request.instrument = getInstruments()[randInstrument][0]
+        request.teacher = self.faker.first_name() + " " + self.faker.last_name()
+        request.status = self.get_random_status()
+        request.save()
+        print("Created request")
 
     def get_random_user(self):
-        index = randint(0,self.users.count()-1)
-        return self.users[index]
+        index = randint(0,self.allUsers.count()-1)
+        return self.allUsers[index]
 
     def get_random_term_date(self):
         while (True):
             index = randint(1, Command.NUMBER_OF_TERMS)
             termStart = Command.TERM_START_DATES[index]
-            today = datetime.today()
+            today = datetime.datetime.today()
             if (termStart < today):
                 return self.faker.date_between(termStart, today)
             print(f'Getting random term data.',  end='\r')
-
+    
+    def get_random_status(self):
+        if Command.REQUEST_FULFILL_PROBABILITY < random():
+            return "test"
+        else: 
+            return "In Progress"
 
     def create_petrapickles_admin(self):
         User.objects.create_user(
