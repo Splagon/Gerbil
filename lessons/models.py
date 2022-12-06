@@ -34,11 +34,17 @@ class User(AbstractUser):
         null=True,
         verbose_name = "Date of Birth"
     )
-
+    child_name = models.CharField(blank=False, verbose_name = "Student's name", max_length=50, default = "")
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
-    is_adult = models.BooleanField(verbose_name = "Adult Status", default=False)
-    
+    number_of_students = models.PositiveIntegerField(
+        verbose_name = "Number of children / students",
+        validators = [MinValueValidator(1), MaxValueValidator(20)],
+        default=1
+    )
+
+    child_age = models.IntegerField(blank=False, verbose_name = "Student's age", default = 15, validators=[MinValueValidator(5), MaxValueValidator(80)])
+
     balance = models.FloatField(default=0.0)
 
     def __str__(self):
@@ -72,6 +78,7 @@ class Request(models.Model):
     """Request from a student for a lesson"""
     id = models.UUIDField(primary_key = True, default=uuid.uuid4, editable = False)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     availability_date = models.DateField( blank=False, default=now )
     availability_time = models.TimeField(blank=False, default="08:00")
     # number_of_lessons = models.IntegerField(blank=False, validators=[MinValueValidator(0), MaxValueValidator(20)])
@@ -79,12 +86,17 @@ class Request(models.Model):
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
     instrument = models.CharField(blank=True, max_length=180, choices=getInstruments())
     teacher = models.CharField(blank=True,max_length=50)
+    student = models.CharField(verbose_name = "Register a student", max_length=50) # want to add a choices field for each child
     status = models.CharField(max_length=50,default="In Progress", )
     totalPrice = models.CharField( max_length=50,default=0,  )
     requesterId = models.IntegerField(default=0)
 
     def __str__(self):
         return self.username
+    
+    # @property
+    # def student_info(self):
+    #     print(self.username)
 
     @property
     def lesson_dates(self):
@@ -113,17 +125,17 @@ class Term(models.Model):
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
 
-class Adult(User):
-    class Meta:
-        verbose_name = "Adult"
-    # This class is a subclass of user, uses multi-table inheritance
-    # An adult object will appear as a user and as an adult
-    def __str__(self):
-        return self.username
+# class Adult(User):
+#     class Meta:
+#         verbose_name = "Adult"
+#     # This class is a subclass of user, uses multi-table inheritance
+#     # An adult object will appear as a user and as an adult
+#     def __str__(self):
+#         return self.username
 
-class AdultChildRelationship(models.Model):
-    # if adult deleted, all associated child relationships gone
-    adult = models.ForeignKey(Adult, on_delete=models.CASCADE, blank=False)
-    # if child delete, all associated adults gone
-    child = models.CharField(max_length=50,blank=False)
+# class AdultChildRelationship(models.Model):
+#     # if adult deleted, all associated child relationships gone
+#     adult = models.ForeignKey(Adult, on_delete=models.CASCADE, blank=False)
+#     # if child delete, all associated adults gone
+#     child = models.CharField(max_length=50,blank=False)
     

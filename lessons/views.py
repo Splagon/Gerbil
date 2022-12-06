@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount, AdultChildRelationship, Adult
+from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
+# , AdultChildRelationship, Adult
 from .forms import RequestForm
 
-from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm, AdultChildRelationForm
+from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferForm
+# AdultChildRelationForm
 from django.http import HttpResponseForbidden
 import uuid
 
@@ -20,46 +22,49 @@ def home(request):
     
     return render(request, 'home.html')
 
-def add_child(request):
-    if request.method == 'POST':
-        form = AdultChildRelationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.info(request, "Successfully added child!")            
-            return redirect('add_child')
-    else:
-        form = AdultChildRelationForm()
+# @login_required(login_url="log_in")
+# def add_child(request):
+#     if request.method == 'POST':
+#         form = AddChildForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             messages.info(request, "Successfully added child!")   
+#             # Redirect back to home if successful         
+#             return redirect('')
 
-    return render(request, 'add_child.html', {'form': form, })
+#     else:
+#         form = AddChildForm()
 
-def view_child(request):
-    user = request.user
-    i_am = Adult.objects.get(username=user.username)
-    child_array = []
+#     return render(request, 'add_child.html', {'form': form, })
+
+# def view_child(request):
+#     user = request.user
+#     i_am = Adult.objects.get(username=user.username)
+#     child_array = []
     
-    relations = AdultChildRelationship.objects.filter(adult=i_am).all().values()
-    print(relations)
-    for r in relations:
-        child_array.append(User.objects.get(username=r["child"]))
-    return render(request, "view_child.html", {"children":child_array})
+#     relations = AdultChildRelationship.objects.filter(adult=i_am).all().values()
+#     print(relations)
+#     for r in relations:
+#         child_array.append(User.objects.get(username=r["child"]))
+#     return render(request, "view_child.html", {"children":child_array})
 
-def delete_child(request, name):
-    user = request.user
-    i_am = Adult.objects.get(username=user.username)
-    relation = AdultChildRelationship.objects.get(adult=i_am, child=name)
-    relation.delete()
-    return redirect('view_child')
+# def delete_child(request, name):
+#     user = request.user
+#     i_am = Adult.objects.get(username=user.username)
+#     relation = AdultChildRelationship.objects.get(adult=i_am, child=name)
+#     relation.delete()
+#     return redirect('view_child')
 
-def request_form_child(request, name):
-    if request.method == 'POST':
-        form = RequestForm(request.POST)
-        if form.is_valid():
-            the_child = User.objects.get(username = name)
-            form.save(the_child)
-            return redirect('view_child')
-    else:
-        form = RequestForm()
-    return render(request, "request_form_for_child.html", {"child_name":name, "form":form})
+# def request_form_child(request, name):
+#     if request.method == 'POST':
+#         form = RequestForm(request.POST)
+#         if form.is_valid():
+#             the_child = User.objects.get(username = name)
+#             form.save(the_child)
+#             return redirect('view_child')
+#     else:
+#         form = RequestForm()
+#     return render(request, "request_form_for_child.html", {"child_name":name, "form":form})
 
 
 

@@ -14,12 +14,12 @@
         <p><a href='{% url "bank_transfer" %}'>Make a bank transfer</a></p>
         <p><a href='{% url "balance_and_transactions" %}'>See balance and transactions</a></p>
 
-        {% if user.is_adult %}
+        {% comment %} {% if user.is_adult %}
           <p><a href='{% url "add_child" %}'><b>Add a child</b></href></p>
         {% else %}
           <p></p>
-        {% endif %}
-        
+        {% endif %} {% endcomment %}
+        {% comment %} <p><a href={% url "add_child" user.id%}>Add your child to the database. </a></p> {% endcomment %}
 
         
       {% else %}

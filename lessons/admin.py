@@ -1,12 +1,13 @@
 from django.contrib import admin
-from .models import User, Request, Term, Invoice,BankTransfer, SchoolBankAccount, Adult, AdultChildRelationship
-
+from .models import User, Request, Term, Invoice,BankTransfer, SchoolBankAccount
+# Adult, AdultChildRelationship
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users"""
     site_header = "MSMS Administration"
     list_display = [
-        'username','first_name', 'last_name', 'is_active', 'is_adult'
+        'username','first_name', 'last_name', 'is_active'
+        #'is_adult'
     ]
 
 @admin.register(Request)
@@ -40,15 +41,15 @@ class BankTransferAdmin(admin.ModelAdmin):
 class SchoolBankAccountAdmin(admin.ModelAdmin):
     list_display=["balance"]
 
-@admin.register(Adult)
-class AdultAdmin(admin.ModelAdmin):
-    list_display = [
-        'username','first_name', 'last_name', 'is_active', 'is_adult'
-    ]
+# @admin.register(Adult)
+# class AdultAdmin(admin.ModelAdmin):
+#     list_display = [
+#         'username','first_name', 'last_name', 'is_active', 'is_adult'
+#     ]
 
-@admin.register(AdultChildRelationship)
-class AdultChildRelationAdmin(admin.ModelAdmin):
-    list_display = [
-        "adult", "child"
-    ]
+# @admin.register(AdultChildRelationship)
+# class AdultChildRelationAdmin(admin.ModelAdmin):
+#     list_display = [
+#         "adult", "child"
+#     ]
 

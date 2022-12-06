@@ -3,7 +3,8 @@ from .models import Request
 from django.contrib.auth import get_user_model
 from django.forms import widgets
 
-from .models import User, Term, BankTransfer, Adult, AdultChildRelationship
+from .models import User, Term, BankTransfer
+# , Adult, AdultChildRelationship
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 # from .helpers import getDurationsToPrices
 
@@ -59,24 +60,26 @@ class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
    
     class Meta:
-        start_of_term_date = Term.objects.filter(
-        endDate__gte=datetime.datetime.today()).values().first()['startDate']
+        # start_of_term_date = Term.objects.filter(
+        # endDate__gte=datetime.datetime.today()).values().first()['startDate']
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
             'instrument' : 'Please select the instrument you\'d like to start having lessons in',
             'interval_between_lessons' : 'Interval between lessons(in weeks)',
             'teacher' : 'Please select a preferred teacher',
+            'student' : 'Register'
         }
         model = Request
         # 'number_of_lessons'
         # Replace datetime.date.today with start of term date so that a day of the week can be established
-        fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
+        fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher', 'student']
         widgets = {
-            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': datetime.date.today(), 'max' : datetime.date.today() + datetime.timedelta(days=6) }, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
             'interval_between_lessons' : widgets.Select(),
+            # 'student' : widgets.Select(),
             # 'number_of_lessons' : widgets.NumberInput(),
             'duration_of_lessons' : widgets.Select(),
         }
@@ -114,6 +117,7 @@ class RequestForm(forms.ModelForm):
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
+            student = self.cleaned_data.get('student'),
             # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
@@ -131,9 +135,8 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         #User
         model = get_user_model()
-        fields = ["username", "first_name","last_name", "dateOfBirth", "is_adult"]
-        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'}),
-                   "is_adult":widgets.CheckboxInput}
+        fields = ["username", "first_name","last_name", "dateOfBirth" ,"number_of_students", "child_name", "child_age"]
+        widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'})}
     password = forms.CharField(label="Password",
                             widget=forms.PasswordInput(),
                             validators=[RegexValidator(
@@ -151,29 +154,78 @@ class SignUpForm(forms.ModelForm):
 
     def save(self):
         super().save(commit=False)
-        is_adult = self.cleaned_data.get("is_adult")
-        if(is_adult):
-            user = Adult.objects.create_user(
-                self.cleaned_data.get("username"),
-                first_name = self.cleaned_data.get("first_name"),
-                last_name = self.cleaned_data.get("last_name"),
-                dateOfBirth = self.cleaned_data.get("dateOfBirth"),
-                password = self.cleaned_data.get("password"),
-                is_adult = self.cleaned_data.get("is_adult")
-            )
-        else:
-            user = User.objects.create_user(
-                    self.cleaned_data.get("username"),
-                    first_name = self.cleaned_data.get("first_name"),
-                    last_name = self.cleaned_data.get("last_name"),
-                    dateOfBirth = self.cleaned_data.get("dateOfBirth"),
-                    password = self.cleaned_data.get("password"),
-                    is_adult = self.cleaned_data.get("is_adult")
-            )
+        user = User.objects.create_user(
+            self.cleaned_data.get("username"),
+            first_name = self.cleaned_data.get("first_name"),
+            last_name = self.cleaned_data.get("last_name"),
+            dateOfBirth = self.cleaned_data.get("dateOfBirth"),
+            password = self.cleaned_data.get("password"),
+            number_of_students = self.cleaned_data.get("number_of_students")
+        )
+           
         return user
 
+# class AddChildForm(forms.ModelForm):
+#     labels = {
+#             'name' : 'Please select a date for your first lesson',
+#     }
+#     model = Request
+#     # 'number_of_lessons'
+#     # Replace datetime.date.today with start of term date so that a day of the week can be established
+#     fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
+#     widgets = {
+#         'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
+#         'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
+#         'instrument' : widgets.Select(),
+#         'interval_between_lessons' : widgets.Select(),
+#         # 'number_of_lessons' : widgets.NumberInput(),
+#         'duration_of_lessons' : widgets.Select(),
+#     }
+
+#     def clean(self):
+#         """Clean the data and generate messages for any errors."""
+
+#         availability_time = self.cleaned_data['availability_time']
+#         if availability_time < datetime.time(hour=8, minute=0, second=0):
+#             raise forms.ValidationError('Time cannot be before 8.')
+
+#         elif availability_time > datetime.time(hour=17, minute=30, second=0):
+#             raise forms.ValidationError('Time cannot be after 17:30.')
+
+#         availability_date = self.cleaned_data['availability_date']
+#         if(availability_date < datetime.date.today()):
+#             self.add_error('availability_date', 'Date cannot be before today')
+#             raise forms.ValidationError('Date cannot be before today.')
+
+#         if(availability_date >= datetime.date.today() + datetime.timedelta(days=365*2)):
+#             raise forms.ValidationError('Date cannot be more than 2 years in the future.')
+
+#         super().clean()
+
+#     # Saves a new request form
+#     def save(self, user):
+#         """Create a new request."""
+#         super().save(commit=False)
+#         request = Request.objects.create(
+#             username = user,
+#             availability_date=self.cleaned_data.get('availability_date'),
+#             availability_time=self.cleaned_data.get('availability_time'),
+#             # number_of_lessons=self.cleaned_data.get('number_of_lessons'),
+#             interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
+#             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
+#             instrument=self.cleaned_data.get('instrument'),
+#             teacher=self.cleaned_data.get('teacher'),
+#             # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
+#             status = 'In Progress',
+#             requesterId= user.id
+
+#         )
+
+
+#         return request
+
+
 class PasswordForm(forms.Form):
-    print("test")
     password = forms.CharField(
         label='Current password', widget=forms.PasswordInput())
     new_password = forms.CharField(
@@ -311,34 +363,34 @@ class TermForm(forms.ModelForm):
         )
         return term
     
-class AdultChildRelationForm(forms.ModelForm):
-    class Meta:
-        model = AdultChildRelationship
-        fields=["adult", "child"]
+# class AdultChildRelationForm(forms.ModelForm):
+#     class Meta:
+#         model = AdultChildRelationship
+#         fields=["adult", "child"]
     
-    def clean(self):
-        super().clean()
-        the_adult = self.cleaned_data.get("adult")
-        the_child = self.cleaned_data.get("child")
-        if the_adult == None:
-            self.add_error("adult","No adult assigned (this should not be possible)")
-        else:
-            if the_adult.username == the_child:
-                self.add_error("child","Cannot add yourself as a child.")
-            else:
-                if User.objects.filter(username=the_child).exists():
-                    if AdultChildRelationship.objects.filter(adult=the_adult, child=the_child).exists():
-                        self.add_error("child", "This relationship already exists")
-                    else:
-                        pass
-                else:
-                    self.add_error("child","Child email has invalid format or does not correspond with any existing user in our database.")
+#     def clean(self):
+#         super().clean()
+#         the_adult = self.cleaned_data.get("adult")
+#         the_child = self.cleaned_data.get("child")
+#         if the_adult == None:
+#             self.add_error("adult","No adult assigned (this should not be possible)")
+#         else:
+#             if the_adult.username == the_child:
+#                 self.add_error("child","Cannot add yourself as a child.")
+#             else:
+#                 if User.objects.filter(username=the_child).exists():
+#                     if AdultChildRelationship.objects.filter(adult=the_adult, child=the_child).exists():
+#                         self.add_error("child", "This relationship already exists")
+#                     else:
+#                         pass
+#                 else:
+#                     self.add_error("child","Child email has invalid format or does not correspond with any existing user in our database.")
         
     
-    def save(self):
-        super().save(commit=False)
-        rel = AdultChildRelationship.objects.create(
-            adult = self.cleaned_data.get("adult"),
-            child = self.cleaned_data.get("child")
-        )
-        return rel
+#     def save(self):
+#         super().save(commit=False)
+#         rel = AdultChildRelationship.objects.create(
+#             adult = self.cleaned_data.get("adult"),
+#             child = self.cleaned_data.get("child")
+#         )
+#         return rel
