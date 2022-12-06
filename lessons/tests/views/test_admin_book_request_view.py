@@ -33,7 +33,7 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
         response = self.client.post(
             self.booking_url,
             {
-                'username' : self.user,
+                'username' : self.user.username,
                 'availability_date' : "2023-02-26",
                 'availability_time' : "08:30",
                 'instrument' : "double bass",

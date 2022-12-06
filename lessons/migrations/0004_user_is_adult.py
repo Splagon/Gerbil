@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lessons', '0003_adultchildrelationship'),
+        ('lessons', '0004_alter_request_interval_between_lessons'),
     ]
 
     operations = [

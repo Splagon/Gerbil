@@ -273,7 +273,7 @@ def admin_delete_request(request, id):
     return redirect('admin_view_requests')
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
-def create_invoice(id):
+def create_invoice(request, id):
     request = Request.objects.get(id=id)
     amount = request.totalPrice
     user = request.username
@@ -324,18 +324,18 @@ def admin_book_request_form(request, id, requesterId):
         status = 'Booked'
 
         # Update the records after the user has made changes
-        request = Request.objects.get(id=id)
-        request.availability_date = availability_date
-        request.availability_time = availability_time
-        request.duration_of_lessons = duration_of_lessons
+        currRequest = Request.objects.get(id=id)
+        currRequest.availability_date = availability_date
+        currRequest.availability_time = availability_time
+        currRequest.duration_of_lessons = duration_of_lessons
         # request.number_of_lessons = number_of_lessons
-        request.interval_between_lessons = interval_between_lessons
-        request.teacher = teacher
-        request.instrument = instrument
-        request.status = status
+        currRequest.interval_between_lessons = interval_between_lessons
+        currRequest.teacher = teacher
+        currRequest.instrument = instrument
+        currRequest.status = status
 
-        create_invoice(id)
-        request.save()
+        create_invoice(request, id)
+        currRequest.save()
 
         return redirect('admin_view_requests')
     return render(request, 'admin/admin_book_request_form.html', {'request': requestObject, 'form': form})

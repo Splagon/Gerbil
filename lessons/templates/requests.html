@@ -22,7 +22,6 @@
                 <tbody>
 
                     {% for value in requests %}
-                        {{value.lesson_dates}}
                         {% if value.status == "In Progress" %}
                             <tr class="text-center font-weight-bold">
                                 {% for key,date in value.lesson_dates.items %}

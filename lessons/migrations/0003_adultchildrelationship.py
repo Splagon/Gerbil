@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lessons', '0002_adult'),
+        ('lessons', '0002_alter_invoice_unique_reference_number'),
     ]
 
     operations = [
