@@ -1,0 +1,23 @@
+[
+  {
+    "model" : "lessons.user",
+    "pk" : 1,
+    "fields" : {
+      "username" : "philfoden@example.com",
+      "first_name" : "Phil",
+      "last_name" : "Foden",
+      "password" : "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+      "is_adult" : true,
+      "is_staff" : false,
+      "is_superuser" : false
+    }
+  },
+
+  {
+    "model" : "lessons.adult",
+    "pk" : 1,
+    "fields" : {
+      "user_ptr_id" : 1
+    }
+  }
+]

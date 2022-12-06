@@ -2,7 +2,7 @@
 from django import forms
 from django.test import TestCase
 from lessons.forms import TermForm
-from ..models import Term
+from lessons.models import Term
 import datetime
 class TermFormTestCase(TestCase):
     """Unit tests of the request form."""

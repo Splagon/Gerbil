@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from ..models import Term
+from lessons.models import Term
 import datetime
 
 class TermModelTestCase(TestCase):
