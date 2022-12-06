@@ -60,9 +60,9 @@ class RequestForm(forms.ModelForm):
 
     class Meta:
         start_of_term_date = datetime.datetime.today()
-        #query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
-        #if (query):
-        #    start_of_term_date = query.first().get('startDate')
+        query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
+        if (query):
+            start_of_term_date = query.first().get('startDate')
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
