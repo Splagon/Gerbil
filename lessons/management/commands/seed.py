@@ -5,21 +5,23 @@ from lessons.models import Term
 from django.db.utils import IntegrityError
 import datetime
 from random import randint, random
-from .helpers import getDurations, getInstruments,getIntervalBetweenLessons
+from lessons.helpers import getDurations, getInstruments, getIntervalBetweenLessons
+
 
 class Command(BaseCommand):
     PASSWORD = "Password123"
     USER_COUNT = 100
+    REQUEST_COUNT = 100
     NUMBER_OF_TERMS = 6
     REQUEST_FULFILL_PROBABILITY = 0.75
     # Makes a dictionary for the term dates
     TERM_START_DATES = {
-        1 : datetime.datetime(2022, 9, 1),
-        2 : datetime.datetime(2022, 10, 31),
-        3 : datetime.datetime(2023, 1, 3),
-        4 : datetime.datetime(2023, 2, 20),
-        5 : datetime.datetime(2023, 4, 17),
-        6 : datetime.datetime(2023, 6, 5),
+        1: datetime.datetime(2022, 9, 1),
+        2: datetime.datetime(2022, 10, 31),
+        3: datetime.datetime(2023, 1, 3),
+        4: datetime.datetime(2023, 2, 20),
+        5: datetime.datetime(2023, 4, 17),
+        6: datetime.datetime(2023, 6, 5),
     }
     TERM_END_DATES = {
         1: datetime.datetime(2022, 10, 21),
@@ -30,7 +32,6 @@ class Command(BaseCommand):
         6: datetime.datetime(2023, 7, 21),
     }
 
-
     def __init__(self):
         super().__init__()
         self.faker = Faker('en_GB')
@@ -39,7 +40,7 @@ class Command(BaseCommand):
         self.create_terms()
         self.create_all_users()
         self.allUsers = User.objects.all()
-        self.create_requests()
+        self.create_all_requests()
 
     def create_terms(self):
         """Uses the dictionaries to add data for the term dates"""
@@ -53,7 +54,6 @@ class Command(BaseCommand):
             term.save()
             print(f'Seeding term {i+1}',  end='\r')
         print('Term seeding complete')
-
 
     def create_all_users(self):
         user_count = 0
@@ -84,7 +84,7 @@ class Command(BaseCommand):
             username=username,
             first_name=first_name,
             last_name=last_name,
-            dateOfBirth= dateOfBirth,
+            dateOfBirth=dateOfBirth,
             password=Command.PASSWORD
         )
 
@@ -103,26 +103,33 @@ class Command(BaseCommand):
 
         # request = Request()
         # request.username = User.objects.filter(username="john.doe@example.org")
-        # request.availability_time = 
+        # request.availability_time =
+
+    def create_all_requests(self):
+        request_count = 0
+        while request_count < Command.REQUEST_COUNT:
+            print(f'Seeding request {request_count}',  end='\r')
+            self.create_requests()
+            request_count += 1
+        print("Request seeding complete")
 
     def create_requests(self):
         request = Request()
         request.username = self.get_random_user()
         request.availability_date = self.get_random_term_date()
-        request.interval_between_lessons = randint(1,2)
-        #Creates a random int between 0 and length of duration
+        request.interval_between_lessons = randint(1, 2)
+        # Creates a random int between 0 and length of duration
         randDuration = randint(0, len(getDurations())-1)
         request.duration_of_lessons = getDurations()[randDuration][0]
-        #Random int for instrument
+        # Random int for instrument
         randInstrument = randint(0, len(getInstruments())-1)
         request.instrument = getInstruments()[randInstrument][0]
         request.teacher = self.faker.first_name() + " " + self.faker.last_name()
         request.status = self.get_random_status()
         request.save()
-        print("Created request")
 
     def get_random_user(self):
-        index = randint(0,self.allUsers.count()-1)
+        index = randint(0, self.allUsers.count()-1)
         return self.allUsers[index]
 
     def get_random_term_date(self):
@@ -133,11 +140,11 @@ class Command(BaseCommand):
             if (termStart < today):
                 return self.faker.date_between(termStart, today)
             print(f'Getting random term data.',  end='\r')
-    
+
     def get_random_status(self):
         if Command.REQUEST_FULFILL_PROBABILITY < random():
-            return "test"
-        else: 
+            return "Booked"
+        else:
             return "In Progress"
 
     def create_petrapickles_admin(self):
@@ -147,9 +154,9 @@ class Command(BaseCommand):
             last_name="Pickles",
             dateOfBirth=self.faker.date_of_birth(None, 18, 60),
             password=Command.PASSWORD,
-            is_staff = True,
-            is_superuser = False
-    )
+            is_staff=True,
+            is_superuser=False
+        )
 
     def create_martymajor_director(self):
         User.objects.create_user(
@@ -160,4 +167,4 @@ class Command(BaseCommand):
             password=Command.PASSWORD,
             is_staff=True,
             is_superuser=True
-            )
+        )
