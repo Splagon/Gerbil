@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.timezone import now
 import datetime
 import uuid
-from .helpers import getDurations, getInstruments, getIntervalBetweenLessons
+from .helpers import getDurations, getInstruments,getIntervalBetweenLessons
 
 class User(AbstractUser):
     username = models.EmailField(
@@ -40,7 +40,7 @@ class User(AbstractUser):
     is_adult = models.BooleanField(verbose_name = "Adult Status", default=False)
     
     balance = models.FloatField(default=0.0)
-
+    
     def __str__(self):
         return self.username
 
@@ -107,9 +107,8 @@ class Request(models.Model):
             lesson_dates[i] = lesson_date
         return lesson_dates
 
-
-
 class Term(models.Model):
+    termName = models.CharField(default="blank", max_length=50)
     startDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
 
