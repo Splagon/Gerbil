@@ -2,6 +2,10 @@ INSTRUMENTS = [
     ('violin', 'violin'),
     ('double bass', 'double bass'),
     ('cello', 'cello'),
+    ('keyboard', 'keyboard'),
+    ('piano', 'piano'),
+    ('trumpet', 'trumpet'),
+    ('other', 'other'),
 ]
 
 DURATIONS = [

@@ -37,12 +37,12 @@ class User(AbstractUser):
 
     is_staff = models.BooleanField(verbose_name = "Admin Status")
     is_superuser = models.BooleanField(verbose_name = "Director Status")
-    is_adult = models.BooleanField(verbose_name = "Adult Status", default=False)
-    
+    is_adult = models.BooleanField(verbose_name = "Adult Status", default=True)
+
     balance = models.FloatField(default=0.0)
-    
+
     def __str__(self):
-        return self.username
+        return str(self.username)
 
 
 class Invoice(models.Model):
@@ -84,7 +84,7 @@ class Request(models.Model):
     requesterId = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.username
+        return str(self.username)
 
     @property
     def lesson_dates(self):
@@ -118,11 +118,10 @@ class Adult(User):
     # This class is a subclass of user, uses multi-table inheritance
     # An adult object will appear as a user and as an adult
     def __str__(self):
-        return self.username
+        return str(self.username)
 
 class AdultChildRelationship(models.Model):
     # if adult deleted, all associated child relationships gone
-    adult = models.ForeignKey(Adult, on_delete=models.CASCADE, blank=False)
+    adult = models.ForeignKey(Adult, on_delete=models.CASCADE, blank=False, related_name = 'adult')
     # if child delete, all associated adults gone
-    child = models.CharField(max_length=50,blank=False)
-    
+    child = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, related_name = 'child')

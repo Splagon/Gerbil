@@ -1,13 +1,12 @@
-{% extends 'base.html' %}
-{% block body %}
+{% extends 'base_content.html' %}
+{% block content %}
 <div id="cover-images">
   <div>
-    <p>Simple test page</p>
-
+    <h1>Home Page</h1>
     </img>
     <p>
       {% if user.is_authenticated %}
-        <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
+        <p><b>Welcome, {{ user.first_name }} {{ user.last_name }}</b></p>
         <p><a href='{% url 'request_form' %}'>Request a lesson!</href></p>
         <p><a href='{% url "requests" %}'>View Requests</a></p>
         <p><a href='{% url "view_bookings" %}'>View Bookings</a></p>
@@ -15,13 +14,11 @@
         <p><a href='{% url "balance_and_transactions" %}'>See balance and transactions</a></p>
 
         {% if user.is_adult %}
-          <p><a href='{% url "add_child" %}'><b>Add a child</b></href></p>
-        {% else %}
-          <p></p>
+          <a href='{% url "view_children" %}'>View Children</a>
         {% endif %}
-        
 
-        
+
+
       {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'log_in' %}">Log In</a>
