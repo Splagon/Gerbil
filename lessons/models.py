@@ -40,9 +40,9 @@ class User(AbstractUser):
     is_adult = models.BooleanField(verbose_name = "Adult Status", default=True)
 
     balance = models.FloatField(default=0.0)
-    
+
     def __str__(self):
-        return self.username
+        return str(self.username)
 
 
 class Invoice(models.Model):
@@ -84,7 +84,7 @@ class Request(models.Model):
     requesterId = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.username
+        return str(self.username)
 
     @property
     def lesson_dates(self):
@@ -118,7 +118,7 @@ class Adult(User):
     # This class is a subclass of user, uses multi-table inheritance
     # An adult object will appear as a user and as an adult
     def __str__(self):
-        return self.username
+        return str(self.username)
 
 class AdultChildRelationship(models.Model):
     # if adult deleted, all associated child relationships gone

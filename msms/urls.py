@@ -20,7 +20,7 @@ from lessons import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('requests/', views.requests, name='requests'),
-    path('request-lesson/', views.request_form, name='request_form'),
+    path('request_lesson/', views.request_form, name='request_form'),
 
     path('request_form_child/<int:child_id>', views.request_form_child, name='request_form_child'),
 

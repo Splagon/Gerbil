@@ -75,7 +75,7 @@ def request_form_child(request, child_id):
 @login_required(login_url="log_in")
 def requests(request):
     user = request.user
-    requests = Request.objects.all()
+    requests = Request.objects.filter(username = user.id,status = "In Progress")
     return render(request, 'requests.html', {'user': user, 'requests': requests})
 
 
@@ -101,8 +101,8 @@ def request_form(request):
 
 @login_required(login_url="log_in")
 def delete_request(request, id):
-    request = Request.objects.get(id=id)
-    request.delete()
+    requestToDelete = Request.objects.get(id=id)
+    requestToDelete.delete()
     return render(request, 'requests.html')
 
 @login_required(login_url="log_in")
@@ -492,7 +492,7 @@ def admin_check_student_balance_and_transactions(request):
 @login_required(login_url="log_in")
 def view_bookings(request):
     user = request.user
-    requests = Request.objects.all()
+    requests = Request.objects.filter(username = user.id, status = "Booked")
     return render(request, 'bookings.html', {'user': user, 'requests': requests})
 
 
