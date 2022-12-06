@@ -59,8 +59,7 @@ class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
    
     class Meta:
-        start_of_term_date = Term.objects.filter(
-        endDate__gte=datetime.datetime.today()).values().first()['startDate']
+        start_of_term_date = datetime.date.today()
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
@@ -316,6 +315,7 @@ class AdultChildRelationForm(forms.ModelForm):
         model = AdultChildRelationship
         fields=["adult", "child"]
     
+        
     def clean(self):
         super().clean()
         the_adult = self.cleaned_data.get("adult")
