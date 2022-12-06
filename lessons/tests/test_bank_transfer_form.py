@@ -3,10 +3,12 @@
 from django import forms
 from django.test import TestCase
 from lessons.forms import BankTransferForm
-from ..models import Invoice
+from ..models import Invoice,User,BankTransfer
 
 class BankTransferFormTestCase(TestCase):
-    fixtures = ['lessons/tests/fixtures/default_invoice.json']
+    fixtures = ['lessons/tests/fixtures/default_invoice.json',
+                'lessons/tests/fixtures/default_user2.json']
+
 
     def setUp(self):
         self.invoice = Invoice.objects.get(invoice_number="15945615-7f29-4079-b567-a5a7ac6647a4")
@@ -14,6 +16,7 @@ class BankTransferFormTestCase(TestCase):
         "inv_number":"15945615-7f29-4079-b567-a5a7ac6647a4",
         "paid_amount": 43.00
         }
+        self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
 
     def test_valid_sign_up_form(self):
         form = BankTransferForm(data=self.form_input)
@@ -58,3 +61,16 @@ class BankTransferFormTestCase(TestCase):
         self.form_input['inv_number'] = ''
         form = BankTransferForm(data=self.form_input)
         self.assertFalse(form.is_valid())
+
+
+    def test_bank_transfer_form_must_save_correctly(self):
+        form=BankTransferForm(data=self.form_input)
+        before_count = BankTransfer.objects.count()
+        form.save(self.user)
+        after_count = BankTransfer.objects.count()
+        self.assertEqual(after_count, before_count+1)
+        bank_transfer = BankTransfer.objects.get(invoice_number=self.form_input['inv_number'])
+        self.assertEqual(bank_transfer.invoice_number, self.form_input['inv_number'])
+        self.assertEqual(bank_transfer.username, self.user)
+        self.assertEqual(bank_transfer.amount, self.form_input['paid_amount'])
+        self.assertEqual(bank_transfer.student_id,self.user.id)

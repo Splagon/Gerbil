@@ -91,12 +91,8 @@ def update_request(request, id):
 
         invoice_exists = Invoice.objects.filter(
             invoice_number=str(id)).exists()
-        print(invoice_exists)
         if (invoice_exists):
-
-            print("invoice exists")
             update_invoice(id, str(old_price))
-            print(old_price)
 
 
         return redirect('requests')
@@ -303,7 +299,7 @@ def admin_book_request_form(request, id, requesterId):
 @login_required(login_url="log_in")
 def edit_profile(request):
     current_user = request.user
-    print(request.user)
+
     if request.method == 'POST':
         form = UserForm(instance=current_user, data=request.POST)
         if form.is_valid():

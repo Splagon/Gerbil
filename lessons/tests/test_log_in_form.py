@@ -7,8 +7,15 @@ from lessons.forms import LogInForm
 class LogInFormTestCase(TestCase):
     """Unit tests of the log in form"""
 
+    fixtures = [
+        'lessons/tests/fixtures/default_user.json'
+    ]
+
     def setUp(self):
-        self.form_input = {"username": "@janedoe", "password":"Password123", "id":"3"}
+        #self.user = User.objects.get(username='jonathandeer@example.com@example.com')
+        self.form_input = {"username": "jonathandeer@example.com",
+         "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc="}
+
 
     def test_form_contains_required_fields(self):
         form = LogInForm()

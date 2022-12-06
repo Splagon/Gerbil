@@ -1,7 +1,7 @@
 """Test admin request methods"""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import User, Request
+from lessons.models import User, Request,Invoice
 from lessons.tests.helpers import reverse_with_next
 from lessons.tests.helpers import LogInTester
 import operator
@@ -9,9 +9,10 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
 
     # Get user to identify request form
     fixtures = [
-        'lessons/tests/fixtures/default_admin.json'
+        'lessons/tests/fixtures/default_admin.json',
+        "lessons/tests/fixtures/default_invoice2.json"
     ]
-    
+
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='danielthomas@example.com')
@@ -24,6 +25,15 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
             interval_between_lessons = 1,
             # number_of_lessons = 5,
             duration_of_lessons = 30
+        )
+
+        self.invoice = Invoice.objects.create(
+        unique_reference_number = str(self.request.id),
+        invoice_number= str(self.request.id),
+        student_id = self.user.id,
+        paid = False,
+        amount = 100.00,
+        currently_paid = 20.00
         )
         self.delete_url = reverse('admin_delete_requests', kwargs={'id': self.request.id})
         self.update_url = reverse('admin_update_requests', kwargs={'id': self.request.id})
@@ -38,7 +48,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
 
     def test_admin_login_required(self):
         response = self.client.get(self.view_requests_url)
-        self.assertRedirects(response, reverse('admin_log_in')+'?next=/admin/'+'view_requests/')  
+        self.assertRedirects(response, reverse('admin_log_in')+'?next=/admin/'+'view_requests/')
 
     def test_admin_get_view_requests(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -51,7 +61,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
 
     def test_admin_is_user_staff_type(self):
         self.assertTrue(self.user, operator.attrgetter('is_staff'))
-        
+
     def test_admin_delete_request_after_toggle(self):
         self.client.login(username = self.user.username, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -84,3 +94,6 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
         self.client.get(self.update_url, follow=True)
         requests_after = len(Request.objects.values())
         self.assertEquals(requests_before, requests_after)
+
+        invoice_exists = Invoice.objects.filter(invoice_number=str(self.request.id)).exists()
+        self.assertTrue(invoice_exists)
