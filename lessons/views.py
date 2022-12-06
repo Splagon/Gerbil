@@ -17,9 +17,9 @@ import operator
 
 
 def home(request):
-
     return render(request, 'home.html')
 
+@login_required(login_url="log_in")
 def add_child(request):
     if request.method == 'POST':
         form = AdultChildRelationForm(request.POST)
@@ -32,6 +32,7 @@ def add_child(request):
 
     return render(request, 'add_child.html', {'form': form, })
 
+@login_required(login_url="log_in")
 def view_child(request):
     user = request.user
     i_am = Adult.objects.get(username=user.username)
@@ -42,6 +43,7 @@ def view_child(request):
         child_array.append(User.objects.get(id=r["child_id"]))
     return render(request, "view_child.html", {"children":child_array})
 
+@login_required(login_url="log_in")
 def delete_child(request, child_id):
     user = request.user
     adult_ = Adult.objects.get(username=user.username)
@@ -49,17 +51,21 @@ def delete_child(request, child_id):
     relation.delete()
     return redirect('view_child')
 
+@login_required(login_url="log_in")
 def request_form_child(request, child_id):
-    the_child
-    if request.method == 'POST':
-        form = RequestForm(request.POST)
-        if form.is_valid():
-            the_child = User.objects.get(id = child_id)
-            form.save(the_child)
-            return redirect('view_child')
+    the_child = User.objects.get(id = child_id)
+    if (AdultChildRelationship.objects.filter(adult = request.user, child = the_child)):
+        if request.method == 'POST':
+            form = RequestForm(request.POST)
+            if form.is_valid():
+                form.save(the_child)
+                return redirect('view_child')
+        else:
+            form = RequestForm()
+
+        return render(request, "request_form_for_child.html", {"child" : the_child, "form" : form})
     else:
-        form = RequestForm()
-    return render(request, "request_form_for_child.html", {"child":the_child, "form":form})
+        return redirect('view_child')
 
 
 
@@ -90,13 +96,13 @@ def request_form(request):
 
     return render(request, 'request_form.html', {'form': form, 'error_messages': error_message})
 
-
+@login_required(login_url="log_in")
 def delete_request(request, id):
     request = Request.objects.get(id=id)
     request.delete()
     return render(request, 'requests.html')
 
-
+@login_required(login_url="log_in")
 def update_request(request, id):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
@@ -223,7 +229,7 @@ def admin_view_requests(request):
     requests = Request.objects.all()
     return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests})
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
@@ -260,13 +266,13 @@ def admin_update_requests(request, id):
 
     return render(request, 'admin/admin_home.html')
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_delete_request(request, id):
     request = Request.objects.get(id=id)
     request.delete()
     return redirect('admin_view_requests')
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def create_invoice(id):
     request = Request.objects.get(id=id)
     amount = request.totalPrice
@@ -283,7 +289,7 @@ def create_invoice(id):
     )
     invoice.save()
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def update_invoice(id, old_price):
     request = Request.objects.get(id=id)
     new_total = request.totalPrice
@@ -302,7 +308,7 @@ def update_invoice(id, old_price):
     school_bank_account.balance += float(new_total)
     school_bank_account.save()
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_book_request_form(request, id, requesterId):
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
@@ -441,25 +447,25 @@ def balance_and_transactions(request):
     user = request.user
     return render(request, "balance_and_transactions.html", {"user": user})
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_view_user_invoice(request, id):
     user = User.objects.get(id=id)
     user_invoices = Invoice.objects.filter(student_id=user.id)
     return render(request, "view_invoices.html", {"user": user, "user_invoices": user_invoices})
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_view_user_transfers(request, id):
     user = User.objects.get(id=id)
     user_transfers = BankTransfer.objects.filter(student_id=user.id)
     return render(request, "view_transfers.html", {"user": user, "user_transfers": user_transfers})
 
-
+@login_required(login_url="log_in")
 def view_invoices(request):
     user = request.user
     user_invoices = Invoice.objects.filter(student_id=user.id)
     return render(request, "view_invoices.html", {"user": user, "user_invoices": user_invoices})
 
-
+@user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def view_transfers(request):
     user = request.user
     user_transfers = BankTransfer.objects.filter(username=user.id)

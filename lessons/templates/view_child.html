@@ -32,7 +32,7 @@
                 <td> {{c.last_name}}</td>
                 <td> {{c.dateOfBirth}}</td>
                 <td>
-                  <a href="{% url 'delete_child' c.username %}">
+                  <a href="{% url 'delete_child' c.id %}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="3 6 5 6 21 6"></polyline>
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -42,7 +42,7 @@
                   </a>
                 </td>
                 <td>
-                  <a href="{% url 'request_form_child' c.username %}">
+                  <a href="{% url 'request_form_child' c.id %}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
                       <path d="M14 3v5h5M12 18v-6M9 15h6"/>

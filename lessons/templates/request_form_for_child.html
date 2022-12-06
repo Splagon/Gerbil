@@ -3,14 +3,13 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <a href="/">Back to home</a>
       <p>
         <a href="{% url 'view_child' %}">Back to viewing current children</a>
       </p>
       <h1>Request Lessons!</h1>
-      <h2>Making a request for {{ child.username }}, by parent {{ user.username }}</h2>
+      <h2>Making a request for {{ child.first_name }} {{ child.last_name }}, by parent {{ user.first_name }} {{ user.last_name }}</h2>
 
-      <form action="{% url 'request_form_child' child_name %}" method="post">
+      <form action="{% url 'request_form_child' child.id %}" method="post">
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}
         <div class=" text-center">
