@@ -42,7 +42,7 @@ def add_child(request, id):
 def view_children(request, id): 
     user = request.user
     # children = Child.objects.filter(id=id).all()
-    children = Child.objects.all()
+    children = Child.objects.filter(user_id = User.objects.get(id=id))
     return render(request, 'view_children.html', {'user': user, 'children': children })
 # def view_child(request):
 #     user = request.user
@@ -79,15 +79,17 @@ def view_children(request, id):
 def requests(request):
     user = request.user
     requests = Request.objects.all()
-    return render(request, 'requests.html', {'user': user, 'requests': requests}) 
+    return render(request, 'requests.html', {'user': user, 'requests': requests }) 
 
 
 
 @login_required(login_url="log_in")
 def request_form(request):
+    user = request.user
+    children = Child.objects.filter(user_id = user)
     error_message = ""
     if request.method == 'POST':
-        form = RequestForm(request.POST)
+        form = RequestForm(request.POST, user_id = user.id)
         if form.is_valid():
             terms = Term.objects.filter(
             endDate__gte=datetime.datetime.today()).values()
@@ -98,9 +100,9 @@ def request_form(request):
                 error_message = "Please contact your administrator. Issue concerns no term dates defined"
 
     else:
-        form = RequestForm()
+        form = RequestForm(user_id = user.id)
 
-    return render(request, 'request_form.html', {'form': form, 'error_messages': error_message})
+    return render(request, 'request_form.html', {'form': form, 'error_messages': error_message, 'children' : children})
 
 
 def delete_request(request, id):

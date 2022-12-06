@@ -15,8 +15,10 @@
                 </thead>
                 <tbody>
                     {%for child in children%}
-                        <td>{{child.child_age}}</td>
-                        <td>{{child.child_name}}</td>
+                            <tr>
+                                <td>{{child.child_name}}</td>
+                                <td>{{child.child_age}}</td>
+                            </tr>
                     {% endfor %}
 
 

@@ -66,15 +66,20 @@ class SchoolBankAccount(models.Model):
     balance= models.FloatField(default=0.0)
 
 
+class Child(models.Model):
+    id = models.UUIDField(primary_key = True, default=uuid.uuid4, editable = False)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    child_name = models.CharField(blank=False, verbose_name = "Student's name", max_length=50, default = "")
+    child_age = models.IntegerField(blank=False, verbose_name = "Student's age", default = 15, validators=[MinValueValidator(5), MaxValueValidator(80)])
 
 
 class Request(models.Model):
     """Request from a student for a lesson"""
     id = models.UUIDField(primary_key = True, default=uuid.uuid4, editable = False)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    
     availability_date = models.DateField( blank=False, default=now )
     availability_time = models.TimeField(blank=False, default="08:00")
+    students = models.CharField(verbose_name = "Register a student for these lessons",  max_length=120 )
     # number_of_lessons = models.IntegerField(blank=False, validators=[MinValueValidator(0), MaxValueValidator(20)])
     interval_between_lessons = models.CharField(blank=False, choices=getIntervalBetweenLessons(), max_length=2 )
     duration_of_lessons = models.CharField(blank=False, max_length=4, choices=getDurations())
@@ -86,10 +91,6 @@ class Request(models.Model):
 
     def __str__(self):
         return self.username
-    
-    # @property
-    # def student_info(self):
-    #     print(self.username)
 
     @property
     def lesson_dates(self):
@@ -119,10 +120,6 @@ class Term(models.Model):
     endDate = models.DateField(blank = False, unique = True, default=datetime.date.today)
 
 
-class Child(models.Model):
-    user_id = models.ForeignKey(User,on_delete=models.CASCADE, unique=False)
-    child_name = models.CharField(blank=False, verbose_name = "Student's name", max_length=50, default = "")
-    child_age = models.IntegerField(blank=False, verbose_name = "Student's age", default = 15, validators=[MinValueValidator(5), MaxValueValidator(80)])
 
 # class Adult(User):
 #     class Meta:
