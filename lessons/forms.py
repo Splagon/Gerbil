@@ -59,7 +59,6 @@ class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
 
     class Meta:
-<<<<<<< HEAD
         start_of_term_date = datetime.datetime.today()
         query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
         if (query):
@@ -83,9 +82,6 @@ class RequestForm(forms.ModelForm):
             # 'number_of_lessons' : widgets.NumberInput(),
             'duration_of_lessons' : widgets.Select(),
         }
-=======
-        start_of_term_date = datetime.date.today()
->>>>>>> ba8eea74b35ff1f0d0513097afaf22e74c2f9406
 
     def clean(self):
         """Clean the data and generate messages for any errors."""
