@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import User, Request, Term, BankTransfer, Invoice, SchoolBankAccount
+from .models import User, Request,  BankTransfer, Invoice, SchoolBankAccount, Term
 from .forms import RequestForm
 from django.http import HttpResponseForbidden
 import uuid
@@ -7,6 +7,7 @@ from .forms import LogInForm, UserForm, SignUpForm, PasswordForm, BankTransferFo
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from .forms import SignUpForm, LogInForm, AdminSignUpForm, TermForm
+# TermForm
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 from .helpers import getDurationsToPrices
@@ -22,22 +23,24 @@ def home(request):
 def requests(request):
     user = request.user
     requests = Request.objects.all()
-    return render(request, 'requests.html', {'user': user, 'requests': requests}) 
+    return render(request, 'requests.html', {'user': user, 'requests': requests})
 
 
 
 @login_required(login_url="log_in")
 def request_form(request):
+
     error_message = ""
     if request.method == 'POST':
         form = RequestForm(request.POST)
         if form.is_valid():
+
             terms = Term.objects.filter(
             endDate__gte=datetime.datetime.today()).values()
             if len(terms) > 0 :
                 form.save(request.user)
                 return redirect('requests')
-            else: 
+            else:
                 error_message = "Please contact your administrator. Issue concerns no term dates defined"
 
     else:
@@ -53,6 +56,8 @@ def delete_request(request, id):
 
 
 def update_request(request, id):
+    old_request = Request.objects.get(id=id)
+    old_price = old_request.price_of_lessons
     requestObject = Request.objects.get(id=id)
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
@@ -68,8 +73,7 @@ def update_request(request, id):
         # totalPrice = int(form.cleaned_data.get('number_of_lessons')) * \
         #     getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
 
-        old_request = Request.objects.get(id=id)
-        old_price = old_request.totalPrice
+
 
 
         # Update the records after the user has made changes
@@ -87,8 +91,13 @@ def update_request(request, id):
 
         invoice_exists = Invoice.objects.filter(
             invoice_number=str(id)).exists()
+        print(invoice_exists)
         if (invoice_exists):
+
+            print("invoice exists")
             update_invoice(id, str(old_price))
+            print(old_price)
+
 
         return redirect('requests')
 
@@ -104,6 +113,8 @@ def log_in(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                if request.user.is_superuser:
+                    return redirect("admin_home")
                 return redirect("home")
     form = LogInForm()
     return render(request, 'log_in.html', {"form": form})
@@ -193,7 +204,7 @@ def admin_update_requests(request, id):
         instrument = form.cleaned_data.get('instrument')
         # totalPrice = int(form.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(form.cleaned_data.get('duration_of_lessons'))
         old_request = Request.objects.get(id=id)
-        old_price = old_request.totalPrice
+        old_price = old_request.price_of_lessons
 
         # Update the records after the user has made changes
         request = Request.objects.get(id=id)
@@ -213,7 +224,7 @@ def admin_update_requests(request, id):
 
         return redirect('admin_view_requests')
 
-    return render(request, 'admin/admin_home.html')
+    return render(request, 'update_request_form.html', {'request': requestObject, 'form': form})
 
 
 def admin_delete_request(request, id):
@@ -223,17 +234,18 @@ def admin_delete_request(request, id):
 
 
 def create_invoice(id):
+
     request = Request.objects.get(id=id)
-    amount = request.totalPrice
+    price= request.price_of_lessons
     user = request.username
-    user.balance -= float(amount)
+    user.balance -= price
     user.save()
 
     invoice = Invoice.objects.create(
         unique_reference_number=str(request.requesterId)+"-"+str(request.id),
         invoice_number=str(request.id),
         student_id=request.requesterId,
-        amount=float(request.totalPrice),
+        amount= price,
         currently_paid = 0.0
     )
     invoice.save()
@@ -241,21 +253,19 @@ def create_invoice(id):
 
 def update_invoice(id, old_price):
     request = Request.objects.get(id=id)
-    new_total = request.totalPrice
+    new_total = request.price_of_lessons
 
     user = request.username
     user.balance += float(old_price)
-    user.balance -= float(new_total)
+    user.balance -= new_total
     user.save()
 
     invoice = Invoice.objects.get(invoice_number=str(id))
     invoice.amount = new_total
+    if(invoice.currently_paid < invoice.amount):
+        invoice.paid = False
     invoice.save()
 
-    school_bank_account = SchoolBankAccount.objects.get(id=1)
-    school_bank_account.balance -= float(old_price)
-    school_bank_account.balance += float(new_total)
-    school_bank_account.save()
 
 
 def admin_book_request_form(request, id, requesterId):
@@ -365,34 +375,35 @@ def bank_transfer(request):
                             user.balance+= amount_to_refund_to_user
                             school_bank_account.balance += float(amount_paid_by_user-amount_to_refund_to_user)
                             invoice.paid = True
-                            invoice.currently_paid = invoice.amount
+                            invoice.currently_paid += invoice.amount
 
                         if(amount_paid_by_user < invoice.amount):
                             user.balance += amount_paid_by_user
                             print("amount is less")
-                            previous_amount_paid = invoice.currently_paid
+                            #previous_amount_paid = invoice.currently_paid
                             school_bank_account.balance += amount_paid_by_user
                             invoice.currently_paid+= amount_paid_by_user
                             if(invoice.currently_paid >= invoice.amount):
+                                print("paid exact amount or overpaid")
                                 invoice.paid = True
-                                amount_to_refund_to_user =invoice.currently_paid- invoice.amount
-                                user.balance+= amount_to_refund_to_user
+                                #amount_to_refund_to_user =invoice.currently_paid- invoice.amount
+                                #user.balance+= amount_to_refund_to_user
                                 invoice.currently_paid = invoice.amount
                                 school_bank_account.balance -= (amount_paid_by_user- invoice.amount)
                             else:
+                                print("branch c")
                                 invoice.paid = False
-                                user.balance += amount_paid_by_user
-                                school_bank_account.balance += amount_paid_by_user
-                                invoice.currently_paid+= amount_paid_by_user
 
                         form.save(request.user)
                         user.save()
                         invoice.save()
                         school_bank_account.save()
+                        print("an amount has been paid")
                         return redirect('home')
 
+
                     else:
-                        print("invoice has been paid")
+                        print("invoice has been paid before")
                         form = BankTransferForm()
                         return render(request, 'bank_transfer.html', {'form': form})
                 else:
@@ -455,7 +466,6 @@ def admin_view_school_balance_and_transfers(request):
 @login_required(login_url="log_in")
 def admin_check_student_balance_and_transactions(request):
     users = User.objects.filter(is_superuser=False, is_staff=False)
-
     return render(request, "admin/admin_check_student_balance_and_transactions.html", {"users": users})
 
 
@@ -479,6 +489,7 @@ def admin_view_terms(request):
     terms = Term.objects.filter(
         endDate__gte=datetime.datetime.today()).values()
     return render(request, 'admin/admin_view_terms.html', {'terms': terms})
+
 
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")

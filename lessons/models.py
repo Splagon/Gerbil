@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.timezone import now
 import datetime
 import uuid
-from .helpers import getDurations, getInstruments, getIntervalBetweenLessons
+from .helpers import getDurations, getInstruments, getIntervalBetweenLessons,getDurationsToPrices
 
 class User(AbstractUser):
     username = models.EmailField(
@@ -106,6 +106,9 @@ class Request(models.Model):
             lesson_dates[i] = lesson_date
         return lesson_dates
 
+    @property
+    def price_of_lessons(self):
+        return float(len(self.lesson_dates) * float(getDurationsToPrices(self.duration_of_lessons)))
 
 
 class Term(models.Model):

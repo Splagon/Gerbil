@@ -12,12 +12,12 @@
                         <th scope="col">Request No. </th>
                         <th scope="col">Delete</th>
                         <th scope="col">Update</th>
+                        <th scope="col">Total Price</th>
                         <th scope="col">Email</th>
                         <th scope="col">Availability time</th>
                         <th scope="col">Lesson time</th>
                         <th scope="col">Teacher</th>
                         <th scope="col">Instrument</th>
-                        <th scope="col">Total Price</th>
                         <th scope="col">Status</th>
                         <th scope="col">Lesson Dates</th>
                     </tr>
@@ -26,7 +26,7 @@
                     {% for value in requests %}
                         {% if value.status == "In Progress" %}
                             <tr>
-                                {% for key,date in value.lesson_dates.items %} 
+                                {% for key,date in value.lesson_dates.items %}
                                     <tr>
                                         {% if key == 0 %}
                                         <td>
@@ -49,10 +49,12 @@
                                                 </svg>
                                             </a>
                                         </td>
+                                        <td scope="col">{{value.price_of_lessons}}</td>
                                         {% for user in users %}
                                         {% if user.id == value.username_id %}
                                             <th scope="col">{{user.username}}</th>
                                         {% endif %}
+
                                         {% endfor %}
                                         {% else %}
                                         <td></td>
@@ -60,17 +62,21 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
+
+
+
 
                                         {% endif %}
-                                  
+
                                         <td scope="col">{{value.availability_time}}</td>
                                         <td scope="col">{{value.duration_of_lessons}}</td>
                                         <td scope="col">{{value.teacher}}</td>
                                         <td scope="col">{{value.instrument}}</td>
-                                        <td scope="col">£{{value.totalPrice}}</td>
+
                                         <td scope="col">{{value.status}}</td>
                                         <td scope="col">{{date}}</td>
-                                        
+
                                     </tr>
 
                                 {% endfor %}
@@ -90,7 +96,7 @@
 
 
 
-{% comment %} 
+{% comment %}
 {% extends 'base_content.html' %}
 {% block content %}
 <div class="container">
@@ -116,7 +122,7 @@
                     {% for value in requests %}
                         {% if value.status == "In Progress" %}
                             <tr class="text-center font-weight-bold">
-                                {% for key,date in value.lesson_dates.items %} 
+                                {% for key,date in value.lesson_dates.items %}
                                     <tr>
                                         {% if key == 0 %}
                                             <td class="font-weight-bold">{{value.id}}</td>
@@ -137,22 +143,22 @@
                                         {% else %}
                                         <td></td>
                                         <td></td>
-                                        <td></td> 
+                                        <td></td>
                                         {% endif %}
                                         <td scope="col">{{date}}
                                         <td scope="col">{{value.availability_time}}</td>
                                         <td scope="col">{{value.duration_of_lessons}}</td>
                                         <td scope="col">{{value.teacher}}</td>
-                                        <td scope="col">{{value.instrument}}</td>                                
+                                        <td scope="col">{{value.instrument}}</td>
                                     </tr>
                                 {% endfor%}
-                                    
-                                                        
+
+
                             </tr>
                         {% endif%}
                     {% endfor %}
                 </tbody>
-            </table>  
+            </table>
         </div>
     </div>
 </div>
