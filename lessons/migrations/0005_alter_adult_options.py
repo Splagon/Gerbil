@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lessons', '0004_user_is_adult'),
+        ('lessons', '0002_alter_adultchildrelationship_adult_and_more'),
     ]
 
     operations = [

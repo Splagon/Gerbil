@@ -4,7 +4,6 @@
     <div class="row">
         <div class="col-12 table-responsive">
             <h2> List of Unfulfilled Requests </h2>
-            <a class="float-left" href="{% url "admin_home" %}">Back to home</a>
             <table class="table">
                 <thead class="text-left">
                     <tr class="overflow-auto" style="white-space:nowrap">
@@ -26,7 +25,7 @@
                     {% for value in requests %}
                         {% if value.status == "In Progress" %}
                             <tr>
-                                {% for key,date in value.lesson_dates.items %} 
+                                {% for key,date in value.lesson_dates.items %}
                                     <tr>
                                         {% if key == 0 %}
                                         <td>
@@ -62,7 +61,7 @@
                                         <td></td>
 
                                         {% endif %}
-                                  
+
                                         <td scope="col">{{value.availability_time}}</td>
                                         <td scope="col">{{value.duration_of_lessons}}</td>
                                         <td scope="col">{{value.teacher}}</td>
@@ -70,7 +69,7 @@
                                         <td scope="col">£{{value.totalPrice}}</td>
                                         <td scope="col">{{value.status}}</td>
                                         <td scope="col">{{date}}</td>
-                                        
+
                                     </tr>
 
                                 {% endfor %}
@@ -90,7 +89,7 @@
 
 
 
-{% comment %} 
+{% comment %}
 {% extends 'base_content.html' %}
 {% block content %}
 <div class="container">
@@ -116,7 +115,7 @@
                     {% for value in requests %}
                         {% if value.status == "In Progress" %}
                             <tr class="text-center font-weight-bold">
-                                {% for key,date in value.lesson_dates.items %} 
+                                {% for key,date in value.lesson_dates.items %}
                                     <tr>
                                         {% if key == 0 %}
                                             <td class="font-weight-bold">{{value.id}}</td>
@@ -137,22 +136,22 @@
                                         {% else %}
                                         <td></td>
                                         <td></td>
-                                        <td></td> 
+                                        <td></td>
                                         {% endif %}
                                         <td scope="col">{{date}}
                                         <td scope="col">{{value.availability_time}}</td>
                                         <td scope="col">{{value.duration_of_lessons}}</td>
                                         <td scope="col">{{value.teacher}}</td>
-                                        <td scope="col">{{value.instrument}}</td>                                
+                                        <td scope="col">{{value.instrument}}</td>
                                     </tr>
                                 {% endfor%}
-                                    
-                                                        
+
+
                             </tr>
                         {% endif%}
                     {% endfor %}
                 </tbody>
-            </table>  
+            </table>
         </div>
     </div>
 </div>

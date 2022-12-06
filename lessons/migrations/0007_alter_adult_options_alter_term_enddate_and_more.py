@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lessons', '0006_merge_20221206_1149'),
+        ('lessons', '0005_alter_adult_options'),
     ]
 
     operations = [
