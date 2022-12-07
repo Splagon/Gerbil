@@ -75,8 +75,7 @@ class RequestForm(forms.ModelForm):
             'teacher' : 'Please select a preferred teacher',
         }
         model = Request
-        # 'number_of_lessons'
-        # Replace datetime.date.today with start of term date so that a day of the week can be established
+
         fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
             'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
@@ -109,12 +108,10 @@ class RequestForm(forms.ModelForm):
             username = user,
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
-            # number_of_lessons=self.cleaned_data.get('number_of_lessons'),
             interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
-            # totalPrice= int(len(self.fields['lesson_dates'])) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
 
@@ -122,7 +119,7 @@ class RequestForm(forms.ModelForm):
 
 
         return request
-
+        
 class LogInForm(forms.Form):
     username = forms.CharField(label = "Username")
     password = forms.CharField(label = "Password", widget= forms.PasswordInput())
