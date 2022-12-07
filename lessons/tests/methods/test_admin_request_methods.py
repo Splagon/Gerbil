@@ -1,7 +1,7 @@
 """Test admin request methods"""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import User, Request
+from lessons.models import User, Request,SchoolBankAccount,Invoice
 from lessons.tests.helpers import reverse_with_next
 from lessons.tests.helpers import LogInTester
 import operator
@@ -25,6 +25,29 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
             # number_of_lessons = 5,
             duration_of_lessons = 30
         )
+
+        self.invoice = Invoice.objects.create(
+            unique_reference_number = "1"+"-"+str(self.request.id),
+            invoice_number=str(self.request.id),
+            student_id =5,
+            paid = False,
+            amount = 44,
+            currently_paid = 11
+
+            )
+
+        self.request_2 = Request.objects.create(
+            # Must be in the form YYYY-MM-DD
+            username = self.user,
+            availability_date = "2022-12-29",
+            availability_time = "08:30",
+            instrument = "Violin",
+            interval_between_lessons = 5,
+            duration_of_lessons = 30
+        )
+
+        self.school_bank_account = SchoolBankAccount.objects.create(balance = 0.0)
+
         self.delete_url = reverse('admin_delete_requests', kwargs={'id': self.request.id})
         self.update_url = reverse('admin_update_requests', kwargs={'id': self.request.id})
         self.view_requests_url = reverse('admin_view_requests')
@@ -83,3 +106,21 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
         self.client.get(self.update_url, follow=True)
         requests_after = len(Request.objects.values())
         self.assertEquals(requests_before, requests_after)
+
+    def test_unsuccesful_admin_invoice_update(self):
+        self.client.login(username = self.user.username, password='Password123')
+        self.update_url = reverse('update-request', kwargs={'id': self.request_2.id})
+        response = self.client.post(
+            self.update_url,
+            {
+                'username' : self.user,
+                'availability_date' : "2023-02-26",
+                'availability_time' : "08:30",
+                'instrument' : "Double Bass",
+                'interval_between_lessons' : 1,
+                'duration_of_lessons' : 30
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        self.request.refresh_from_db()
+        self.client.get(self.update_url, follow=True)
