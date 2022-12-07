@@ -12,11 +12,11 @@
                         <th scope="col">Delete</th>
                         <th scope="col">Update</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Total Price</th>
                         <th scope="col">Availability time</th>
                         <th scope="col">Lesson time</th>
                         <th scope="col">Teacher</th>
                         <th scope="col">Instrument</th>
-                        <th scope="col">Total Price</th>
                         <th scope="col">Status</th>
                         <th scope="col">Lesson Dates</th>
                     </tr>
@@ -45,6 +45,7 @@
                                             </a>
                                         </td>
                                         <td>
+
                                             <a href="{% url 'admin_update_requests' value.id  %}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
                                                     <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
@@ -54,7 +55,9 @@
                                         {% for user in users %}
                                         {% if user.id == value.username_id %}
                                             <th scope="col">{{user.username}}</th>
+                                            <th scope="col">{{value.price_of_lessons}}</th>
                                         {% endif %}
+
                                         {% endfor %}
                                         {% else %}
                                         <td></td>
@@ -62,6 +65,8 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
+
 
                                         {% endif %}
 
@@ -69,7 +74,7 @@
                                         <td scope="col">{{value.duration_of_lessons}}</td>
                                         <td scope="col">{{value.teacher}}</td>
                                         <td scope="col">{{value.instrument}}</td>
-                                        <td scope="col">£{{value.totalPrice}}</td>
+
                                         <td scope="col">{{value.status}}</td>
                                         <td scope="col">{{date}}</td>
 

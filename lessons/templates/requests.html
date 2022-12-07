@@ -10,6 +10,7 @@
                     <th scope="col">Request No. </th>
                     <th scope="col">Delete</th>
                     <th scope="col">Update</th>
+                    <th scope="col">Total Price</th>
                     <th scope="col">Availability date(date)</th>
                     <th scope="col">Availability time</th>
                     <th scope="col">Lesson time</th>
@@ -41,10 +42,15 @@
                                   </svg>
                                 </a>
                               </td>
+                              <td scope="col">{{value.price_of_lessons}}</td>
                             {% else %}
                               <td></td>
                               <td></td>
                               <td></td>
+                              <td></td>
+
+
+
                             {% endif %}
                             <td scope="col">{{date}}
                             <td scope="col">{{value.availability_time}}</td>
