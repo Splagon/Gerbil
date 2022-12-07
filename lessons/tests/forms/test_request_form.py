@@ -21,7 +21,7 @@ class RequestFormTestCase(TestCase):
             'duration_of_lessons': 30,
             'interval_between_lessons': 1,
             # 'number_of_lessons': 2,
-            'instrument': 'violin',
+            'instrument': 'Violin',
             'teacher': 'Mr Doe'
         }
 
@@ -59,5 +59,5 @@ class RequestFormTestCase(TestCase):
         self.assertEqual(request.availability_time.strftime('%H:%M'), "09:00")
         self.assertEqual(request.duration_of_lessons, '30')
         self.assertEqual(request.interval_between_lessons, '1')
-        self.assertEqual(request.instrument, 'violin')
+        self.assertEqual(request.instrument, 'Violin')
         self.assertEqual(request.teacher,'Mr Doe')

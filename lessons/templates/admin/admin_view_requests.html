@@ -29,7 +29,7 @@
                         {% if value.status == "In Progress" %}
                             <tr>
                                 {% for key,date in value.lesson_dates.items %}
-                                    <tr>
+                      1              <tr>
                                         {% if key == 0 %}
                                         <td>
                                             <a href="{% url 'admin_book_request_form' value.id value.requesterId %}" class="btn btn-primary">
