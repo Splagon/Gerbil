@@ -69,7 +69,7 @@ class RequestForm(forms.ModelForm):
 
         fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date'}, ),
+            'availability_date' : widgets.DateInput(format='%Y-%m-%d', attrs={'type' : 'date'}, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
             'interval_between_lessons' : widgets.Select(),
