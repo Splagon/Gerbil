@@ -6,7 +6,9 @@
   <p>Welcome, your reference number is {{ user.id }} </p>
 </head>
 <body>
-
+  {%for message in messages%}
+  <p><b> {{message}}</b></p>
+  {% endfor %}
     <form action="{% url "bank_transfer" %}" method="post">
       {% csrf_token%}
       {{form.as_p}}

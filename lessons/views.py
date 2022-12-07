@@ -112,6 +112,7 @@ def log_in(request):
                 if request.user.is_superuser:
                     return redirect("admin_home")
                 return redirect("home")
+        messages.add_message(request,messages.ERROR, "Invalid credentials")
     form = LogInForm()
     return render(request, 'log_in.html', {"form": form})
 
@@ -343,12 +344,12 @@ def bank_transfer(request):
             if (invoice_exists):
                 invoice = Invoice.objects.get(
                 invoice_number=form.cleaned_data.get('inv_number'))
-                print("invoice exists ")
+                #print("invoice exists ")
 
                 request_exists = Request.objects.filter(
                 id= uuid.UUID(form.cleaned_data.get('inv_number'))).exists()
                 if(request_exists):
-                    print("request_exists")
+                    #print("request_exists")
                     amount = Request.objects.get(id=form.cleaned_data.get('inv_number'))
                     invoice = Invoice.objects.get(
                     invoice_number=form.cleaned_data.get('inv_number'))
@@ -360,9 +361,9 @@ def bank_transfer(request):
                     paid = invoice.paid
 
                     if (paid == False):
-                        print("paid is False")
+                        #print("paid is False")
                         if(amount_paid_by_user == invoice.amount):
-                            print("same")
+                            #print("same")
 
                             user.balance += invoice.amount
                             #the user is returned the amount they owed
@@ -372,7 +373,7 @@ def bank_transfer(request):
 
                         if(amount_paid_by_user > invoice.amount):
                             user.balance += invoice.amount
-                            print("amount is greater")
+                            #print("amount is greater")
                             amount_to_refund_to_user = amount_paid_by_user - invoice.amount
                             #The user is given the extra money they paid
                             user.balance+= amount_to_refund_to_user
@@ -382,51 +383,57 @@ def bank_transfer(request):
 
                         if(amount_paid_by_user < invoice.amount):
                             user.balance += amount_paid_by_user
-                            print("amount is less")
+                            #print("amount is less")
                             #previous_amount_paid = invoice.currently_paid
-                            print(f"awa{invoice.currently_paid}")
+                            #print(f"awa{invoice.currently_paid}")
                             school_bank_account.balance += amount_paid_by_user
                             invoice.currently_paid+= amount_paid_by_user
-                            print(f" eeeee{amount_paid_by_user}")
-                            print(f"awa{invoice.currently_paid}")
+                            #print(f" eeeee{amount_paid_by_user}")
+                            #print(f"awa{invoice.currently_paid}")
                             if(invoice.currently_paid >= invoice.amount):
-                                print("paid exact amount or overpaid")
+                                #print("paid exact amount or overpaid")
                                 invoice.paid = True
                                 #amount_to_refund_to_user =invoice.currently_paid- invoice.amount
                                 #user.balance+= amount_to_refund_to_user
                                 invoice.currently_paid = invoice.amount
                                 school_bank_account.balance -= (amount_paid_by_user- invoice.amount)
                             else:
-                                print("branch c")
+                                #print("branch c")
                                 invoice.paid = False
 
                         form.save(request.user)
                         user.save()
                         invoice.save()
                         school_bank_account.save()
-                        print("an amount has been paid")
-                        return redirect('home')
+                        #print("an amount has been paid")
+                        messages.add_message(request,messages.SUCCESS, "Bank transfer went through")
+                        #return redirect('home')
+                        form = BankTransferForm()
+                        return render(request, 'bank_transfer.html', {'form': form})
 
 
                     else:
-                        print("invoice has been paid before")
+                        #print("invoice has been paid before")
+                        messages.add_message(request,messages.SUCCESS, "Bank transfer has been fully paid already")
                         form = BankTransferForm()
                         return render(request, 'bank_transfer.html', {'form': form})
                 else:
-                    print("request didnt exist")
+                    #print("request didnt exist")
+                    messages.add_message(request,messages.ERROR, "Request doesnt exist")
                     form = BankTransferForm()
                     return render(request, 'bank_transfer.html', {'form': form})
 
             else:
-                print("branch invoice didnt exist")
+                #print("branch invoice didnt exist")
+                messages.add_message(request,messages.ERROR, "Invoice doesnt exist")
                 form = BankTransferForm()
                 return render(request, 'bank_transfer.html', {'form': form})
         else:
-            print("form wasnt valid")
+            messages.add_message(request,messages.ERROR, "Invalid data entered")
             form = BankTransferForm()
             return render(request, 'bank_transfer.html', {'form': form})
     else:
-        print("wasnt POST")
+        #print("wasnt POST")
         form = BankTransferForm()
         return render(request, 'bank_transfer.html', {'form': form})
 

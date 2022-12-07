@@ -3,6 +3,10 @@
 <body>
   <h1>Log in</h1>
   <p>Simple log in page</p>
+
+  {%for message in messages%}
+  <p><b> {{message}}</b></p>
+  {% endfor %}
   <form action="{% url 'log_in' %}" method ="post">
     {% csrf_token %}
     {{form.as_p}}
