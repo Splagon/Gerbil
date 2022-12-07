@@ -229,7 +229,7 @@ def admin_sign_up(request):
 def admin_view_requests(request):
     user = request.user
     users = User.objects.all().values()
-    requests = Request.objects.all()
+    requests = Request.objects.filter(username = user.id,status = "In Progress")
     return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests})
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
@@ -504,7 +504,7 @@ def view_bookings(request):
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_view_bookings(request):
     user = request.user
-    requests = Request.objects.all()
+    requests = Request.objects.filter(username = user.id,status = "Booked")
     users = User.objects.all()
     return render(request, 'admin/admin_bookings.html', {'user': user,'users': users, 'requests': requests, })
 
