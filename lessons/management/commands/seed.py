@@ -12,6 +12,7 @@ class Command(BaseCommand):
     PASSWORD = "Password123"
     USER_COUNT = 100
     REQUEST_COUNT = 100
+    JOHNDOE_REQUEST_COUNT = 5
     NUMBER_OF_TERMS = 6
     REQUEST_FULFILL_PROBABILITY = 0.75
     # Makes a dictionary for the term dates
@@ -40,7 +41,7 @@ class Command(BaseCommand):
         self.create_terms()
         self.create_all_users()
         self.allUsers = User.objects.all()
-        self.create_all_requests()
+        self.create_requests()
 
     def create_terms(self):
         """Uses the dictionaries to add data for the term dates"""
@@ -101,21 +102,21 @@ class Command(BaseCommand):
             password=Command.PASSWORD
         )
 
-        # request = Request()
-        # request.username = User.objects.filter(username="john.doe@example.org")
-        # request.availability_time =
+    def create_requests(self):
+        john_doe = self.get_user("john.doe@example.org")
+        for i in range(Command.JOHNDOE_REQUEST_COUNT):
+            self.create_a_request(john_doe)
 
-    def create_all_requests(self):
         request_count = 0
         while request_count < Command.REQUEST_COUNT:
             print(f'Seeding request {request_count}',  end='\r')
-            self.create_requests()
+            self.create_a_request(self.get_random_user())
             request_count += 1
         print("Request seeding complete")
 
-    def create_requests(self):
+    def create_a_request(self, user):
         request = Request()
-        request.username = self.get_random_user()
+        request.username = user
         request.availability_date = self.get_random_term_date()
         request.interval_between_lessons = randint(1, 2)
         # Creates a random int between 0 and length of duration
@@ -127,6 +128,11 @@ class Command(BaseCommand):
         request.teacher = self.faker.first_name() + " " + self.faker.last_name()
         request.status = self.get_random_status()
         request.save()
+
+    def get_user(self, username):
+        for user in self.allUsers:
+            if user.username == username:
+                return user
 
     def get_random_user(self):
         index = randint(0, self.allUsers.count()-1)
