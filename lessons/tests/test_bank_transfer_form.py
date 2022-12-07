@@ -74,3 +74,5 @@ class BankTransferFormTestCase(TestCase):
         self.assertEqual(bank_transfer.username, self.user)
         self.assertEqual(bank_transfer.amount, self.form_input['paid_amount'])
         self.assertEqual(bank_transfer.student_id,self.user.id)
+
+        

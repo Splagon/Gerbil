@@ -336,11 +336,15 @@ def bank_transfer(request):
     if request.method == 'POST':
         form = BankTransferForm(request.POST)
         if form.is_valid():
+
             invoice_exists = Invoice.objects.filter(
                 invoice_number=form.cleaned_data.get('inv_number')).exists()
-            print(invoice_exists)
+
             if (invoice_exists):
-                print("invoice exists")
+                invoice = Invoice.objects.get(
+                invoice_number=form.cleaned_data.get('inv_number'))
+                print("invoice exists ")
+
                 request_exists = Request.objects.filter(
                 id= uuid.UUID(form.cleaned_data.get('inv_number'))).exists()
                 if(request_exists):
@@ -356,7 +360,10 @@ def bank_transfer(request):
                     paid = invoice.paid
 
                     if (paid == False):
+                        print("paid is False")
                         if(amount_paid_by_user == invoice.amount):
+                            print("same")
+
                             user.balance += invoice.amount
                             #the user is returned the amount they owed
                             school_bank_account.balance += amount_paid_by_user
@@ -377,8 +384,11 @@ def bank_transfer(request):
                             user.balance += amount_paid_by_user
                             print("amount is less")
                             #previous_amount_paid = invoice.currently_paid
+                            print(f"awa{invoice.currently_paid}")
                             school_bank_account.balance += amount_paid_by_user
                             invoice.currently_paid+= amount_paid_by_user
+                            print(f" eeeee{amount_paid_by_user}")
+                            print(f"awa{invoice.currently_paid}")
                             if(invoice.currently_paid >= invoice.amount):
                                 print("paid exact amount or overpaid")
                                 invoice.paid = True
@@ -408,7 +418,7 @@ def bank_transfer(request):
                     return render(request, 'bank_transfer.html', {'form': form})
 
             else:
-                print("invoice didnt exist")
+                print("branch invoice didnt exist")
                 form = BankTransferForm()
                 return render(request, 'bank_transfer.html', {'form': form})
         else:
@@ -416,7 +426,7 @@ def bank_transfer(request):
             form = BankTransferForm()
             return render(request, 'bank_transfer.html', {'form': form})
     else:
-        #print("wasnt POST")
+        print("wasnt POST")
         form = BankTransferForm()
         return render(request, 'bank_transfer.html', {'form': form})
 

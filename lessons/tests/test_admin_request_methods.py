@@ -39,6 +39,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
         self.update_url = reverse('admin_update_requests', kwargs={'id': self.request.id})
         self.view_requests_url = reverse('admin_view_requests')
 
+
     def test_admin_delete_request_url(self):
         self.assertEqual(self.delete_url,f'/admin/delete_request/{self.request.id}')
 
@@ -96,4 +97,5 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
         self.assertEquals(requests_before, requests_after)
 
         invoice_exists = Invoice.objects.filter(invoice_number=str(self.request.id)).exists()
+
         self.assertTrue(invoice_exists)
