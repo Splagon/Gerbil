@@ -60,10 +60,15 @@ class RequestForm(forms.ModelForm):
 
     class Meta:
 
-        start_of_term_date = datetime.datetime.today()
-        query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
-        if (query):
-            start_of_term_date = query.first().get('startDate')
+        terms = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
+        start_of_term_date = None
+        if len(terms) > 0:
+            start_of_term_date = terms.first().get('startDate')
+        else:
+            start_of_term_date = datetime.date.today()
+        # query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
+        # if (query):
+        #     start_of_term_date = query.first().get('startDate')
 
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
@@ -137,7 +142,7 @@ class SignUpForm(forms.ModelForm):
         model = get_user_model()
         fields = ["username", "first_name","last_name", "dateOfBirth", "is_adult"]
         widgets = {"dateOfBirth":widgets.DateInput(attrs={'type': 'date'}),
-                   "is_adult":widgets.CheckboxInput}
+                   "is_adult":widgets.CheckboxInput()}
     password = forms.CharField(label="Password",
                             widget=forms.PasswordInput(),
                             validators=[RegexValidator(
