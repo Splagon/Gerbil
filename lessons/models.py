@@ -6,8 +6,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.timezone import now
 import datetime
 import uuid
-from .helpers import getDurations, getInstruments,getIntervalBetweenLessons
-from .helpers import getDurationsToPrices
+
+
+from .helpers import getDurations, getInstruments,getIntervalBetweenLessons, getDurationsToPrices
+
 class User(AbstractUser):
     username = models.EmailField(
         unique = True,
@@ -83,27 +85,50 @@ class Request(models.Model):
     totalPrice = models.CharField( max_length=50,default=0,  )
     requesterId = models.IntegerField(default=0)
 
+
     def __str__(self):
         return str(self.username)
 
+    """ Find the """
     @property
     def lesson_dates(self):
-
-        terms = Term.objects.filter(
-        endDate__gte=datetime.datetime.today()).values()
-
+        # Retrieve all term objects in ascending order
+        terms = Term.objects.all().order_by('startDate').values()
+        start_date = None
+        end_date = None
         if(len(terms) > 0):
-            end_of_term_date = terms.first()['endDate']
+            for i in range(len(terms)):
+            # If the date falls mid-term:
+                if(terms[i].get('startDate') < self.availability_date and self.availability_date < terms[i].get('endDate')):
+                    start_date = self.availability_date
+                    end_date = terms[i].get('endDate')
+
+            # if the availability date falls in the break or between two terms
+            for i in range(len(terms) - 1):
+                if(terms[i].get('endDate') < self.availability_date and self.availability_date < terms[i+1].get('startDate')):
+                    start_date = terms[i+1].get('startDate')
+                    end_date = terms[i+1].get('endDate')
+
+            # if the availabilty date is before the first term
+            if(self.availability_date < terms[0].get('startDate')):
+                start_date = terms[0].get('startDate')
+                end_date = terms[0].get('endDate')
+
+            # if the availability date is after the last term
+            if(terms[len(terms)-1].get('endDate') <= self.availability_date ):
+                start_date = terms[len(terms)-1].get('endDate')
+                end_date = terms[len(terms)-1].get('endDate')
         else:
-            end_of_term_date = datetime.date.today()
+            start_date = datetime.date.today()
+            end_date = datetime.date.today()
         # Finds the difference in weeks between two dates by finding the consecutive mondays
-        startOfTerm = (self.availability_date - datetime.timedelta(days=self.availability_date.weekday()))
-        endOfTerm = (end_of_term_date - datetime.timedelta(days=end_of_term_date.weekday()))
+        startOfTerm = (start_date - datetime.timedelta(days=start_date.weekday()))
+        endOfTerm = (end_date - datetime.timedelta(days=end_date.weekday()))
         numWeeks = (endOfTerm - startOfTerm).days / 7
 
         lesson_dates = {}
         for i in range(int(numWeeks)):
-            lesson_date= self.availability_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons)))
+            lesson_date= start_date + datetime.timedelta(weeks=(i * int(self.interval_between_lessons)))
             lesson_dates[i] = lesson_date
         return lesson_dates
         
@@ -111,6 +136,10 @@ class Request(models.Model):
     def price_of_lessons(self):
         return float(len(self.lesson_dates) * float(getDurationsToPrices(self.duration_of_lessons)))
 
+
+    @property
+    def price_of_lessons(self):
+        return float(len(self.lesson_dates) * float(getDurationsToPrices(self.duration_of_lessons)))
 
 class Term(models.Model):
     termName = models.CharField(default="blank", max_length=50)

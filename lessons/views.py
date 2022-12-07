@@ -48,8 +48,9 @@ def view_children(request):
 @login_required(login_url="log_in")
 def delete_child(request, child_id):
     user = request.user
-    adult_ = Adult.objects.get(username=user.username)
-    relation = AdultChildRelationship.objects.get(adult=adult_id, child=child_id)
+    adult_id = Adult.objects.get(username=user.username)
+    the_child = User.objects.get(id=child_id)
+    relation = AdultChildRelationship.objects.get(adult=adult_id, child=the_child)
     relation.delete()
     return redirect('view_children')
 
@@ -85,8 +86,7 @@ def request_form(request):
     if request.method == 'POST':
         form = RequestForm(request.POST)
         if form.is_valid():
-            terms = Term.objects.filter(
-            endDate__gte=datetime.datetime.today()).values()
+            terms = Term.objects.filter().values()
             if len(terms) > 0 :
                 form.save(request.user)
                 return redirect('requests')

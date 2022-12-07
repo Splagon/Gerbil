@@ -51,7 +51,6 @@ class BankTransferForm(forms.ModelForm):
         student_id= user.id
         )
 
-        #)
         return bank_transfer
 
 
@@ -59,14 +58,6 @@ class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
 
     class Meta:
-
-        terms = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
-        start_of_term_date = None
-        if len(terms) > 0:
-            start_of_term_date = terms.first().get('startDate')
-        else:
-            start_of_term_date = datetime.date.today()
-
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
@@ -75,11 +66,10 @@ class RequestForm(forms.ModelForm):
             'teacher' : 'Please select a preferred teacher',
         }
         model = Request
-        # 'number_of_lessons'
-        # Replace datetime.date.today with start of term date so that a day of the week can be established
+
         fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date'}, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
             'interval_between_lessons' : widgets.Select(),
@@ -88,8 +78,7 @@ class RequestForm(forms.ModelForm):
         }
 
     def clean(self):
-        """Clean the data and generate messages for any errors."""
-
+        """Clean the data and generate messages for any errors."""        
         availability_time = self.cleaned_data['availability_time']
         if availability_time < datetime.time(hour=8, minute=0, second=0):
             raise forms.ValidationError('Time cannot be before 8.')
@@ -97,30 +86,22 @@ class RequestForm(forms.ModelForm):
         elif availability_time > datetime.time(hour=17, minute=30, second=0):
             raise forms.ValidationError('Time cannot be after 17:30.')
 
-        availability_date = self.cleaned_data['availability_date']
-        if(availability_date < datetime.date.today()):
-            self.add_error('availability_date', 'Date cannot be before today')
-            raise forms.ValidationError('Date cannot be before today.')
-
-        if(availability_date >= datetime.date.today() + datetime.timedelta(days=365*2)):
-            raise forms.ValidationError('Date cannot be more than 2 years in the future.')
 
         super().clean()
 
     # Saves a new request form
     def save(self, user):
         """Create a new request."""
+
         super().save(commit=False)
         request = Request.objects.create(
             username = user,
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
-            # number_of_lessons=self.cleaned_data.get('number_of_lessons'),
             interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
-            # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
 
@@ -128,7 +109,7 @@ class RequestForm(forms.ModelForm):
 
 
         return request
-
+        
 class LogInForm(forms.Form):
     username = forms.CharField(label = "Username")
     password = forms.CharField(label = "Password", widget= forms.PasswordInput())
