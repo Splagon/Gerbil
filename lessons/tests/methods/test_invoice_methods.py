@@ -6,7 +6,6 @@ from lessons.tests.helpers import reverse_with_next
 
 class InvoiceMethodsTestCase(TestCase):
 
-        # Get user to identify request form
     fixtures = [
         'lessons/tests/fixtures/default_user2.json'
     ]

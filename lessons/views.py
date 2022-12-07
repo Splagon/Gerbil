@@ -13,7 +13,7 @@ from .helpers import getDurationsToPrices
 import datetime
 import operator
 
-
+#Returns user to the home pagge
 def home(request):
     return render(request, 'home.html')
 
@@ -71,7 +71,7 @@ def request_form_child(request, child_id):
         return redirect('view_children')
 
 
-
+#User can see their submitted requests
 @login_required(login_url="log_in")
 def requests(request):
     user = request.user
@@ -148,7 +148,7 @@ def update_request(request, id):
 
     return render(request, 'update_request_form.html', {'request': requestObject, 'form': form})
 
-
+#The user logs in
 def log_in(request):
     if request.method == "POST":
         form = LogInForm(request.POST)
@@ -178,7 +178,7 @@ def sign_up(request):
 def view_profile(request):
     return render(request, 'view_profile.html')
 
-
+#Sends an administrator to the admin home page
 def admin_home(request):
     return render(request, 'admin/admin_home.html')
 
@@ -232,6 +232,7 @@ def admin_view_requests(request):
     requests = Request.objects.all()
     return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests})
 
+#An administrator updates a request
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
@@ -292,19 +293,23 @@ def create_invoice(request, id):
     )
     invoice.save()
 
-
+#An invoice is updated_automatically by the system when a user
+#makes changes to a request
 def update_invoice(id, old_price):
     request = Request.objects.get(id=id)
     new_total = request.totalPrice
 
+    #The user is refunded the  amount originally stated in the invoice
+    #And are charged a new one
     user = request.username
     user.balance += float(old_price)
     user.balance -= float(new_total)
     user.save()
-
+    #The amount the user has to pay is updated
     invoice = Invoice.objects.get(invoice_number=str(id))
     invoice.amount = new_total
     invoice.save()
+    #The school is discounted the aforesaid amount
 
     school_bank_account = SchoolBankAccount.objects.get(id=1)
     school_bank_account.balance -= float(old_price)
@@ -319,7 +324,6 @@ def admin_book_request_form(request, id, requesterId):
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
         duration_of_lessons = form.cleaned_data.get('duration_of_lessons')
-        # number_of_lessons = form.cleaned_data.get('number_of_lessons')
         interval_between_lessons = form.cleaned_data.get(
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
@@ -378,6 +382,7 @@ def password(request):
 
 
 @login_required(login_url="log_in")
+#How a transfer from a student/ adult is handled by the system
 def bank_transfer(request):
 
     if request.method == 'POST':
@@ -449,25 +454,29 @@ def bank_transfer(request):
     return render(request, 'bank_transfer.html', {'form': form})
 
 
-
+#The user can see how much they owe to the school / they have on the system
+#As well as the transactions they have made
 @login_required(login_url="log_in")
 def balance_and_transactions(request):
     user = request.user
     return render(request, "balance_and_transactions.html", {"user": user})
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
+#An admin sees the invoices of all users
 def admin_view_user_invoice(request, id):
     user = User.objects.get(id=id)
     user_invoices = Invoice.objects.filter(student_id=user.id)
     return render(request, "view_invoices.html", {"user": user, "user_invoices": user_invoices})
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
+#An admin sees the bank transfers made by all users to the school
 def admin_view_user_transfers(request, id):
     user = User.objects.get(id=id)
     user_transfers = BankTransfer.objects.filter(student_id=user.id)
     return render(request, "view_transfers.html", {"user": user, "user_transfers": user_transfers})
 
 @login_required(login_url="log_in")
+#A user sees their invoices
 def view_invoices(request):
     user = request.user
     user_invoices = Invoice.objects.filter(student_id=user.id)
@@ -481,6 +490,7 @@ def view_transfers(request):
 
 
 @login_required(login_url="log_in")
+#The admin checks the balance of the school bank account and incoming transfers
 def admin_view_school_balance_and_transfers(request):
     school_balance = SchoolBankAccount.objects.get(id=1)
     transfers = BankTransfer.objects.all().values()
@@ -488,6 +498,7 @@ def admin_view_school_balance_and_transfers(request):
 
 
 @login_required(login_url="log_in")
+#The admin can check the balance of each student and their invoices and transfers
 def admin_check_student_balance_and_transactions(request):
     users = User.objects.filter(is_superuser=False, is_staff=False)
 
@@ -495,6 +506,7 @@ def admin_check_student_balance_and_transactions(request):
 
 
 @login_required(login_url="log_in")
+#User can see their bookings
 def view_bookings(request):
     user = request.user
     requests = Request.objects.filter(username = user.id, status = "Booked")

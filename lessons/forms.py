@@ -5,7 +5,7 @@ from django.forms import widgets
 
 from .models import User, BankTransfer, Adult, AdultChildRelationship
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
-# from .helpers import getDurationsToPrices
+
 
 from django.db.models import Q
 import datetime
@@ -22,7 +22,7 @@ class BankTransferForm(forms.ModelForm):
     validators=[RegexValidator(
     regex=r'^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$',
 
-    #regex=r'^[0-9]+-[0-9]+',
+
 
             message='Invoice  format is not valid'
             )]
@@ -34,13 +34,9 @@ class BankTransferForm(forms.ModelForm):
                 'min': '0.01',
             }),validators=[MinValueValidator(0.01), MaxValueValidator(9999.99)])
 
-
-
-
-
     def clean(self):
         super().clean()
-
+    #Saves a new BankTransfer Form    
     def save(self,user):
         super().save(commit=False)
 
@@ -73,12 +69,11 @@ class RequestForm(forms.ModelForm):
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
             'interval_between_lessons' : widgets.Select(),
-            # 'number_of_lessons' : widgets.NumberInput(),
             'duration_of_lessons' : widgets.Select(),
         }
 
     def clean(self):
-        """Clean the data and generate messages for any errors."""        
+        """Clean the data and generate messages for any errors."""
         availability_time = self.cleaned_data['availability_time']
         if availability_time < datetime.time(hour=8, minute=0, second=0):
             raise forms.ValidationError('Time cannot be before 8.')
@@ -109,7 +104,7 @@ class RequestForm(forms.ModelForm):
 
 
         return request
-        
+
 class LogInForm(forms.Form):
     username = forms.CharField(label = "Username")
     password = forms.CharField(label = "Password", widget= forms.PasswordInput())

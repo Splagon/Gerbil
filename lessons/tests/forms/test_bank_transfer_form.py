@@ -49,6 +49,7 @@ class BankTransferFormTestCase(TestCase):
         form = BankTransferForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
+        #Regex format for the invoice number can be found in forms.py
     def test_entered_invoice_number_must_contain_dashes(self):
         self.form_input['inv_number'] = '159456157f294079b567a5a7ac6647a5'
         form = BankTransferForm(data=self.form_input)
