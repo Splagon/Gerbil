@@ -3,26 +3,34 @@ from django import forms
 from django.test import TestCase
 from lessons.forms import RequestForm
 from lessons.models import Request
-from lessons.models import User
+from lessons.models import User, Child
 import datetime
 class RequestFormTestCase(TestCase):
     """Unit tests of the request form."""
 
     # Get user to identify request form
     fixtures = [
-        'lessons/tests/fixtures/default_user2.json'
+        'lessons/tests/fixtures/default_user2.json',
     ]
 
     def setUp(self):
         self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
+        self.child = Child.objects.create(
+            user_id = self.user,
+            child_name = 'child_name',
+            child_age = 15
+        )
+        
         self.form_input = {
+            'username' : self.user,
             'availability_date': datetime.date.today(),
             'availability_time': '09:00',
             'duration_of_lessons': 30,
             'interval_between_lessons': 1,
             # 'number_of_lessons': 2,
             'instrument': 'violin',
-            'teacher': 'Mr Doe'
+            'teacher': 'Mr Doe',
+            'students' : self.child
         }
     
 
@@ -44,13 +52,15 @@ class RequestFormTestCase(TestCase):
         self.assertIn('interval_between_lessons', form.fields)
         # self.assertIn('number_of_lessons', form.fields)
 
+        self.assertIn('students', form.fields)
+
     def test_valid_request_form_(self):
-        form = RequestForm(data=self.form_input)
+        form = RequestForm(data=self.form_input, user_id= self.user.id)
         self.assertTrue(form.is_valid())
 
 
     def test_request_form_must_save_correctly(self):
-        form=RequestForm(data=self.form_input)
+        form=RequestForm(data=self.form_input, user_id = self.user.id)
         before_count = Request.objects.count()
         form.save(self.user)
         after_count = Request.objects.count()

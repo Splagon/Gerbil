@@ -58,15 +58,13 @@ class BankTransferForm(forms.ModelForm):
 
 class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
-    test = 0
     def __init__(self, *args, **kwargs):
-        global test
         user_id = kwargs.pop('user_id', None)
-        test = user_id
-        super().__init__(*args, **kwargs)
-    print(test)
-    request_form = forms.ModelMultipleChoiceField(queryset=Child.objects.filter(user_id=test).values_list('child_name') )
+        # defining students field based on child model
+        super(RequestForm,self).__init__(*args, **kwargs)
+        self.fields['students'] = forms.ModelChoiceField( label="Register a student", queryset=Child.objects.filter(user_id = user_id), empty_label=None)
 
+        
     class Meta:
         
         terms = Term.objects.filter(
@@ -82,7 +80,6 @@ class RequestForm(forms.ModelForm):
             'instrument' : 'Please select the instrument you\'d like to start having lessons in',
             'interval_between_lessons' : 'Interval between lessons(in weeks)',
             'teacher' : 'Please select a preferred teacher',
-            'students' : 'Register student for lessons'
         }
         model = Request
         # 'number_of_lessons'
@@ -92,7 +89,6 @@ class RequestForm(forms.ModelForm):
             'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': startDate, 'max' : startDate + datetime.timedelta(days=6) }, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
-            'students' : widgets.Select(),
             'interval_between_lessons' : widgets.Select(),
             # 'number_of_lessons' : widgets.NumberInput(),
             'duration_of_lessons' : widgets.Select(),
@@ -126,19 +122,18 @@ class RequestForm(forms.ModelForm):
             username = user,
             availability_date=self.cleaned_data.get('availability_date'),
             availability_time=self.cleaned_data.get('availability_time'),
+            students = self.cleaned_data.get('students'),
             # number_of_lessons=self.cleaned_data.get('number_of_lessons'),
             interval_between_lessons = self.cleaned_data.get('interval_between_lessons'),
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
-            student = self.cleaned_data.get('student'),
             # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
-
         )
 
-
+        print(request.students)
         return request
 
 class LogInForm(forms.Form):

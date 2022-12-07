@@ -2,7 +2,7 @@ from django.test import TestCase
 from django import forms
 from lessons.forms import SignUpForm
 from django.urls import reverse
-from ..models import User, Adult
+from ..models import User
 from django.contrib.auth.hashers import check_password
 
 class SignUpViewTestCase(TestCase):
@@ -17,7 +17,6 @@ class SignUpViewTestCase(TestCase):
             "password" : "Password123",
             "password_confirm" : "Password123",
             "id": "3",
-            "is_adult" : False
         }
 
     def test_sign_up_url(self):
@@ -52,27 +51,3 @@ class SignUpViewTestCase(TestCase):
         self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
         self.assertTemplateUsed(response, "home.html")
     
-    def test_successful_sign_up_not_adult(self):
-        before_count = User.objects.count()
-        before_count_adult = Adult.objects.count()
-        response = self.client.post(self.url, self.form_input, follow=True)
-        after_count = User.objects.count()
-        after_count_adult = Adult.objects.count()
-        self.assertEqual(after_count, before_count+1)
-        self.assertEqual(after_count_adult, before_count_adult)
-        response_url = reverse("home")
-        self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
-        self.assertTemplateUsed(response, "home.html")
-    
-    def test_successful_sign_up_is_adult(self):
-        self.form_input["is_adult"] = True
-        before_count = User.objects.count()
-        before_count_adult = Adult.objects.count()
-        response = self.client.post(self.url, self.form_input, follow=True)
-        after_count = User.objects.count()
-        after_count_adult = Adult.objects.count()
-        self.assertEqual(after_count, before_count+1)
-        self.assertEqual(after_count_adult, before_count_adult+1)
-        response_url = reverse("home")
-        self.assertRedirects(response, response_url, status_code=302,target_status_code=200)
-        self.assertTemplateUsed(response, "home.html")

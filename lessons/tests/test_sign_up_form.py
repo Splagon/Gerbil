@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django import forms
 from lessons.forms import SignUpForm
-from ..models import User, Adult
+from ..models import User
 from django.contrib.auth.hashers import check_password
 
 class SignUpFormTestCase(TestCase):
@@ -15,7 +15,6 @@ class SignUpFormTestCase(TestCase):
             "password" : "Password123",
             "password_confirm" : "Password123",  
             "id":"3",
-            "is_adult" : False
         }
 
     # Form accepts valid input data
@@ -45,10 +44,6 @@ class SignUpFormTestCase(TestCase):
         self.assertIn("password_confirm", form.fields)
         password_wdg = form.fields["password_confirm"].widget
         self.assertTrue(isinstance(password_wdg, forms.PasswordInput))
-        
-        self.assertIn("is_adult", form.fields)
-        is_adult_field = form.fields["is_adult"]
-        self.assertTrue(isinstance(is_adult_field, forms.BooleanField))
 
     # Form uses model validation
     def test_form_uses_model_validation(self):
@@ -106,29 +101,3 @@ class SignUpFormTestCase(TestCase):
         is_pass_correct = check_password("Password123", user.password)
         self.assertTrue(is_pass_correct)
         
-    def test_save_as_adult(self):
-        self.form_input["is_adult"] = True
-        form=SignUpForm(data=self.form_input)
-        self.assertTrue(form.is_valid())
-        
-        before_count = User.objects.count()
-        before_count_adult = Adult.objects.count()
-        form.save()
-        after_count = User.objects.count()
-        after_count_adult = Adult.objects.count()
-        self.assertEqual(after_count, before_count +1)
-        self.assertEqual(after_count_adult, before_count_adult+1)
-        
-    def test_save_as_not_adult(self):
-        self.form_input["is_adult"] = False
-        form=SignUpForm(data=self.form_input)
-        self.assertTrue(form.is_valid())
-        
-        # No adult object should be created
-        before_count = User.objects.count()
-        before_count_adult = Adult.objects.count()
-        form.save()
-        after_count = User.objects.count()
-        after_count_adult = Adult.objects.count()
-        self.assertEqual(after_count, before_count +1)
-        self.assertEqual(after_count_adult, before_count_adult)

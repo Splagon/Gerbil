@@ -71,6 +71,8 @@ class Child(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     child_name = models.CharField(blank=False, verbose_name = "Student's name", max_length=50, default = "")
     child_age = models.IntegerField(blank=False, verbose_name = "Student's age", default = 15, validators=[MinValueValidator(5), MaxValueValidator(80)])
+    def __str__(self):
+        return self.child_name
 
 
 class Request(models.Model):

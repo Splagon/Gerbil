@@ -1,0 +1,10 @@
+[
+    {
+        "model" : "lessons.child",
+        "pk" : 1,
+        "fields" : {
+          "child_name" : "Child 1",
+          "child_age" : "15"
+        }
+    }
+]               

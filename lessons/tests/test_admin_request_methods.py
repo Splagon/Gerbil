@@ -1,7 +1,7 @@
 """Test admin request methods"""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import User, Request
+from lessons.models import User, Request, Child
 from lessons.tests.helpers import reverse_with_next
 from lessons.tests.helpers import LogInTester
 import operator
@@ -15,6 +15,11 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='danielthomas@example.com')
+        self.child = Child.objects.create(
+            user_id = self.user,
+            child_name = 'child_name',
+            child_age = 15
+        )
         self.request = Request.objects.create(
             # Must be in the form YYYY-MM-DD
             username = self.user,
@@ -23,7 +28,8 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
             instrument = "violin",
             interval_between_lessons = 1,
             # number_of_lessons = 5,
-            duration_of_lessons = 30
+            duration_of_lessons = 30,
+            students = self.child
         )
         self.delete_url = reverse('admin_delete_requests', kwargs={'id': self.request.id})
         self.update_url = reverse('admin_update_requests', kwargs={'id': self.request.id})
@@ -72,7 +78,8 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
                 'instrument' : "double bass",
                 # 'number_of_lessons' : 3,
                 'interval_between_lessons' : 1,
-                'duration_of_lessons' : 30
+                'duration_of_lessons' : 30,
+                'students' : self.child
             }
         )
 

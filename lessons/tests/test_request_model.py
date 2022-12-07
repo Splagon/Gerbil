@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from lessons.models import Request
 import datetime
-from lessons.models import User
+from lessons.models import User, Child
 class RequestModelTestCase(TestCase):
     # Get user to identify request form
     fixtures = [
@@ -14,6 +14,11 @@ class RequestModelTestCase(TestCase):
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
+        self.child = Child.objects.create(
+            user_id = self.user,
+            child_name = 'child_name',
+            child_age = 15
+        )
         self.request = Request.objects.create(
             # Must be in the form YYYY-MM-DD
             username = self.user,
@@ -22,7 +27,9 @@ class RequestModelTestCase(TestCase):
             instrument = "violin",
             interval_between_lessons = 1,
             # number_of_lessons = 5,
-            duration_of_lessons = 30
+            duration_of_lessons = 30,
+            students = self.child
+            
         )
 
     def test_valid_request(self):

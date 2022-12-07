@@ -1,7 +1,7 @@
 """Test delete request method"""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import User, Request
+from lessons.models import User, Request, Child
 from lessons.tests.helpers import reverse_with_next
 
 class RequestMethodsTestCase(TestCase):
@@ -14,6 +14,11 @@ class RequestMethodsTestCase(TestCase):
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
+        self.child = Child.objects.create(
+            user_id = self.user,
+            child_name = 'child_name',
+            child_age = 15
+        )
         self.request = Request.objects.create(
             # Must be in the form YYYY-MM-DD
             username = self.user,
@@ -22,7 +27,8 @@ class RequestMethodsTestCase(TestCase):
             instrument = "violin",
             interval_between_lessons = 5,
             # number_of_lessons = 5,
-            duration_of_lessons = 30
+            duration_of_lessons = 30,
+            students = self.child
         )
 
         self.delete_url = reverse('delete-request', kwargs={'id': self.request.id})
@@ -48,7 +54,7 @@ class RequestMethodsTestCase(TestCase):
         self.client.login(username = self.user.username, password='Password123')
         requests_before = len(Request.objects.values())
         response = self.client.post(
-            self.update_url,
+            self.update_url,            
             {
                 'username' : self.user,
                 'availability_date' : "2023-02-26",
@@ -56,7 +62,8 @@ class RequestMethodsTestCase(TestCase):
                 'instrument' : "double bass",
                 # 'number_of_lessons' : 3,
                 'interval_between_lessons' : 1,
-                'duration_of_lessons' : 30
+                'duration_of_lessons' : 30,
+                'students' : self.child
             }
         )
 

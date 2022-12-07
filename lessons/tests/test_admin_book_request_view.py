@@ -1,7 +1,7 @@
 """Test admin booking view"""
 from django.test import TestCase
 from django.urls import reverse
-from lessons.models import User, Request
+from lessons.models import User, Request, Child
 from lessons.tests.helpers import reverse_with_next
 from lessons.tests.helpers import LogInTester
 import operator
@@ -15,6 +15,11 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='danielthomas@example.com')
+        self.child = Child.objects.create(
+            user_id = self.user,
+            child_name = 'child_name',
+            child_age = 15
+        )
         self.request = Request.objects.create(
             # Must be in the form YYYY-MM-DD
             username = self.user,
@@ -23,7 +28,8 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
             instrument = "violin",
             interval_between_lessons = 1,
             # number_of_lessons = 5,
-            duration_of_lessons = 30
+            duration_of_lessons = 30,
+            students = self.child
         )
 
         self.booking_url = reverse('admin_book_request_form', kwargs={'id': self.request.id, 'requesterId': self.request.requesterId})
@@ -41,7 +47,8 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
                 'instrument' : "double bass",
                 # 'number_of_lessons' : 3,
                 'interval_between_lessons' : 1,
-                'duration_of_lessons' : 30
+                'duration_of_lessons' : 30,
+                'students' : self.child
             }
         )
 

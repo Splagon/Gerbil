@@ -86,7 +86,7 @@ def requests(request):
 @login_required(login_url="log_in")
 def request_form(request):
     user = request.user
-    children = Child.objects.filter(user_id = user)
+    children = Child.objects.filter(user_id = user).values_list(flat=True)
     error_message = ""
     if request.method == 'POST':
         form = RequestForm(request.POST, user_id = user.id)
@@ -318,8 +318,33 @@ def update_invoice(id, old_price):
 
 
 def admin_book_request_form(request, id, requesterId):
+    user = request.user
+    children = Child.objects.filter(user_id = user).values_list(flat=True)
     requestObject = Request.objects.get(id=id)
-    form = RequestForm(request.POST or None, instance=requestObject)
+    error_message = ""
+    if request.method == 'POST':
+        form = RequestForm(request.POST, user_id = user.id)
+        if form.is_valid():
+            terms = Term.objects.filter(
+            endDate__gte=datetime.datetime.today()).values()
+            if len(terms) > 0 :
+                create_invoice(id)
+                form.save(request.user)
+                return redirect('admin_view_requests')
+            else: 
+                error_message = "Please add some terms as administrator - this will allow users to make requests!"
+
+    else:
+        form = RequestForm(user_id = user.id)
+
+    return render(request, 'admin/admin_book_request_form.html', {'form': form, 'error_messages': error_message, 'children' : children, 'request': requestObject})
+
+
+
+
+
+    requestObject = Request.objects.get(id=id)
+    form = RequestForm(request.POST, user_id = requesterId)
     if form.is_valid():
         availability_date = form.cleaned_data.get('availability_date')
         availability_time = form.cleaned_data.get('availability_time')
@@ -329,6 +354,7 @@ def admin_book_request_form(request, id, requesterId):
             'interval_between_lessons')
         teacher = form.cleaned_data.get('teacher')
         instrument = form.cleaned_data.get('instrument')
+        students = form.cleaned_data.get('students')
         status = 'Booked'
 
         # Update the records after the user has made changes
@@ -341,6 +367,7 @@ def admin_book_request_form(request, id, requesterId):
         request.teacher = teacher
         request.instrument = instrument
         request.status = status
+        request.students = students
 
         create_invoice(id)
         request.save()
