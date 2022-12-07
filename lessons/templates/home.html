@@ -1,10 +1,9 @@
 {% extends 'base_content.html' %}
 {% block content %}
 
-  <div>
+  <div class="row">
     <h1>Home Page</h1>
-    </img>
-    <p>
+    <span class="col-9">
       {% if user.is_authenticated %}
         <p><b>Welcome, {{ user.first_name }} {{ user.last_name }}</b></p>
         <p><a href='{% url 'request_form' %}'>Request a lesson!</href></p>
@@ -22,6 +21,9 @@
       {% else %}
         <h5>You are not logged in</h5>
       {% endif %}
-    </p>
+    </span>
+
+  </div>
+
 
 {% endblock %}

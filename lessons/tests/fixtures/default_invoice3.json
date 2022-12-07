@@ -1,0 +1,14 @@
+[
+  {
+    "model" : "lessons.invoice",
+    "pk" : 3,
+    "fields" : {
+      "unique_reference_number" : "3-25945612-8f29-4069-b00b-b2a7ac6647a2",
+      "invoice_number": "25945612-8f29-4069-b00b-b2a7ac6647a2",
+      "student_id":1,
+      "amount":100.0,
+      "currently_paid" : 80.00,
+      "paid": true
+    }
+  }
+]
