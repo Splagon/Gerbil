@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import Adult, User, Request, AdultChildRelationship
+from lessons.models import Adult, User, Request, AdultChildRelationship, SchoolBankAccount
 from lessons.models import Term
 from django.db.utils import IntegrityError
 import datetime
@@ -40,6 +40,7 @@ class Command(BaseCommand):
         self.faker = Faker('en_GB')
 
     def handle(self, *args, **options):
+        self.create_school_bank_account()
         self.create_terms()
         self.create_all_adult_users()
         self.allAdultUsers = User.objects.filter(is_adult=True)
@@ -47,6 +48,12 @@ class Command(BaseCommand):
         self.allChildUsers = User.objects.filter(is_adult = False)
         self.create_requests()
         print("SEEDING COMPLETE")
+
+    def create_school_bank_account(self):
+        schoolBankAccount = SchoolBankAccount()
+        schoolBankAccount.balance = 0
+        schoolBankAccount.save()
+        print("School account seeding complete")
 
     def create_terms(self):
         """Uses the dictionaries to add data for the term dates"""
