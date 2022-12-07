@@ -20,7 +20,14 @@ from lessons import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('requests/', views.requests, name='requests'),
-    path('request-lesson/', views.request_form, name='request_form'),
+    path('request_lesson/', views.request_form, name='request_form'),
+
+    path('request_form_child/<int:child_id>', views.request_form_child, name='request_form_child'),
+
+    path('add_child/', views.add_child, name='add_child'),
+    path("view_children/",views.view_children, name="view_children"),
+    path("delete_child/<int:id>", views.delete_child, name="delete_child"),
+
     path('delete_request/<uuid:id>', views.delete_request, name='delete-request'),
     path('update_request/<uuid:id>', views.update_request, name='update-request'),
     path("admin/view_user_invoice/<int:id>", views.admin_view_user_invoice, name ="admin_view_user_invoice"),
@@ -50,8 +57,10 @@ urlpatterns = [
 
     path('admin/view_requests/', views.admin_view_requests, name = 'admin_view_requests'),
     path('admin/view_bookings/', views.admin_view_bookings, name = 'admin_view_bookings'),
-    path('admin/update_request/<uuid:id>', views.update_request, name = 'admin_update_requests'),
-    path('admin/delete_request/<uuid:id>', views.delete_request, name = 'admin_delete_requests'),
+
+    path('admin/update_request/<uuid:id>', views.admin_update_requests, name = 'admin_update_requests'),
+
+    path('admin/delete_request/<uuid:id>', views.admin_delete_request, name = 'admin_delete_requests'),
     path('admin/book_request/<uuid:id>/<int:requesterId>', views.admin_book_request_form, name = 'admin_book_request_form'),
 
     path('admin/view_terms/', views.admin_view_terms, name='admin_view_terms'),

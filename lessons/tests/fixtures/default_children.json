@@ -1,0 +1,30 @@
+[
+    {
+      "model" : "lessons.user",
+      "pk" : 2,
+      "fields" : {
+        "username" : "jimmy.john@kcl.ac.uk",
+        "first_name" : "Jimmy",
+        "last_name" : "John",
+        "dateOfBirth": "2007-01-01",
+        "password" : "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+        "is_adult" : false,
+        "is_staff" : false,
+        "is_superuser" : false
+      }
+    },
+    {
+      "model" : "lessons.user",
+      "pk" : 3,
+      "fields" : {
+        "username" : "bella.belle@kcl.ac.uk",
+        "first_name" : "Bella",
+        "last_name" : "Belle",
+        "dateOfBirth": "2008-01-01",
+        "password" : "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
+        "is_adult" : false,
+        "is_staff" : false,
+        "is_superuser" : false
+      }
+    }
+  ]

@@ -1,7 +1,11 @@
 INSTRUMENTS = [
-    ('violin', 'violin'),
-    ('double bass', 'double bass'),
-    ('cello', 'cello'),
+    ('Violin', 'Violin'),
+    ('Double Bass', 'Double Bass'),
+    ('Cello', 'Cello'),
+    ('Keyboard', 'Keyboard'),
+    ('Piano', 'Piano'),
+    ('Trumpet', 'Trumpet'),
+    ('Other', 'Other'),
 ]
 
 DURATIONS = [
@@ -18,9 +22,9 @@ DURATION_TO_PRICES = {
 
 
 
-STATUSES = [
-    ('in_progress', 'in_progress'),
-    ('fulfilled', 'fulfilled')
+INTERVALS_BETWEEN_LESSONS = [
+    ('1', 1),
+    ('2', 2)
 ]
 
 
@@ -31,8 +35,8 @@ def getInstruments():
 def getDurations():
     return DURATIONS
 
-def getStatuses():
-    return STATUSES
+def getIntervalBetweenLessons():
+    return INTERVALS_BETWEEN_LESSONS
 
 def getDurationsToPrices(duration):
     return DURATION_TO_PRICES[duration]

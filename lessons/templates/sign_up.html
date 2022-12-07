@@ -1,15 +1,16 @@
-<html>
-<head>
-  <title>MSMS</title>
-</head>
+{% extends 'base_content.html' %}
+{% block content %}
 <body>
   <h1>Sign Up Page</h1>
-  <form action='{% url "sign_up" %}' method="post">
+  <span class="me-auto text-right text-danger ">
+    {{error_messages}}
+  </span>
+  <form action="{% url 'sign_up' %}" method="post">
     {% csrf_token %}
-
-    {{ form.as_p }}
-    
-    <input type="submit" value="Sign Up">
+    {% include 'partials/bootstrap_form.html' with form=form %}
+    <div class=" text-center">
+      <input type="submit" value="Sign Up" class="btn btn-primary" />
+    </div>
   </form>
 </body>
-</html>
+{% endblock %}

@@ -1,11 +1,9 @@
-<html>
-<head>
-  <title>MSMS</title>
-</head>
+{% extends 'base_content.html' %}
+{% block content %}
 <body>
   <h1>Profile</h1>
+  <br>
   <p><a href='{% url "edit_profile" %}'>View and update your profile.</a></p>
   <p><a href='{% url "password" %}'>Change your password.</a></p>
-  <p><a href='{% url 'home' %}'>Go Home</a></p>
 </body>
-</html>
+{% endblock %}

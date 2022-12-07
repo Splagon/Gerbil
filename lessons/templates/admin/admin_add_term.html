@@ -3,9 +3,11 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <a href="/">Back to home</a>
       <h1>Add New Term</h1>
 
+      <span class="me-auto text-right text-danger ">
+        {{error_messages}}
+      </span>
       <form action="{% url 'admin_add_term' %}" method="post">
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}

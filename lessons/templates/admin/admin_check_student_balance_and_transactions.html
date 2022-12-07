@@ -1,7 +1,7 @@
+{% extends 'base_content.html' %}
+{% block content %}
 <div class="container ">
     <h2> List of Students </h2>
-    <a class="float-left" href="{% url "admin_home" %}">Back to home</a>
-
     <div class=" d-flex justify-content-around nowrap ">
         <table class="table-responsive table">
             <thead class="text-left">
@@ -17,30 +17,25 @@
                 </tr>
             </thead>
             <tbody>
-                 %}
-
-                        <tr class="h-25 overflow-auto" style="white-space:nowrap">
-
-                            {% for user in users %}
-
-
-
-
-                            <td scope="col">{{user.id}}</td>
-                            <td scope="col">{{user.first_name}}</td>
-                            <td scope="col">{{user.last_name}}</td>
-                            <td scope="col">{{user.balance}}</td>
-                            <td>
-                                <a href="{% url 'admin_view_user_invoice' user.id %}" class="btn btn-primary">
-                                    View Invoices</td>
-
-                                  <td>  <a href="{% url 'admin_view_user_transfers' user.id %}" class="btn btn-primary">
-                                        View Transfers</td>
-
-                        </tr>
-
-
-                {% endfor %}
-
+              {% if not users %}
+                <tr><td colspan="100%"><center style="font-weight:bold">--- No Users Found ---</center></td></tr>
+              {% endif %}
+              {% for user in users %}
+                <tr class="h-25 overflow-auto" style="white-space:nowrap">
+                  <td scope="col">{{user.id}}</td>
+                  <td scope="col">{{user.first_name}}</td>
+                  <td scope="col">{{user.last_name}}</td>
+                  <td scope="col">{{user.balance}}</td>
+                  <td>
+                    <a href="{% url 'admin_view_user_invoice' user.id %}" class="btn btn-primary">View Invoices</a>
+                  </td>
+                  <td>
+                    <a href="{% url 'admin_view_user_transfers' user.id %}" class="btn btn-primary">View Transfers</a>
+                  </td>
+                </tr>
+              {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+{% endblock %}

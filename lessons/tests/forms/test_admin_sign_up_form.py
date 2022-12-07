@@ -1,30 +1,30 @@
 from django.test import TestCase
 from django import forms
-from lessons.forms import SignUpForm
-from ..models import User
+from lessons.forms import AdminSignUpForm
+from lessons.models import User
 from django.contrib.auth.hashers import check_password
 
-class SignUpFormTestCase(TestCase):
+class AdminSignUpFormTestCase(TestCase):
     """Unit tests for sign-up form"""
     def setUp(self):
         self.form_input = {
-            "first_name": "Michael",
-            "last_name": "Kolling",
-            "username": "michael.kolling@kcl.ac.uk",
-            "dateOfBirth":"01/01/1995",
+            "first_name": "Harry",
+            "last_name": "Kane",
+            "username": "harry.kane@england.co.uk",
+            "dateOfBirth": "01/01/1995",
             "password" : "Password123",
             "password_confirm" : "Password123",
-            "id": "3"
+            "is_superuser" : False
         }
 
     # Form accepts valid input data
     def test_valid_sign_up_form(self):
-        form = SignUpForm(data=self.form_input)
+        form = AdminSignUpForm(data=self.form_input)
         self.assertTrue(form.is_valid())
 
     # Form has necessary fields
     def test_form_has_necessary_fields(self):
-        form = SignUpForm()
+        form = AdminSignUpForm()
 
         self.assertIn("username", form.fields)
         user_email_field = form.fields["username"]
@@ -45,60 +45,67 @@ class SignUpFormTestCase(TestCase):
         password_wdg = form.fields["password_confirm"].widget
         self.assertTrue(isinstance(password_wdg, forms.PasswordInput))
 
+        self.assertIn("is_superuser", form.fields)
+        superuser_wdg = form.fields["is_superuser"].widget
+        self.assertTrue(isinstance(superuser_wdg, forms.CheckboxInput))
+
 
 
     # Form uses model validation
     def test_form_uses_model_validation(self):
         self.form_input["username"] = ""
-        form = SignUpForm(data=self.form_input)
+        form = AdminSignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     # New password has correct format
     def test_password_must_contain_uppercase(self):
         self.form_input["password"] = "password123"
         self.form_input["password_confirm"] = "password123"
-        form=SignUpForm(data=self.form_input)
+        form=AdminSignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     def test_password_must_contain_lowercase(self):
         self.form_input["password"] = "PASSWORD123"
         self.form_input["password_confirm"] = "PASSWORD123"
-        form=SignUpForm(data=self.form_input)
+        form=AdminSignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     def test_password_must_contain_number(self):
         self.form_input["password"] = "PasswordABC"
         self.form_input["password_confirm"] = "PasswordABC"
-        form=SignUpForm(data=self.form_input)
+        form=AdminSignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     def test_passwords_must_be_identical(self):
         self.form_input["password_confirm"] = "WrongPass123"
-        form=SignUpForm(data=self.form_input)
+        form=AdminSignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
+    # Validates incorrect date of birth
     def test_dob_no_entry(self):
         self.form_input["dateOfBirth"] = ""
-        form=SignUpForm(data=self.form_input)
+        form=AdminSignUpForm(data=self.form_input)
         self.assertTrue(form.is_valid())
 
     def test_dob_invalid(self):
         self.form_input["dateOfBirth"] = "NotAValidDate123"
-        form=SignUpForm(data=self.form_input)
+        form=AdminSignUpForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
-    def test_form_must_save_correctly(self):
 
-        form=SignUpForm(data=self.form_input)
+    def test_form_must_save_correctly(self):
+        form=AdminSignUpForm(data=self.form_input)
         before_count = User.objects.count()
         form.save()
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count+1)
 
-        user = User.objects.get(username="michael.kolling@kcl.ac.uk")
-        self.assertEqual(user.first_name, "Michael")
-        self.assertEqual(user.last_name, "Kolling")
-        self.assertEqual(user.username, "michael.kolling@kcl.ac.uk")
+        user = User.objects.get(username="harry.kane@england.co.uk")
+        self.assertEqual(user.first_name, "Harry")
+        self.assertEqual(user.last_name, "Kane")
+        self.assertEqual(user.username, "harry.kane@england.co.uk")
         self.assertEqual(user.dateOfBirth.strftime("%d/%m/%Y"), "01/01/1995")
         is_pass_correct = check_password("Password123", user.password)
         self.assertTrue(is_pass_correct)
+        self.assertEqual(user.is_staff, True)
+        self.assertEqual(user.is_superuser, False)

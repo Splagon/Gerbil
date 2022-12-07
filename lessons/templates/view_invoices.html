@@ -1,38 +1,37 @@
-
 {% extends 'base_content.html' %}
 {% block content %}
 <div class="container ">
     <h2> Invoices of {{user.first_name}} {{user.last_name}}</h2>
-    <a href="/">Back to home</a>
 
     <div class=" d-flex justify-content-around nowrap ">
         <table class="table-responsive table">
             <thead class="text-left">
                 <tr class="overflow-auto" style="white-space:nowrap">
                     <th scope="col">Invoice number </th>
+                    <th scope="col">Amount due</th>
+                    <th scope="col">Amount paid</th>
+                    <th scope="col">Invoice Paid</th>
 
                 </tr>
             </thead>
             <tbody>
-                {% for value in user_invoices %}
-
-                        <tr>
-
-
-
-                            <td scope="col">{{value.invoice_number}}</td>
-
-
-
-                        </tr>
-
-
-                {% endfor %}
-
+              {% if not user_invoices %}
+                <tr><td colspan="100%"><center style="font-weight:bold">--- No Invoices Found ---</center></td></tr>
+              {% endif %}
+              {% for value in user_invoices %}
+                <tr>
+                  <td scope="col">{{value.invoice_number}}</td>
+                  <td scope="col">£{{value.amount | floatformat:2}}</td>
+                  <td scope="col">{{value.currently_paid}}</td>
+                  <td scope="col">{{value.paid}}</td>
+                </tr>
+              {% endfor %}
             </tbody>
         </table>
 
     </div>
+    <br>
+    <p><a href='{% url 'balance_and_transactions' %}'>Return to Balance and Transactions</a></p>
 
 
 

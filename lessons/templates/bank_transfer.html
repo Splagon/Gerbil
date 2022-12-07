@@ -1,19 +1,17 @@
-<html>
-<head>
-
-
-  <h1>Make a bank transfer</h1>
-  <p>Welcome, your reference number is {{ user.id }} </p>
-</head>
+{% extends 'base_content.html' %}
+{% block content %}
 <body>
-
+    <h1>Make a bank transfer</h1>
+    <p>Welcome, your iD number is <b>{{ user.id }}</b> </p>
+    <span class="me-auto text-right text-danger ">
+      {{error_messages}}
+    </span>
     <form action="{% url "bank_transfer" %}" method="post">
-      {% csrf_token%}
-      {{form.as_p}}
-      <input type = "submit" value= "submit invoice number">
+      {% csrf_token %}
+      {% include 'partials/bootstrap_form.html' with form=form %}
+      <div class=" text-center">
+        <input type="submit" value="Submit Invoice Number" class="btn btn-primary" />
+      </div>
     </form>
-
-
-
 </body>
-</html>
+{% endblock %}

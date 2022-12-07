@@ -1,40 +1,27 @@
-<h1> School´s Bank account balance: {{school_balance.balance}}</h1>
-
-
-
-<div class="container ">
-    <h2>Incoming transfers: </h2>
-    <a class="float-left" href="{% url "admin_home" %}">Back to home</a>
-    <div class=" d-flex justify-content-around nowrap ">
-        <table class="table-responsive table">
-            <thead class="text-left">
-                <tr class="overflow-auto" style="white-space:nowrap">
-                    <th scope="col">Invoice Number</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Bologne</th>
-
-                </tr>
-            </thead>
-            <tbody>
-
-
-
-
-
-                            {% for transfer in transfers %}
-
-
-                            <td scope="col">{{transfer.invoice_number}}</td>
-                            <td scope="col">{{transfer.amount }}</td>
-                            
-
-
-
-
-                        </tr>
-
-
-                {% endfor %}
-
-            </tbody>
-        </table>
+{% extends 'base_content.html' %}
+{% block content %}
+<h1> School´s Bank account balance: £{{school_balance.balance | floatformat:2}}</h1>
+<br>
+<h2>Incoming transfers: </h2>
+<div class=" d-flex justify-content-around nowrap ">
+  <table class="table-responsive table">
+    <thead class="text-left">
+      <tr class="overflow-auto" style="white-space:nowrap">
+        <th scope="col">Invoice Number</th>
+        <th scope="col">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if not transfers %}
+        <tr><td colspan="100%"><center style="font-weight:bold">--- No Transfers Found ---</center></td></tr>
+      {% endif %}
+      {% for transfer in transfers %}
+        <tr>
+          <td scope="col">{{transfer.invoice_number}}</td>
+          <td scope="col">£{{transfer.amount | floatformat:2}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
