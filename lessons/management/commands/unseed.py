@@ -8,4 +8,4 @@ class Command(BaseCommand):
         Adult.objects.all().delete()
         Term.objects.all().delete()
         Request.objects.all().delete()
-        print("Unseeding complete.")
+        print("UNSEEDING COMPLETE.")
