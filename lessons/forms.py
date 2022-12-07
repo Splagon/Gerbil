@@ -51,7 +51,6 @@ class BankTransferForm(forms.ModelForm):
         student_id= user.id
         )
 
-        #)
         return bank_transfer
 
 
@@ -59,14 +58,6 @@ class RequestForm(forms.ModelForm):
     """Form enabling students to make lesson requests."""
 
     class Meta:
-
-        terms = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
-        start_of_term_date = None
-        if len(terms) > 0:
-            start_of_term_date = terms.first().get('startDate')
-        else:
-            start_of_term_date = datetime.date.today()
-
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
             'availability_time' : 'Please select a time to start your lesson. Note that it can\'t start before 8:00 or after 17:30',
@@ -78,7 +69,7 @@ class RequestForm(forms.ModelForm):
 
         fields = ['availability_date','availability_time','interval_between_lessons', 'duration_of_lessons', 'instrument', 'teacher']
         widgets = {
-            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date', 'min': start_of_term_date, 'max' : start_of_term_date + datetime.timedelta(days=6) }, ),
+            'availability_date' : widgets.DateInput(format='%d/%m/%Y', attrs={'type' : 'date'}, ),
             'availability_time' : widgets.TimeInput(attrs={'type' : 'time', 'min': '08:00', 'max': '17:30'}),
             'instrument' : widgets.Select(),
             'interval_between_lessons' : widgets.Select(),
@@ -87,8 +78,7 @@ class RequestForm(forms.ModelForm):
         }
 
     def clean(self):
-        """Clean the data and generate messages for any errors."""
-
+        """Clean the data and generate messages for any errors."""        
         availability_time = self.cleaned_data['availability_time']
         if availability_time < datetime.time(hour=8, minute=0, second=0):
             raise forms.ValidationError('Time cannot be before 8.')

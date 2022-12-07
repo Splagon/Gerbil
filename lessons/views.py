@@ -88,8 +88,7 @@ def request_form(request):
     if request.method == 'POST':
         form = RequestForm(request.POST)
         if form.is_valid():
-            terms = Term.objects.filter(
-            endDate__gte=datetime.datetime.today()).values()
+            terms = Term.objects.filter().values()
             if len(terms) > 0 :
                 form.save(request.user)
                 return redirect('requests')
