@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User, Request, Term, Invoice,BankTransfer, SchoolBankAccount, Adult, AdultChildRelationship
+#Term
+from .models import User, Request, Invoice,BankTransfer, SchoolBankAccount, Adult, AdultChildRelationship,Term
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

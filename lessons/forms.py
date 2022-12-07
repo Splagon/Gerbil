@@ -1,9 +1,9 @@
 from django import forms
-from .models import Request
+from .models import Request ,Term
 from django.contrib.auth import get_user_model, authenticate
 from django.forms import widgets
 
-from .models import User, Term, BankTransfer, Adult, AdultChildRelationship
+from .models import User, BankTransfer, Adult, AdultChildRelationship
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 # from .helpers import getDurationsToPrices
 

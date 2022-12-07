@@ -1,5 +1,6 @@
 {% extends 'base_content.html' %}
 {% block content %}
+
 <div class="container table-responsive">
   <h2>List of Requests</h2>
   <table class="table " >
@@ -50,6 +51,7 @@
         {% endif %}
       </tbody>
   </table>
+
 </div>
 <form action="{% url 'request_form' %}">
   <div class=" text-center">
