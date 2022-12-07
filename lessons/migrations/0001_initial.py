@@ -7,6 +7,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 import uuid
+import datetime
 
 
 class Migration(migrations.Migration):
