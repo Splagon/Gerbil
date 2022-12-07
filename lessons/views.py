@@ -50,8 +50,9 @@ def view_children(request):
 @login_required(login_url="log_in")
 def delete_child(request, child_id):
     user = request.user
-    adult_ = Adult.objects.get(username=user.username)
-    relation = AdultChildRelationship.objects.get(adult=adult_id, child=child_id)
+    adult_id = Adult.objects.get(username=user.username)
+    the_child = User.objects.get(id = child_id)
+    relation = AdultChildRelationship.objects.get(adult=adult_id, child=the_child)
     relation.delete()
     return redirect('view_children')
 

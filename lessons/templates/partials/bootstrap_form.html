@@ -9,7 +9,13 @@
         {% render_field field class="form-control is-valid" %}
       {% endif %}
     {% else %}
-      {% render_field field class="form-control" %}
+
+      {% if field.field.widget.input_type == "checkbox" %}
+        {% render_field field class="form-check-input" %}
+      {% else %}
+        {% render_field field class="form-control" %}
+      {% endif %}
+
     {% endif %}
     <div class="valid-feedback">
       Looks good!
