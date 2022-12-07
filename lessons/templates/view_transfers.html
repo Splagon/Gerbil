@@ -1,7 +1,7 @@
 {% extends 'base_content.html' %}
 {% block content %}
 <div class="container ">
-    <h2> Transfer of {{user.first_name}} {{user.last_name}}</h2>
+    <h2> Transfers by {{user.first_name}} {{user.last_name}}</h2>
 
     <div class=" d-flex justify-content-around nowrap ">
         <table class="table-responsive table">
@@ -13,29 +13,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for value in user_transfers %}
-
-                        <tr>
-
-
-
-                            <td scope="col">{{value.invoice_number}}</td>
-                            <td scope="col">{{value.amount}}</td>
-
-
-
-
-                        </tr>
-
-
-                {% endfor %}
-
+              {% if not user_transfers %}
+                <tr><td colspan="100%"><center style="font-weight:bold">--- No Transfers Found ---</center></td></tr>
+              {% endif %}
+              {% for value in user_transfers %}
+                <tr>
+                  <td scope="col">{{value.invoice_number}}</td>
+                  <td scope="col">£{{value.amount | floatformat:2}}</td>
+                </tr>
+              {% endfor %}
             </tbody>
         </table>
-
     </div>
-
-
-
+    <br>
+    <p><a href='{% url 'balance_and_transactions' %}'>Return to Balance and Transactions</a></p>
 </div>
 {% endblock %}
