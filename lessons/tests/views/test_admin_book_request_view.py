@@ -20,7 +20,7 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
             username = self.user,
             availability_date = "2022-12-29",
             availability_time = "08:30",
-            instrument = "violin",
+            instrument = "Violin",
             interval_between_lessons = 1,
             duration_of_lessons = 30
         )
@@ -36,12 +36,11 @@ class AdminBookRequestViewTestCase(LogInTester,TestCase ):
                 'username' : self.user.username,
                 'availability_date' : "2023-02-26",
                 'availability_time' : "08:30",
-                'instrument' : "double bass",
+                'instrument' : "Double Bass",
                 'interval_between_lessons' : 1,
                 'duration_of_lessons' : 30
             }
         )
-
         self.assertEqual(response.status_code, 302)
         self.request.refresh_from_db()
         self.client.get(self.booking_url, follow=True)

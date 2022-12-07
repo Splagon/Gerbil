@@ -3,11 +3,14 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
+      <span class="me-auto text-right text-danger ">
+        {{error_messages}}
+      </span>
       <form action="" method="post">
         {% csrf_token %}
-        {% include 'partials/bootstrap_form.html' with request=request %}
+        {% include 'partials/bootstrap_form.html' with form=form %}
         <div class=" text-center">
-          <input type="submit" value="Update" class="btn btn-secondary" />
+          <input type="submit" value="Update" class="btn btn-primary" />
         </div>
       </form>
     </div>

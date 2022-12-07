@@ -10,7 +10,7 @@ class RequestModelTestCase(TestCase):
     fixtures = [
         'lessons/tests/fixtures/default_user2.json'
     ]
-    
+
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
@@ -19,7 +19,7 @@ class RequestModelTestCase(TestCase):
             username = self.user,
             availability_date = "2022-12-29",
             availability_time = "08:30",
-            instrument = "violin",
+            instrument = "Violin",
             interval_between_lessons = 1,
             # number_of_lessons = 5,
             duration_of_lessons = 30
@@ -58,7 +58,7 @@ class RequestModelTestCase(TestCase):
         d = datetime.timedelta(days=365 )
         self.request.availability_date = tod + d
         self._assert_request_is_valid()
-    
+
 
     def test_interval_between_lesson_must_be_greater_than_zero(self):
         self.request.interval_between_lessons = -1
@@ -69,7 +69,7 @@ class RequestModelTestCase(TestCase):
     #     self.form_input['interval_between_lessons'] = ''
     #     form = RequestForm(data=self.form_input)
     #     self.assertFalse(form.is_valid())
-    
+
     # def test_duration_of_lessons_must_not_be_blank(self):
     #     self.form_input['duration_of_lessons'] = ''
     #     form = RequestForm(data=self.form_input)
@@ -84,7 +84,7 @@ class RequestModelTestCase(TestCase):
     #     self.form_input['instrument'] = ()
     #     form = RequestForm(data=self.form_input)
     #     self.assertTrue(form.is_valid())
-    
+
     # def test_teacher_can_be_blank(self):
     #     self.form_input['teacher'] = ()
     #     form = RequestForm(data=self.form_input)

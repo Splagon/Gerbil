@@ -22,11 +22,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                  {% if not requests %}
+                    <tr><td colspan="100%"><center style="font-weight:bold">--- No Requests Found ---</center></td></tr>
+                  {% else %}
                     {% for value in requests %}
                         {% if value.status == "In Progress" %}
                             <tr>
                                 {% for key,date in value.lesson_dates.items %}
-                                    <tr>
+                      1              <tr>
                                         {% if key == 0 %}
                                         <td>
                                             <a href="{% url 'admin_book_request_form' value.id value.requesterId %}" class="btn btn-primary">
@@ -79,7 +82,7 @@
                         {% endif%}
 
                     {% endfor %}
-
+                  {% endif %}
                 </tbody>
             </table>
         </div>

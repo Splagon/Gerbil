@@ -2,13 +2,15 @@
 {% block content %}
 <body>
     <h1>Edit Profile</h1>
-    <form action='{% url "edit_profile" %}' method="post">
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        <input type="submit" value="Save">
+    <span class="me-auto text-right text-danger ">
+      {{error_messages}}
+    </span>
+    <form action="{% url "edit_profile" %}" method="post">
+      {% csrf_token %}
+      {% include 'partials/bootstrap_form.html' with form=form %}
+      <div class=" text-center">
+        <input type="submit" value="Save" class="btn btn-primary" />
+      </div>
     </form>
-    <p><a href='{% url 'view_profile' %}'>Return to Profile</a></p>
 </body>
 {% endblock %}

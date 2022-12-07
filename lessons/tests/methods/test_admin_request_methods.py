@@ -11,7 +11,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
     fixtures = [
         'lessons/tests/fixtures/default_admin.json'
     ]
-    
+
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='danielthomas@example.com')
@@ -20,7 +20,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
             username = self.user,
             availability_date = "2022-12-29",
             availability_time = "08:30",
-            instrument = "violin",
+            instrument = "Violin",
             interval_between_lessons = 1,
             # number_of_lessons = 5,
             duration_of_lessons = 30
@@ -38,7 +38,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
 
     def test_admin_login_required(self):
         response = self.client.get(self.view_requests_url)
-        self.assertRedirects(response, reverse('admin_log_in')+'?next=/admin/'+'view_requests/')  
+        self.assertRedirects(response, reverse('admin_log_in')+'?next=/admin/'+'view_requests/')
 
     def test_admin_get_view_requests(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -51,7 +51,7 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
 
     def test_admin_is_user_staff_type(self):
         self.assertTrue(self.user, operator.attrgetter('is_staff'))
-        
+
     def test_admin_delete_request_after_toggle(self):
         self.client.login(username = self.user.username, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -69,13 +69,12 @@ class AdminRequestMethodsTestCase(LogInTester,TestCase ):
                 'username' : self.user,
                 'availability_date' : "2023-02-26",
                 'availability_time' : "08:30",
-                'instrument' : "double bass",
+                'instrument' : "Double Bass",
                 # 'number_of_lessons' : 3,
                 'interval_between_lessons' : 1,
                 'duration_of_lessons' : 30
             }
         )
-
         self.assertEqual(response.status_code, 302)
         self.request.refresh_from_db()
 

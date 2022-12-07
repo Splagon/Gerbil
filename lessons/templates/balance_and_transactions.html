@@ -1,8 +1,10 @@
 {% extends 'base_content.html' %}
 {% block content %}
-<h1>Balance: {{ user.balance }}</h1>
-
-
-<p><a href='{% url "view_transfers" %}'>Check Transactions</a></p>
-<p><a href='{% url "view_invoices" %}'>Check Invoices</a></p>
+<body>
+  <h1>Balance & Transactions</h1>
+  <h4>Balance: £{{ user.balance | floatformat:2}}</h4>
+  <br>
+  <p><a href='{% url "view_transfers" %}'>Check Transactions</a></p>
+  <p><a href='{% url "view_invoices" %}'>Check Invoices</a></p>
+</body>
 {% endblock %}
