@@ -31,7 +31,8 @@ class RequestModelTestCase(TestCase):
         self.request.teacher = 'a' * 51
         self._assert_request_is_invalid()
 
-
+    def test_lesson_dates_in_request(self):
+        self.assertIsNotNone(self.request.lesson_dates)
 
     def test_availability_date_can_be_after_one_year(self):
         tod = datetime.datetime.today()

@@ -1,3 +1,4 @@
+"""Tests of the  admin request view."""
 
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -10,7 +11,6 @@ class AdminRequestViewTestCase(TestCase):
     fixtures = [
         'lessons/tests/fixtures/default_admin.json',
          'lessons/tests/fixtures/default_user2.json'
-
     ]
     def setUp(self):
         #Standard user

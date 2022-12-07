@@ -7,7 +7,7 @@ import datetime
 from random import randint, random
 from lessons.helpers import getDurations, getInstruments
 
-
+""" Seeder class to populate initial databases"""
 class Command(BaseCommand):
     PASSWORD = "Password123"
     ADULT_USER_COUNT = 100

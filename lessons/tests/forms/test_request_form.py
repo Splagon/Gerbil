@@ -26,7 +26,6 @@ class RequestFormTestCase(TestCase):
         }
 
 
-
     def test_form_has_necessary_fields(self):
         form = RequestForm()
         self.assertIn('availability_date', form.fields)
@@ -44,10 +43,10 @@ class RequestFormTestCase(TestCase):
         self.assertIn('interval_between_lessons', form.fields)
         # self.assertIn('number_of_lessons', form.fields)
 
+
     def test_valid_request_form_(self):
         form = RequestForm(data=self.form_input)
         self.assertTrue(form.is_valid())
-
 
     def test_request_form_must_save_correctly(self):
         form=RequestForm(data=self.form_input)
