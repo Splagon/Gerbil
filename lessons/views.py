@@ -140,7 +140,7 @@ def update_request(request, id):
 
         invoice_exists = Invoice.objects.filter(
             invoice_number=str(id)).exists()
-
+        print(f"Invoice {invoice_exists}")
         if (invoice_exists):
             update_invoice(id, str(old_price))
 
@@ -229,12 +229,13 @@ def admin_sign_up(request):
 def admin_view_requests(request):
     user = request.user
     users = User.objects.all().values()
-    requests = Request.objects.filter(username = user.id,status = "In Progress")
+    requests = Request.objects.all()
     return render(request, 'admin/admin_view_requests.html', {'user': user, 'users': users, 'requests': requests})
 
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_update_requests(request, id):
     requestObject = Request.objects.get(id=id)
+    print(f"{requestObject.id} ama")
     form = RequestForm(request.POST or None, instance=requestObject)
     if form.is_valid():
         availability_date = form.cleaned_data.get('availability_date')
@@ -278,7 +279,7 @@ def admin_delete_request(request, id):
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def create_invoice(request, id):
     request = Request.objects.get(id=id)
-    amount = request.price_of_lessons
+    amount = request.totalPrice
     user = request.username
     user.balance -= float(amount)
     user.save()
@@ -287,7 +288,7 @@ def create_invoice(request, id):
         unique_reference_number=str(request.requesterId)+"-"+str(request.id),
         invoice_number=str(request.id),
         student_id=request.requesterId,
-        amount=request.price_of_lessons,
+        amount=float(request.totalPrice),
         currently_paid = 0.0
     )
     invoice.save()
@@ -409,30 +410,25 @@ def bank_transfer(request):
                             invoice.paid = True
                             invoice.currently_paid = invoice.amount
 
-
                         if(amount_paid_by_user > invoice.amount):
                             user.balance += invoice.amount
-                            #amount_to_refund_to_user = amount_paid_by_user - invoice.amount
+                            amount_to_refund_to_user = amount_paid_by_user - invoice.amount
                             #The user is given the extra money they paid
-                            #user.balance+= amount_to_refund_to_user
-                            school_bank_account.balance += float(amount_paid_by_user)
+                            user.balance+= amount_to_refund_to_user
+                            school_bank_account.balance += float(amount_paid_by_user-amount_to_refund_to_user)
                             invoice.paid = True
                             invoice.currently_paid = invoice.amount
-
 
                         if(amount_paid_by_user < invoice.amount):
                             user.balance += amount_paid_by_user
                             school_bank_account.balance += amount_paid_by_user
                             invoice.currently_paid+= amount_paid_by_user
-
                             if(invoice.currently_paid >= invoice.amount):
                                 invoice.paid = True
                                 invoice.currently_paid = invoice.amount
-
-
+                                school_bank_account.balance -= (amount_paid_by_user- invoice.amount)
                             else:
                                 invoice.paid = False
-
 
                         form.save(request.user)
                         user.save()
@@ -442,9 +438,8 @@ def bank_transfer(request):
                         form = BankTransferForm()
                         return render(request, 'bank_transfer.html', {'form': form})
 
-
     #else
-    messages.add_message(request,messages.ERROR, "Something went wrong, contact an administrator")
+    messages.add_message(request,messages.ERROR, "Something went wrong")
     form = BankTransferForm()
     return render(request, 'bank_transfer.html', {'form': form})
 
@@ -504,7 +499,7 @@ def view_bookings(request):
 @user_passes_test(operator.attrgetter('is_staff'), login_url="admin_log_in")
 def admin_view_bookings(request):
     user = request.user
-    requests = Request.objects.filter(username = user.id,status = "Booked")
+    requests = Request.objects.all()
     users = User.objects.all()
     return render(request, 'admin/admin_bookings.html', {'user': user,'users': users, 'requests': requests, })
 

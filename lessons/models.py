@@ -49,11 +49,16 @@ class User(AbstractUser):
 
 class Invoice(models.Model):
     """Invoice"""
+    # requesterId - invoiceNumber
     unique_reference_number = models.CharField(blank=False,max_length= 100)
+    # created automatically
     invoice_number=models.CharField(blank=False, max_length=36)
+    # requesterId
     student_id =models.IntegerField(default=0)
     paid = models.BooleanField(default=False)
+    # request.priceoflessons
     amount = models.FloatField(default=0.0)
+    # default
     currently_paid = models.FloatField(default=0.0)
 
 
