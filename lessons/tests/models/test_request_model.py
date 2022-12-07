@@ -8,7 +8,8 @@ from lessons.models import User
 class RequestModelTestCase(TestCase):
     # Get user to identify request form
     fixtures = [
-        'lessons/tests/fixtures/default_user2.json'
+        'lessons/tests/fixtures/default_user2.json',
+        'lessons/tests/fixtures/terms.json'
     ]
 
     """Unit tests for the Request model."""
@@ -33,6 +34,12 @@ class RequestModelTestCase(TestCase):
 
     def test_lesson_dates_in_request(self):
         self.assertIsNotNone(self.request.lesson_dates)
+        lesson_dates = []
+        for req in Request.objects.all():
+            lesson_dates = req.lesson_dates
+            self.assertGreater(len(lesson_dates),0 )
+
+
 
     def test_availability_date_can_be_after_one_year(self):
         tod = datetime.datetime.today()

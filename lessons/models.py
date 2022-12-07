@@ -96,26 +96,27 @@ class Request(models.Model):
         terms = Term.objects.all().order_by('startDate').values()
         start_date = datetime.date.today()
         end_date = datetime.date.today()
+        availability_date_new = datetime.date.fromisoformat(str(self.availability_date))
         if(len(terms) > 0):
             for i in range(len(terms)):
             # If the date falls mid-term:
-                if(terms[i].get('startDate') < self.availability_date and self.availability_date < terms[i].get('endDate')):
+                if(terms[i].get('startDate') < availability_date_new and availability_date_new < terms[i].get('endDate')):
                     start_date = self.availability_date
                     end_date = terms[i].get('endDate')
 
             # if the availability date falls in the break or between two terms
             for i in range(len(terms) - 1):
-                if(terms[i].get('endDate') < self.availability_date and self.availability_date < terms[i+1].get('startDate')):
+                if(terms[i].get('endDate') < availability_date_new and availability_date_new < terms[i+1].get('startDate')):
                     start_date = terms[i+1].get('startDate')
                     end_date = terms[i+1].get('endDate')
 
             # if the availabilty date is before the first term
-            if(self.availability_date < terms[0].get('startDate')):
+            if(availability_date_new < terms[0].get('startDate')):
                 start_date = terms[0].get('startDate')
                 end_date = terms[0].get('endDate')
 
             # if the availability date is after the last term
-            if(terms[len(terms)-1].get('endDate') <= self.availability_date ):
+            if(terms[len(terms)-1].get('endDate') <= availability_date_new):
                 start_date = terms[len(terms)-1].get('endDate')
                 end_date = terms[len(terms)-1].get('endDate')
         else:
