@@ -19,7 +19,7 @@ class RequestFormViewTestCase(TestCase):
         self.url = reverse('request_form')
 
     def test_request_url(self):
-        self.assertEqual(self.url,'/request-lesson/')
+        self.assertEqual(self.url,'/request_lesson/')
 
     def test_get_request(self):
         self.client.login(username=self.user.username, password='Password123')
@@ -29,7 +29,7 @@ class RequestFormViewTestCase(TestCase):
         form = response.context['form']
         self.assertTrue(isinstance(form, RequestForm))
         self.assertFalse(form.is_bound)
-    
+
     def test_get_request_redirects_when_logged_in(self):
         self.client.login(username=self.user.username, password="Password123")
         response = self.client.get(self.url, follow=True)
