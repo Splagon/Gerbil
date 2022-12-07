@@ -9,11 +9,11 @@
           <th scope="col" class="text-center">Delete</th>
           <th scope="col" class="text-center">Update</th>
           <th scope="col" class="text-center">Email</th>
+          <th scope="col" class="text-center">Total Price</th>
           <th scope="col" class="text-center">Availability time</th>
           <th scope="col" class="text-center">Lesson time</th>
           <th scope="col" class="text-center">Teacher</th>
           <th scope="col" class="text-center">Instrument</th>
-          <th scope="col" class="text-center">Total Price</th>
           <th scope="col" class="text-center">Status</th>
           <th scope="col" class="text-center">Lesson dates</th>
         </tr>
@@ -42,12 +42,13 @@
                 {% if user.id == value.username_id %}
                   <th scope="col">{{user.username}}</th>
                 {% endif %}
-              {% endfor %}              
+              {% endfor %}
               <td scope="col">£{{value.price_of_lessons}}</td>
               <td scope="col">{{value.availability_time}}</td>
               <td scope="col">{{value.duration_of_lessons}}</td>
               <td scope="col">{{value.teacher}}</td>
               <td scope="col">{{value.instrument}}</td>
+              <td scope="col">{{value.status}}</td>
               {% for key,date in value.lesson_dates.items%}
                   <td> {{date}}</td>
               {% endfor %}
@@ -58,9 +59,3 @@
   </table>
 </div>
 {% endblock %}
-
-
-
-
-
-
