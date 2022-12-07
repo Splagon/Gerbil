@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from lessons.models import User, Request
+from lessons.models import Adult, User, Request
 from lessons.models import Term
 from django.db.utils import IntegrityError
 import datetime
@@ -57,52 +57,64 @@ class Command(BaseCommand):
         print('Term seeding complete')
 
     def create_all_users(self):
-        user_count = 0
+        self.create_predefined_users()
+        self.create_all_adult_users()
+
+    def create_predefined_users(self):
         # creates the predefined users
         try:
-            self.create_johndoe_student()
-            self.create_petrapickles_admin()
-            self.create_martymajor_director()
+            self.create_adult_users("john.doe@example.org", "John", "Doe", False, False)
+            self.create_adult_users("petra.pickles@example.org", "Petra", "Pickles", True, False)
+            self.create_adult_users("marty.major@example.org", "Marty", "Major", True, True)
         except (IntegrityError):
             pass
 
+    def create_all_adult_users(self):
+        user_count = 0
         # creates all the random users
         while user_count < Command.USER_COUNT:
             print(f'Seeding user {user_count}',  end='\r')
+            first_name = self.faker.first_name()
+            last_name = self.faker.last_name()
+            username = self._username(first_name, last_name)
             try:
-                self.create_user()
+                self.create_adult_users(username, first_name, last_name, False, False)
             except (IntegrityError):
                 continue
             user_count += 1
         print('User seeding complete')
 
-    def create_user(self):
-        first_name = self.faker.first_name()
-        last_name = self.faker.last_name()
-        username = self._username(first_name, last_name)
+    def create_adult_users(self, username, first_name, last_name, isAdmin, isDirector):
         dateOfBirth = self.faker.date_of_birth(None, 18, 60)
-        User.objects.create_user(
+        Adult.objects.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
             dateOfBirth=dateOfBirth,
-            password=Command.PASSWORD
+            password=Command.PASSWORD,
+            is_staff=isAdmin,
+            is_superuser=isDirector
         )
+
+    # def create_user(self):
+    #     first_name = self.faker.first_name()
+    #     last_name = self.faker.last_name()
+    #     username = self._username(first_name, last_name)
+    #     dateOfBirth = self.faker.date_of_birth(None, 18, 60)
+    #     Adult.objects.create_user(
+    #         username=username,
+    #         first_name=first_name,
+    #         last_name=last_name,
+    #         dateOfBirth=dateOfBirth,
+    #         password=Command.PASSWORD
+    #     )
 
     def _username(self, first_name, last_name):
         username = f'{first_name}.{last_name}@example.org'
         return username
 
-    def create_johndoe_student(self):
-        User.objects.create_user(
-            username="john.doe@example.org",
-            first_name="John",
-            last_name="Doe",
-            dateOfBirth=self.faker.date_of_birth(None, 18, 60),
-            password=Command.PASSWORD
-        )
-
     def create_requests(self):
+        # makes requests for John Doe
         john_doe = self.get_user("john.doe@example.org")
         for i in range(Command.JOHNDOE_REQUEST_COUNT):
             self.create_a_request(john_doe)
@@ -150,24 +162,55 @@ class Command(BaseCommand):
     def get_random_status(self):
         return "Booked" if Command.REQUEST_FULFILL_PROBABILITY > random() else "In Progress"
 
-    def create_petrapickles_admin(self):
+    # def create_johndoe_student(self):
+    #     Adult.objects.create_user(
+    #         username="john.doe@example.org",
+    #         first_name="John",
+    #         last_name="Doe",
+    #         dateOfBirth=self.faker.date_of_birth(None, 18, 60),
+    #         password=Command.PASSWORD
+    #     )
+
+    def create_alicedoe_child(self):
         User.objects.create_user(
-            username="petra.pickles@example.org",
-            first_name="Petra",
-            last_name="Pickles",
-            dateOfBirth=self.faker.date_of_birth(None, 18, 60),
+            username="alice.doe@example.org",
+            first_name="Alice",
+            last_name="Doe",
+            # Has to be under 18 as they are a child
+            dateOfBirth=self.faker.date_of_birth(None, 5, 18),
             password=Command.PASSWORD,
-            is_staff=True,
-            is_superuser=False
+            is_adult = False
         )
 
-    def create_martymajor_director(self):
+    def create_bobdoe_child(self):
         User.objects.create_user(
-            username="marty.major@example.org",
-            first_name="Marty",
-            last_name="Major",
-            dateOfBirth=self.faker.date_of_birth(None, 18, 60),
+            username="bob.doe@example.org",
+            first_name="Bob",
+            last_name="Doe",
+            # Has to be under 18 as they are a child
+            dateOfBirth=self.faker.date_of_birth(None, 5, 18),
             password=Command.PASSWORD,
-            is_staff=True,
-            is_superuser=True
+            is_adult=False
         )
+
+    # def create_petrapickles_admin(self):
+    #     Adult.objects.create_user(
+    #         username="petra.pickles@example.org",
+    #         first_name="Petra",
+    #         last_name="Pickles",
+    #         dateOfBirth=self.faker.date_of_birth(None, 18, 60),
+    #         password=Command.PASSWORD,
+    #         is_staff=True,
+    #         is_superuser=False
+    #     )
+
+    # def create_martymajor_director(self):
+    #     Adult.objects.create_user(
+    #         username="marty.major@example.org",
+    #         first_name="Marty",
+    #         last_name="Major",
+    #         dateOfBirth=self.faker.date_of_birth(None, 18, 60),
+    #         password=Command.PASSWORD,
+    #         is_staff=True,
+    #         is_superuser=True
+    #     )
