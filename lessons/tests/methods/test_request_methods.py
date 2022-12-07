@@ -6,11 +6,11 @@ from lessons.tests.helpers import reverse_with_next
 
 class RequestMethodsTestCase(TestCase):
 
-        # Get user to identify request form
+    # Get user to identify request form
     fixtures = [
         'lessons/tests/fixtures/default_user2.json'
     ]
-    
+
     """Unit tests for the Request model."""
     def setUp(self):
         self.user = User.objects.get(username='michael.kolling@kcl.ac.uk')
@@ -19,9 +19,8 @@ class RequestMethodsTestCase(TestCase):
             username = self.user,
             availability_date = "2022-12-29",
             availability_time = "08:30",
-            instrument = "violin",
+            instrument = "Violin",
             interval_between_lessons = 5,
-            # number_of_lessons = 5,
             duration_of_lessons = 30
         )
 
@@ -42,7 +41,7 @@ class RequestMethodsTestCase(TestCase):
         self.client.get(self.delete_url, follow=True)
         requests_after = len(Request.objects.values())
         self.assertEquals(requests_before, requests_after+1)
-    
+
 
     def test_update_request_after_toggle(self):
         self.client.login(username = self.user.username, password='Password123')
@@ -53,7 +52,7 @@ class RequestMethodsTestCase(TestCase):
                 'username' : self.user,
                 'availability_date' : "2023-02-26",
                 'availability_time' : "08:30",
-                'instrument' : "double bass",
+                'instrument' : "Double Bass",
                 # 'number_of_lessons' : 3,
                 'interval_between_lessons' : 1,
                 'duration_of_lessons' : 30
@@ -63,7 +62,6 @@ class RequestMethodsTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.request.refresh_from_db()
 
-        # self.assertEqual(self.request.number_of_lessons, 3 )
 
         self.client.get(self.update_url, follow=True)
         requests_after = len(Request.objects.values())

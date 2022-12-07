@@ -2,10 +2,16 @@
 {% block content %}
 <body>
   <h1>Log in</h1>
-  <p>Simple log in page</p>
-  <form action="{% url 'log_in' %}" method ="post">
+  <span class="me-auto text-right text-danger ">
+    {{error_messages}}
+  </span>
+  <form action="{% url "log_in" %}" method="post">
     {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" value="Log in">
+    {% include 'partials/bootstrap_form.html' with form=form %}
+    <div class=" text-center">
+      <input type="submit" value="Log in" class="btn btn-primary" />
+    </div>
+  </form>
+
 </body>
 {% endblock %}

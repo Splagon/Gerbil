@@ -36,15 +36,16 @@ def add_child(request):
     return render(request, 'add_child.html', {'form': form, })
 
 @login_required(login_url="log_in")
-def view_child(request):
+def view_children(request):
     user = request.user
-    i_am = Adult.objects.get(username=user.username)
+    #i_am = Adult.objects.get(username=user.username)
     child_array = []
 
-    relations = AdultChildRelationship.objects.filter(adult=i_am).all().values()
+    #relations = AdultChildRelationship.objects.filter(adult=i_am).all().values()
+    relations = AdultChildRelationship.objects.filter(adult=user).all().values()
     for r in relations:
         child_array.append(User.objects.get(id=r["child_id"]))
-    return render(request, "view_child.html", {"children":child_array})
+    return render(request, "view_children.html", {"children":child_array})
 
 @login_required(login_url="log_in")
 def delete_child(request, child_id):
@@ -53,7 +54,7 @@ def delete_child(request, child_id):
     the_child = User.objects.get(id=child_id)
     relation = AdultChildRelationship.objects.get(adult=adult_id, child=the_child)
     relation.delete()
-    return redirect('view_child')
+    return redirect('view_children')
 
 @login_required(login_url="log_in")
 def request_form_child(request, child_id):
@@ -63,20 +64,20 @@ def request_form_child(request, child_id):
             form = RequestForm(request.POST)
             if form.is_valid():
                 form.save(the_child)
-                return redirect('view_child')
+                return redirect('view_children')
         else:
             form = RequestForm()
 
         return render(request, "request_form_for_child.html", {"child" : the_child, "form" : form})
     else:
-        return redirect('view_child')
+        return redirect('view_children')
 
 
 
 @login_required(login_url="log_in")
 def requests(request):
     user = request.user
-    requests = Request.objects.all()
+    requests = Request.objects.filter(username = user.id,status = "In Progress")
     return render(request, 'requests.html', {'user': user, 'requests': requests})
 
 
@@ -102,8 +103,8 @@ def request_form(request):
 
 @login_required(login_url="log_in")
 def delete_request(request, id):
-    request = Request.objects.get(id=id)
-    request.delete()
+    requestToDelete = Request.objects.get(id=id)
+    requestToDelete.delete()
     return render(request, 'requests.html')
 
 @login_required(login_url="log_in")
@@ -493,7 +494,7 @@ def admin_check_student_balance_and_transactions(request):
 @login_required(login_url="log_in")
 def view_bookings(request):
     user = request.user
-    requests = Request.objects.all()
+    requests = Request.objects.filter(username = user.id, status = "Booked")
     return render(request, 'bookings.html', {'user': user, 'requests': requests})
 
 

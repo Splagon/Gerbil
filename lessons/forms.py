@@ -1,6 +1,6 @@
 from django import forms
 from .models import Request
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.forms import widgets
 
 from .models import User, Term, BankTransfer, Adult, AdultChildRelationship
@@ -60,10 +60,12 @@ class RequestForm(forms.ModelForm):
 
     class Meta:
 
-        start_of_term_date = datetime.datetime.today()
-        query = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
-        if (query):
-            start_of_term_date = query.first().get('startDate')
+        terms = Term.objects.filter(endDate__gte=datetime.datetime.today()).values()
+        start_of_term_date = None
+        if len(terms) > 0:
+            start_of_term_date = terms.first().get('startDate')
+        else:
+            start_of_term_date = datetime.date.today()
 
         labels = {
             'availability_date' : 'Please select a date for your first lesson',
@@ -95,19 +97,13 @@ class RequestForm(forms.ModelForm):
         elif availability_time > datetime.time(hour=17, minute=30, second=0):
             raise forms.ValidationError('Time cannot be after 17:30.')
 
-        availability_date = self.cleaned_data['availability_date']
-        if(availability_date < datetime.date.today()):
-            self.add_error('availability_date', 'Date cannot be before today')
-            raise forms.ValidationError('Date cannot be before today.')
-
-        if(availability_date >= datetime.date.today() + datetime.timedelta(days=365*2)):
-            raise forms.ValidationError('Date cannot be more than 2 years in the future.')
 
         super().clean()
 
     # Saves a new request form
     def save(self, user):
         """Create a new request."""
+
         super().save(commit=False)
         request = Request.objects.create(
             username = user,
@@ -118,7 +114,7 @@ class RequestForm(forms.ModelForm):
             duration_of_lessons=self.cleaned_data.get('duration_of_lessons'),
             instrument=self.cleaned_data.get('instrument'),
             teacher=self.cleaned_data.get('teacher'),
-            # totalPrice= int(self.cleaned_data.get('number_of_lessons')) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
+            # totalPrice= int(len(self.fields['lesson_dates'])) * getDurationsToPrices(self.cleaned_data.get('duration_of_lessons')),
             status = 'In Progress',
             requesterId= user.id
 

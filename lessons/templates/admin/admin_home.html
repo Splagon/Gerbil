@@ -8,7 +8,7 @@
   {% endif %}
   <p>
     {% if user.is_authenticated %}
-      <p>Welcome, {{ user.first_name }} {{ user.last_name }} </p>
+      <p><b>Welcome, {{ user.first_name }} {{ user.last_name }}</b></p>
       <p><a href='{% url "admin_view_requests" %}'>View Requests</a></p>
       <p><a href='{% url "admin_view_bookings" %}'>View Bookings</a></p>
       <p><a href='{% url "admin_view_terms" %}'>View Terms</a></p>
