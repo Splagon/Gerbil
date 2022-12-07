@@ -94,8 +94,8 @@ class Request(models.Model):
     def lesson_dates(self):
         # Retrieve all term objects in ascending order
         terms = Term.objects.all().order_by('startDate').values()
-        start_date = None
-        end_date = None
+        start_date = datetime.date.today()
+        end_date = datetime.date.today()
         if(len(terms) > 0):
             for i in range(len(terms)):
             # If the date falls mid-term:
@@ -119,8 +119,7 @@ class Request(models.Model):
                 start_date = terms[len(terms)-1].get('endDate')
                 end_date = terms[len(terms)-1].get('endDate')
         else:
-            start_date = datetime.date.today()
-            end_date = datetime.date.today()
+            return {}
         # Finds the difference in weeks between two dates by finding the consecutive mondays
         startOfTerm = (start_date - datetime.timedelta(days=start_date.weekday()))
         endOfTerm = (end_date - datetime.timedelta(days=end_date.weekday()))
@@ -134,12 +133,7 @@ class Request(models.Model):
         
     @property
     def price_of_lessons(self):
-        return float(len(self.lesson_dates) * float(getDurationsToPrices(self.duration_of_lessons)))
-
-
-    @property
-    def price_of_lessons(self):
-        return float(len(self.lesson_dates) * float(getDurationsToPrices(self.duration_of_lessons)))
+        return float(len(self.lesson_dates)) * float(getDurationsToPrices(self.duration_of_lessons))
 
 class Term(models.Model):
     termName = models.CharField(default="blank", max_length=50)
