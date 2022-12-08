@@ -6,6 +6,8 @@
   <table class="table " >
       <thead class="text-left text-nowrap" >
         <tr>
+          <th scope="col" class="text-center">First Name</th>
+          <th scope="col" class="text-center">Last Name</th>
           <th scope="col" class="text-center">Delete</th>
           <th scope="col" class="text-center">Update</th>
           <th scope="col" class="text-center">Total Price</th>
@@ -17,11 +19,13 @@
         </tr>
       </thead>
       <tbody>
-        {% if not requests %}
+        {% if not requests%}
           <tr><td colspan="100%"><center style="font-weight:bold">--- No Requests Found ---</center></td></tr>
         {% else %}
           {% for value in requests %}
             <tr class="text-center font-weight-bold">
+              <td>{{user.first_name}}</td>
+              <td>{{user.last_name}}</td>
               <td>
                 <a href="{% url 'delete-request' value.id %}">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16"  >
@@ -49,6 +53,7 @@
             </tr>
           {% endfor %}
         {% endif %}
+  
       </tbody>
   </table>
 
