@@ -102,7 +102,7 @@ def request_form(request):
 def delete_request(request, id):
     requestToDelete = Request.objects.get(id=id)
     requestToDelete.delete()
-    return render(request, 'requests.html')
+    return redirect('requests')
 
 @login_required(login_url="log_in")
 def update_request(request, id):
